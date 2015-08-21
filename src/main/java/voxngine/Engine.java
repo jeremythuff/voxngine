@@ -22,9 +22,7 @@ public abstract class Engine
     private GLFWCursorPosCallback   cursorPosCallback;
     private GLFWMouseButtonCallback mouseButtonCallback;
     private GLFWScrollCallback      scrollCallback;
-    
-    private static Window window;
-    
+        
     public static double timer = 0;
 	public static int frames = 0;
 	public static int fps;
@@ -35,8 +33,8 @@ public abstract class Engine
 	
     public Engine()
     {
-    	window = new Window("Engine");
-        glfwMakeContextCurrent(window.id);
+    	Window.init("Engine");
+        glfwMakeContextCurrent(Window.id);
         GLContext.createFromCurrent();
         glfwSwapInterval(1);
     }
@@ -64,24 +62,16 @@ public abstract class Engine
 
         // Set the callbacks
         glfwSetErrorCallback(errorCallback);
-        glfwSetKeyCallback(window.id, keyCallback);
-        glfwSetCursorPosCallback(window.id, cursorPosCallback);
-        glfwSetMouseButtonCallback(window.id, mouseButtonCallback);
-        glfwSetScrollCallback(window.id, scrollCallback);
-                
-        int imageWidth = 0;
-        int imageHeight = 0;
-
-
-
-        fontHeight = imageHeight;
-
+        glfwSetKeyCallback(Window.id, keyCallback);
+        glfwSetCursorPosCallback(Window.id, cursorPosCallback);
+        glfwSetMouseButtonCallback(Window.id, mouseButtonCallback);
+        glfwSetScrollCallback(Window.id, scrollCallback);
         running = true;
         
         init();
 
         // Loop continuously and render and update
-        while (running && glfwWindowShouldClose(window.id) != GL_TRUE)
+        while (running && glfwWindowShouldClose(Window.id) != GL_TRUE)
         {
         	        	
             // Get the time
@@ -106,7 +96,7 @@ public abstract class Engine
     		
             // Poll the events and swap the buffers
             glfwPollEvents();
-            glfwSwapBuffers(window.id);
+            glfwSwapBuffers(Window.id);
             
         }
 
@@ -121,7 +111,7 @@ public abstract class Engine
         errorCallback.release();
 
         // Destroy the window
-        glfwDestroyWindow(window.id);
+        glfwDestroyWindow(Window.id);
         glfwTerminate();
 
         System.exit(0);
@@ -138,11 +128,9 @@ public abstract class Engine
             end();
     }
 
-    public void glfwCursorPosCallback(long window, double xpos, double ypos) {
-       	
+    public void glfwCursorPosCallback(long window, double xpos, double ypos) {   	
     	lastX = xpos;
     	lastY = ypos;
-    	
     }
 
     public void glfwMouseButtonCallback(long window, int button, int action, int mods) {
@@ -154,19 +142,11 @@ public abstract class Engine
 
     // Static helpful polled input methods
     public static boolean isKeyPressed(int key) {
-        return glfwGetKey(window.id, key) != GLFW_RELEASE;
+        return glfwGetKey(Window.id, key) != GLFW_RELEASE;
     }
 
     public static boolean isMouseButtonPressed(int button) {
-        return glfwGetMouseButton(window.id, button) != GLFW_RELEASE;
-    }
-
-    public static long getWindowID() {
-        return window.id;
-    }
-    
-    public long getTime() {
-        return System.nanoTime() / 1000000;
+        return glfwGetMouseButton(Window.id, button) != GLFW_RELEASE;
     }
     
 }

@@ -43,8 +43,7 @@ public class Window {
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-        glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
-        glfwWindowHint(GLFW_RESIZABLE, GL_TRUE); // the window will be resizable
+        glfwWindowHint(GLFW_RESIZABLE, GL_FALSE); // the window will be resizable
 		
 		id = glfwCreateWindow(WIDTH, HEIGHT, name, NULL, NULL);
 		
@@ -53,6 +52,10 @@ public class Window {
 		
 		ByteBuffer vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 			glfwSetWindowPos(id, (GLFWvidmode.width(vidmode) - WIDTH) / 2, (GLFWvidmode.height(vidmode) - HEIGHT) / 2);
+	}
+	
+	public static void init(String name) {
+		 new Window(name);
 	}
 	
 }

@@ -1,6 +1,6 @@
-package voxngine.graphics;
+package voxngine;
 
-public interface Renderable {
+public interface EngineObject {
 	public void init();
 	public void update(float delta);
 	public void render(float delta);

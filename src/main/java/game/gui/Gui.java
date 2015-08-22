@@ -3,9 +3,10 @@ package game.gui;
 import java.util.ArrayList;
 import java.util.List;
 
+import game.GameObject;
 import game.gui.overlays.DebugOverlay;
 
-public class Gui {
+public class Gui implements GameObject {
 		
 	List<GuiObject> guiObjects = new ArrayList<GuiObject>();
 

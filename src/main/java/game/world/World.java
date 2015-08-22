@@ -1,18 +1,19 @@
 package game.world;
 
+import game.GameObject;
 import game.world.World;
-import game.world.terrain.Voxel;
+import game.world.terrain.Zone;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class World {
+public class World implements GameObject {
 		
 	List<WorldObject> worldObjects = new ArrayList<WorldObject>();
 
 	public void init() {		
 		
-		worldObjects.add(new Voxel());
+		worldObjects.add(new Zone());
 	
 		for(WorldObject worldObject : worldObjects) {			
 			System.out.println("Initialiazing the "+ worldObject.getClass().getSimpleName() +" Object...");

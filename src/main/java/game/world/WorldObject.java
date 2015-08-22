@@ -1,9 +1,9 @@
 package game.world;
 
-import voxngine.graphics.Renderable;
+import game.GameObject;
 
-public interface WorldObject extends Renderable {
+public interface WorldObject extends GameObject {
 	
-
+	//Here we can interface methods for all World Objects
 
 }

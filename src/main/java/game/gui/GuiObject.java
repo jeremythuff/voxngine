@@ -1,9 +1,9 @@
 package game.gui;
 
-import voxngine.graphics.Renderable;
+import game.GameObject;
 
-public interface GuiObject extends Renderable {
+public interface GuiObject extends GameObject {
 	
-
+	//Here we can interface methods for all Gui Objects
 
 }

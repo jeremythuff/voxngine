@@ -1,13 +1,19 @@
 package game;
 
 import voxngine.Engine;
+import voxngine.io.Window;
+
+import static org.lwjgl.glfw.GLFW.glfwSetWindowTitle;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import game.gui.Gui;
 import game.world.World;
 
 public class Game extends Engine {
 	
-	private World world;
-	private Gui gui;
+	List<GameObject> gameObjecs = new ArrayList<GameObject>();
 			
 	public static void main(String[] args) {
         new Game().start();
@@ -15,34 +21,41 @@ public class Game extends Engine {
 
 	@Override
 	public void init() {
+		
+		glfwSetWindowTitle(Window.id, "Voxel Game");
+		
 		System.out.println("Game Started!");
 		
-		world = new World();
-		world.init();
+		gameObjecs.add(new World());
+		gameObjecs.add(new Gui());
 		
-		gui = new Gui();
-		gui.init();
+		for(GameObject gameObjec : gameObjecs) {
+			gameObjec.init();
+		}
 		
 		System.out.println("Initialization Done!");
 	}
 
 	@Override
 	public void update(float delta) {
-		world.update(delta);
-		gui.update(delta);
+		for(GameObject gameObjec : gameObjecs) {
+			gameObjec.update(delta);
+		}
 	}
 
 	@Override
 	public void render(float delta) {
-		world.render(delta);
-		gui.render(delta);
+		for(GameObject gameObjec : gameObjecs) {
+			gameObjec.render(delta);
+		}
 	}
 
 	@Override
 	public void dispose() {
 		System.out.println("Shutting down...");
-		world.dispose();
-		gui.dispose();
+		for(GameObject gameObjec : gameObjecs) {
+			gameObjec.dispose();
+		}
 		System.out.println("Game Ended!");
 	}
 	

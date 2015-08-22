@@ -1,10 +1,9 @@
 package game.world;
 
-public interface WorldObject {
+import voxngine.graphics.Renderable;
+
+public interface WorldObject extends Renderable {
 	
-	public void init();
-	public void update(float delta);
-	public void render(float delta);
-	public void dispose();
+
 
 }

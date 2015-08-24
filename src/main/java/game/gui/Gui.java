@@ -40,5 +40,11 @@ public class Gui implements GameObject {
 			guiObject.dispose();
 		}
 	}
+
+	@Override
+	public void input() {
+		// TODO Auto-generated method stub
+		
+	}
 	
 }

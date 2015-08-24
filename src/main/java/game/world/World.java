@@ -2,6 +2,7 @@ package game.world;
 
 import game.GameObject;
 import game.world.World;
+import game.world.terrain.Cube;
 import game.world.terrain.Zone;
 
 import java.util.ArrayList;
@@ -13,12 +14,19 @@ public class World implements GameObject {
 
 	public void init() {		
 		
-		worldObjects.add(new Zone());
+		//worldObjects.add(new Zone());
+		worldObjects.add(new Cube());
 	
 		for(WorldObject worldObject : worldObjects) {			
 			System.out.println("Initialiazing the "+ worldObject.getClass().getSimpleName() +" Object...");
 			worldObject.init();
 		}
+		
+	}
+	
+	@Override
+	public void input() {
+		// TODO Auto-generated method stub
 		
 	}
 
@@ -41,5 +49,6 @@ public class World implements GameObject {
 			worldObject.dispose();
 		}
 	}
+
 	
 }

@@ -9,6 +9,12 @@ public class Cloud implements WorldObject {
 		// TODO Auto-generated method stub
 		
 	}
+	
+	@Override
+	public void input() {
+		// TODO Auto-generated method stub
+		
+	}
 
 	@Override
 	public void update(float delta) {
@@ -27,5 +33,7 @@ public class Cloud implements WorldObject {
 		// TODO Auto-generated method stub
 		
 	}
+
+
 
 }

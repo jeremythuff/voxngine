@@ -24,7 +24,7 @@ public class Game extends Engine {
 		
 		glfwSetWindowTitle(Window.id, "Voxel Game");
 		
-		System.out.println("Game Started!");
+		System.out.println("Game Started...");
 		
 		gameObjecs.add(new World());
 		gameObjecs.add(new Gui());
@@ -33,7 +33,13 @@ public class Game extends Engine {
 			gameObjec.init();
 		}
 		
-		System.out.println("Initialization Done!");
+		System.out.println("Initialization Done!\n");
+	}
+	
+	@Override
+	public void input() {
+		// TODO Auto-generated method stub
+		
 	}
 
 	@Override

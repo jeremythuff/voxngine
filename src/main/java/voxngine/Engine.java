@@ -40,6 +40,8 @@ public abstract class Engine
     }
 
     public abstract void init();
+    
+    public abstract void input();
 
     public abstract void update(float delta);
 
@@ -79,7 +81,7 @@ public abstract class Engine
             delta = now - last;
             last = now;
             
-            
+            input();
             update(delta);
             render(delta);
             frames ++;
@@ -148,5 +150,5 @@ public abstract class Engine
     public static boolean isMouseButtonPressed(int button) {
         return glfwGetMouseButton(Window.id, button) != GLFW_RELEASE;
     }
-    
+
 }

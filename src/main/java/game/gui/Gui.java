@@ -5,6 +5,7 @@ import java.util.List;
 
 import game.GameObject;
 import game.gui.overlays.DebugOverlay;
+import voxngine.graphics.RenderEngine;
 
 public class Gui implements GameObject {
 		
@@ -28,9 +29,9 @@ public class Gui implements GameObject {
 		
 	}
 
-	public void render(float delta) {
+	public void render(RenderEngine renderEngine) {
 		for(GuiObject guiObject : guiObjects) {
-			guiObject.render(delta);
+			guiObject.render(renderEngine);
 		}
 	}
 

@@ -8,6 +8,7 @@ import org.lwjgl.glfw.GLFWMouseButtonCallback;
 import org.lwjgl.glfw.GLFWScrollCallback;
 import org.lwjgl.opengl.GLContext;
 
+import voxngine.graphics.RenderEngine;
 import voxngine.io.Window;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
@@ -23,20 +24,23 @@ public abstract class Engine
     private GLFWMouseButtonCallback mouseButtonCallback;
     private GLFWScrollCallback      scrollCallback;
         
-    public static double timer = 0;
-	public static int frames = 0;
-	public static int fps;
+    public double timer = 0;
+	public int frames = 0;
+	public int fps;
+		
+	public double lastX = 0, lastY = 0;
 	
-	public static double lastX = 0, lastY = 0;
-	
-	public int fontHeight;
-	
+	public RenderEngine renderEngine;
+		
     public Engine()
     {
     	Window.init("Engine");
         glfwMakeContextCurrent(Window.id);
         GLContext.createFromCurrent();
         glfwSwapInterval(1);
+        
+        renderEngine = new RenderEngine();
+        
     }
 
     public abstract void init();
@@ -45,7 +49,7 @@ public abstract class Engine
 
     public abstract void update(float delta);
 
-    public abstract void render(float delta);
+    public abstract void render(RenderEngine renderEngine2);
 
     public abstract void dispose();
 
@@ -83,7 +87,7 @@ public abstract class Engine
             
             input();
             update(delta);
-            render(delta);
+            render(renderEngine);
             frames ++;
             
             if (glfwGetTime() - timer > 1) {

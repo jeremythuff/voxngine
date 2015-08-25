@@ -1,6 +1,7 @@
 package game.world.terrain;
 
 import game.world.WorldObject;
+import voxngine.graphics.RenderEngine;
 
 public class Voxel implements WorldObject {
 
@@ -23,7 +24,7 @@ public class Voxel implements WorldObject {
 	}
 
 	@Override
-	public void render(float delta) {
+	public void render(RenderEngine renderEngine) {
 		// TODO Auto-generated method stub
 		
 	}

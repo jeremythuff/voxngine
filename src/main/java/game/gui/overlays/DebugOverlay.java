@@ -1,6 +1,7 @@
 package game.gui.overlays;
 
 import game.gui.GuiObject;
+import voxngine.graphics.RenderEngine;
 
 public class DebugOverlay implements GuiObject {
 
@@ -17,7 +18,7 @@ public class DebugOverlay implements GuiObject {
 	}
 
 	@Override
-	public void render(float delta) {
+	public void render(RenderEngine renderEngine) {
 		
 		
 	}

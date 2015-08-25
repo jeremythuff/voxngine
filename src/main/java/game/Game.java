@@ -1,6 +1,7 @@
 package game;
 
 import voxngine.Engine;
+import voxngine.graphics.RenderEngine;
 import voxngine.io.Window;
 
 import static org.lwjgl.glfw.GLFW.glfwSetWindowTitle;
@@ -50,9 +51,9 @@ public class Game extends Engine {
 	}
 
 	@Override
-	public void render(float delta) {
+	public void render(RenderEngine renderEngine) {
 		for(GameObject gameObjec : gameObjecs) {
-			gameObjec.render(delta);
+			gameObjec.render(renderEngine);
 		}
 	}
 

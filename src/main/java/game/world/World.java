@@ -2,8 +2,8 @@ package game.world;
 
 import game.GameObject;
 import game.world.World;
-import game.world.terrain.Cube;
 import game.world.terrain.Zone;
+import voxngine.graphics.RenderEngine;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,8 +14,8 @@ public class World implements GameObject {
 
 	public void init() {		
 		
-		//worldObjects.add(new Zone());
-		worldObjects.add(new Cube());
+		worldObjects.add(new Zone());
+		//worldObjects.add(new Cube());
 	
 		for(WorldObject worldObject : worldObjects) {			
 			System.out.println("Initialiazing the "+ worldObject.getClass().getSimpleName() +" Object...");
@@ -30,6 +30,7 @@ public class World implements GameObject {
 		
 	}
 
+	@Override
 	public void update(float delta) {
 		for(WorldObject worldObject : worldObjects) {
 			worldObject.update(delta);
@@ -37,9 +38,10 @@ public class World implements GameObject {
 		
 	}
 
-	public void render(float delta) {
+	@Override
+	public void render(RenderEngine renderEngine) {
 		for(WorldObject worldObject : worldObjects) {
-			worldObject.render(delta);
+			worldObject.render(renderEngine);
 		}
 	}
 

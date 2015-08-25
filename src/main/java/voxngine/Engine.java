@@ -9,9 +9,16 @@ import org.lwjgl.glfw.GLFWScrollCallback;
 import org.lwjgl.opengl.GLContext;
 
 import voxngine.graphics.RenderEngine;
+import voxngine.graphics.shaders.ShaderProgram;
 import voxngine.io.Window;
+
 import static org.lwjgl.glfw.GLFW.*;
+
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL15.*;
+import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.opengl.GL30.*;
+
 
 public abstract class Engine
 {
@@ -37,7 +44,7 @@ public abstract class Engine
     	Window.init("Engine");
         glfwMakeContextCurrent(Window.id);
         GLContext.createFromCurrent();
-        glfwSwapInterval(1);
+        glfwSwapInterval(0);
         
         renderEngine = new RenderEngine();
         
@@ -88,6 +95,7 @@ public abstract class Engine
             input();
             update(delta);
             render(renderEngine);
+            
             frames ++;
             
             if (glfwGetTime() - timer > 1) {
@@ -105,7 +113,7 @@ public abstract class Engine
             glfwSwapBuffers(Window.id);
             
         }
-
+        
         // Dispose the game
         dispose();
 

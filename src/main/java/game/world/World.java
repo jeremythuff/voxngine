@@ -2,6 +2,8 @@ package game.world;
 
 import game.GameObject;
 import game.world.World;
+import game.world.terrain.Triangle;
+import game.world.terrain.TriangleSmall;
 import game.world.terrain.Zone;
 import voxngine.graphics.RenderEngine;
 
@@ -15,12 +17,13 @@ public class World implements GameObject {
 	public void init() {		
 		
 		worldObjects.add(new Zone());
-		//worldObjects.add(new Cube());
+		worldObjects.add(new Triangle());
+		worldObjects.add(new TriangleSmall());
 	
-		for(WorldObject worldObject : worldObjects) {			
-			System.out.println("Initialiazing the "+ worldObject.getClass().getSimpleName() +" Object...");
-			worldObject.init();
-		}
+//		for(WorldObject worldObject : worldObjects) {			
+//			System.out.println("Initialiazing the "+ worldObject.getClass().getSimpleName() +" Object...");
+//			worldObject.init();
+//		}
 		
 	}
 	
@@ -41,6 +44,7 @@ public class World implements GameObject {
 	@Override
 	public void render(RenderEngine renderEngine) {
 		for(WorldObject worldObject : worldObjects) {
+			worldObject.init();
 			worldObject.render(renderEngine);
 		}
 	}

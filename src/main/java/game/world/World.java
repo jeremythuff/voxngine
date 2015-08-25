@@ -20,10 +20,10 @@ public class World implements GameObject {
 		worldObjects.add(new Triangle());
 		worldObjects.add(new TriangleSmall());
 	
-//		for(WorldObject worldObject : worldObjects) {			
-//			System.out.println("Initialiazing the "+ worldObject.getClass().getSimpleName() +" Object...");
-//			worldObject.init();
-//		}
+		for(WorldObject worldObject : worldObjects) {			
+			System.out.println("Initialiazing the "+ worldObject.getClass().getSimpleName() +" Object...");
+			worldObject.init();
+		}
 		
 	}
 	
@@ -44,7 +44,6 @@ public class World implements GameObject {
 	@Override
 	public void render(RenderEngine renderEngine) {
 		for(WorldObject worldObject : worldObjects) {
-			worldObject.init();
 			worldObject.render(renderEngine);
 		}
 	}

@@ -93,9 +93,7 @@ public class TriangleSmall implements WorldObject {
 
 	@Override
 	public void render(RenderEngine renderEngine) {
-		// Clear the screen
-        glClear(GL_COLOR_BUFFER_BIT);
-
+		
         // Use our program
         shaderProgram.bind();
 

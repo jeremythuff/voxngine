@@ -94,6 +94,8 @@ public abstract class Engine
             
             input();
             update(delta);
+         // Clear the screen
+            glClear(GL_COLOR_BUFFER_BIT);
             render(renderEngine);
             
             frames ++;

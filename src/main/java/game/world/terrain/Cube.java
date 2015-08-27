@@ -131,10 +131,10 @@ public class Cube implements WorldObject {
 
         // The 'offset is the number of bytes from the start of the tuple
         final long offsetPosition = 0;
-        final long offsetColor    = 3 * sizeOfFloat;
+        final long offsetColor    = 3;
 
         // Setup pointers using 'stride' and 'offset' we calculated above
-        glVertexAttribPointer(0, 2, GL_FLOAT, false, stride, offsetPosition);
+        glVertexAttribPointer(0, 3, GL_FLOAT, false, stride, offsetPosition);
         glVertexAttribPointer(1, 4, GL_FLOAT, false, stride, offsetColor);
 
         // Enable the vertex attribute locations

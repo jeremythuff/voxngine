@@ -1,11 +1,5 @@
 package voxngine.io;
 
-import static org.lwjgl.glfw.GLFW.GLFW_CONTEXT_VERSION_MAJOR;
-import static org.lwjgl.glfw.GLFW.GLFW_CONTEXT_VERSION_MINOR;
-import static org.lwjgl.glfw.GLFW.GLFW_OPENGL_CORE_PROFILE;
-import static org.lwjgl.glfw.GLFW.GLFW_OPENGL_FORWARD_COMPAT;
-import static org.lwjgl.glfw.GLFW.GLFW_OPENGL_PROFILE;
-import static org.lwjgl.glfw.GLFW.GLFW_RESIZABLE;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.GL_FALSE;
 import static org.lwjgl.opengl.GL11.GL_TRUE;
@@ -39,13 +33,17 @@ public class Window {
 		glfwDefaultWindowHints();
 		glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
 		long temp = glfwCreateWindow(1, 1, "", NULL, NULL);
+		
 		glfwMakeContextCurrent(temp);
 		GLContext.createFromCurrent();
+		
 		ContextCapabilities caps = GL.getCapabilities();
 		glfwDestroyWindow(temp);
 		
 		 /* Reset and set window hints */
-        glfwDefaultWindowHints();
+		glfwDefaultWindowHints();
+		glfwWindowHint(GLFW_DEPTH_BITS, 32);
+		
         if (caps.OpenGL32) {
             /* Hints for OpenGL 3.2 core profile */
             glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -60,7 +58,8 @@ public class Window {
             throw new RuntimeException("Neither OpenGL 3.2 nor OpenGL 2.1 is "
                     + "supported, you may want to update your graphics driver.");
         }
-        glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+        glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
+        glfwWindowHint(GLFW_SAMPLES, 8);
 		
         /* Create window with specified OpenGL context */
         id = glfwCreateWindow(WIDTH, HEIGHT, name, NULL, NULL);
@@ -68,10 +67,6 @@ public class Window {
             glfwTerminate();
             throw new RuntimeException("Failed to create the GLFW window!");
         }
-        
-        /* Create OpenGL context */
-        glfwMakeContextCurrent(id);
-        GLContext.createFromCurrent();
 
         /* Enable v-sync */
         if (vsync) {
@@ -80,10 +75,11 @@ public class Window {
 	
 		ByteBuffer vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 			glfwSetWindowPos(id, (GLFWvidmode.width(vidmode) - WIDTH) / 2, (GLFWvidmode.height(vidmode) - HEIGHT) / 2);
+			System.out.println("Foo");
 	}
 	
 	public static void init(String name) {
-		 new Window(name);
+		new Window(name);
 	}
 	
 }

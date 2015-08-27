@@ -9,15 +9,11 @@ import org.lwjgl.glfw.GLFWScrollCallback;
 import org.lwjgl.opengl.GLContext;
 
 import voxngine.graphics.RenderEngine;
-import voxngine.graphics.shaders.ShaderProgram;
 import voxngine.io.Window;
 
 import static org.lwjgl.glfw.GLFW.*;
 
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL15.*;
-import static org.lwjgl.opengl.GL20.*;
-import static org.lwjgl.opengl.GL30.*;
 
 
 public abstract class Engine
@@ -94,8 +90,10 @@ public abstract class Engine
             
             input();
             update(delta);
-         // Clear the screen
-            glClear(GL_COLOR_BUFFER_BIT);
+            
+            glViewport(0, 0, Window.WIDTH, Window.HEIGHT);
+            // Clear the screen
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             render(renderEngine);
             
             frames ++;

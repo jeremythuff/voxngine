@@ -2,23 +2,26 @@ package game.world;
 
 import game.GameObject;
 import game.world.World;
-import game.world.terrain.Triangle;
-import game.world.terrain.TriangleSmall;
+import game.world.terrain.Cube;
 import game.world.terrain.Zone;
 import voxngine.graphics.RenderEngine;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.lwjgl.opengl.GL11;
+
+import static org.lwjgl.opengl.GL11.*;
+
 public class World implements GameObject {
 		
 	List<WorldObject> worldObjects = new ArrayList<WorldObject>();
 
-	public void init() {		
+	public void init() {
+		
 		
 		worldObjects.add(new Zone());
-		worldObjects.add(new Triangle());
-		worldObjects.add(new TriangleSmall());
+		worldObjects.add(new Cube());
 	
 		for(WorldObject worldObject : worldObjects) {			
 			System.out.println("Initialiazing the "+ worldObject.getClass().getSimpleName() +" Object...");

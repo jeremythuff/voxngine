@@ -118,12 +118,12 @@ public class Cube implements WorldObject {
         		  -cubeSize, -cubeSize, cubeSize,		bottomColor[0], bottomColor[1], bottomColor[2], bottomColor[3], //bottom middle
         		  
         		  //top
-        		  -cubeSize,  cubeSize, -cubeSize,		0f, 0.8f, 0f, 1f,
-        		  cubeSize,  cubeSize, -cubeSize,		0f, 0.8f, 0f, 1f,
-        		  cubeSize,  cubeSize,  cubeSize,		0f, 0.8f, 0f, 1f,
-        		  cubeSize,  cubeSize,  cubeSize,		0f, 0.8f, 0f, 1f,
-        		  -cubeSize,  cubeSize,  cubeSize,		0f, 0.8f, 0f, 1f,
-        		  -cubeSize,  cubeSize, -cubeSize,		0f, 0.8f, 0f, 1f,
+        		  -cubeSize,  cubeSize, -cubeSize,		topColor[0], topColor[1], topColor[2], topColor[3],
+        		  cubeSize,  cubeSize, -cubeSize,		topColor[0], topColor[1], topColor[2], topColor[3],
+        		  cubeSize,  cubeSize,  cubeSize,		topColor[0], topColor[1], topColor[2], topColor[3],
+        		  cubeSize,  cubeSize,  cubeSize,		topColor[0], topColor[1], topColor[2], topColor[3],
+        		  -cubeSize,  cubeSize,  cubeSize,		topColor[0], topColor[1], topColor[2], topColor[3],
+        		  -cubeSize,  cubeSize, -cubeSize,		topColor[0], topColor[1], topColor[2], topColor[3],
         		  
         		  //bottom
         		  -cubeSize, -cubeSize, -cubeSize,		bottomColor[0], bottomColor[1], bottomColor[2], bottomColor[3],
@@ -238,7 +238,7 @@ public class Cube implements WorldObject {
         cam.update(delta);
 		
 		cam.viewMatrix(viewProjMatrix).setPerspective((float) Math.atan((32.5 * Window.HEIGHT / 1200) / 60.0),
-                (float) Window.WIDTH / Window.HEIGHT, 0.01f, 100.0f);
+                (float) Window.WIDTH / Window.HEIGHT, 0.01f, 1000.0f);
 		
 	}
 

@@ -21,7 +21,10 @@ public class World implements GameObject {
 		
 		
 		worldObjects.add(new Zone());
-		worldObjects.add(new Cube());
+		
+		//for(int i = 0 ; i < 9999 ; i++) {
+			worldObjects.add(new Cube());
+		//}
 	
 		for(WorldObject worldObject : worldObjects) {			
 			System.out.println("Initialiazing the "+ worldObject.getClass().getSimpleName() +" Object...");

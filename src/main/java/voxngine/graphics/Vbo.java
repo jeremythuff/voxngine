@@ -57,7 +57,7 @@ public class Vbo {
     public void bind(int target) {
         glBindBuffer(target, id);
     }
-
+    
     /**
      * Upload vertex data to this VBO with specified target, data and usage. The
      * target in the tutorial should be <code>GL_ARRAY_BUFFER</code> and usage

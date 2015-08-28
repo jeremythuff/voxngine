@@ -9,10 +9,6 @@ import static org.lwjgl.glfw.GLFW.glfwSetScrollCallback;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
-import static org.lwjgl.opengl.GL15.glBindBuffer;
-import static org.lwjgl.opengl.GL15.glBufferData;
-import static org.lwjgl.opengl.GL15.glDeleteBuffers;
-import static org.lwjgl.opengl.GL15.glGenBuffers;
 import static org.lwjgl.opengl.GL20.GL_FRAGMENT_SHADER;
 import static org.lwjgl.opengl.GL20.GL_VERTEX_SHADER;
 import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
@@ -35,6 +31,9 @@ import org.lwjgl.glfw.GLFWMouseButtonCallback;
 import org.lwjgl.glfw.GLFWScrollCallback;
 
 import game.world.WorldObject;
+import voxngine.graphics.RenderEngine;
+import voxngine.graphics.Vao;
+import voxngine.graphics.Vbo;
 import voxngine.graphics.shaders.Shader;
 import voxngine.graphics.shaders.ShaderProgram;
 import voxngine.io.Window;
@@ -42,8 +41,9 @@ import voxngine.io.Window;
 public class Cube implements WorldObject {
 	
 	private ShaderProgram shaderProgram;
-    private int vaoID;
-    private int vboID;
+    
+    private Vao vao;
+    private Vbo vbo;
     
     Matrix4f viewProjMatrix = new Matrix4f();
     FloatBuffer fb = BufferUtils.createFloatBuffer(16);
@@ -72,21 +72,17 @@ public class Cube implements WorldObject {
 		
 		shaderProgram = new ShaderProgram();
         
-        Shader vShad = shaderProgram.loadShader(GL_VERTEX_SHADER, "src/main/resources/shaders/cube.vs");
+        Shader vShad = shaderProgram.loadShader(GL_VERTEX_SHADER, "src/main/resources/shaders/default.vs");
         shaderProgram.attachShader(vShad);
         vShad.delete();
         
-        Shader fShad = shaderProgram.loadShader(GL_FRAGMENT_SHADER, "src/main/resources/shaders/cube.fs");
+        Shader fShad = shaderProgram.loadShader(GL_FRAGMENT_SHADER, "src/main/resources/shaders/default.fs");
         shaderProgram.attachShader(fShad);
         fShad.delete();
         
         shaderProgram.link();
         
         matLocation = shaderProgram.getUniformLocation("viewProjMatrix");
-        
-        // Generate and bind a Vertex Array
-        vaoID = glGenVertexArrays();
-        glBindVertexArray(vaoID);
         
         float vertices[] = {
         		   //Back
@@ -141,12 +137,12 @@ public class Cube implements WorldObject {
      // Create a FloatBuffer of vertices
         FloatBuffer interleavedBuffer = BufferUtils.createFloatBuffer(vertices.length);
         interleavedBuffer.put(vertices).flip();
-
+        
         // Create a Buffer Object and upload the vertices buffer
-        vboID = glGenBuffers();
-        glBindBuffer(GL_ARRAY_BUFFER, vboID);
-        glBufferData(GL_ARRAY_BUFFER, interleavedBuffer, GL_STATIC_DRAW);
-
+        vbo = new Vbo();
+        vbo.bind(GL_ARRAY_BUFFER);
+        vbo.uploadData(GL_ARRAY_BUFFER, interleavedBuffer, GL_STATIC_DRAW);
+        
         // The size of float, in bytes (will be 4)
         final int sizeOfFloat = Float.SIZE / Byte.SIZE;
 
@@ -160,6 +156,12 @@ public class Cube implements WorldObject {
         // The 'offset is the number of bytes from the start of the tuple
         final long offsetPosition = 0;
         final long offsetColor    = 3 * sizeOfFloat;
+        
+        // Generate and bind a Vertex Array
+        
+        
+        vao = new Vao();
+        vao.bind();
 
         // Setup pointers using 'stride' and 'offset' we calculated above
         glVertexAttribPointer(0, 3, GL_FLOAT, false, stride, offsetPosition);
@@ -169,7 +171,7 @@ public class Cube implements WorldObject {
         glEnableVertexAttribArray(0);
         glEnableVertexAttribArray(1);
 
-        glBindVertexArray(0);
+        vao.unbind();
 
         glfwSetFramebufferSizeCallback(Window.id, fbCallback = new GLFWFramebufferSizeCallback() {
             @Override
@@ -242,18 +244,18 @@ public class Cube implements WorldObject {
 
 	@Override
 	public void render() {
-		
+		RenderEngine.render();
 		glEnable(GL_DEPTH_TEST);
         // Use our program
         shaderProgram.bind();
         
         // Bind the vertex array and enable our location
-        glBindVertexArray(vaoID);
+        glBindVertexArray(vao.getID());
         glEnableVertexAttribArray(0);
         glUniformMatrix4fv(matLocation, false, cam.viewMatrix(viewProjMatrix).get(fb));
         // Draw a triangle of 3 vertices
         glDrawArrays(GL_TRIANGLES, 0, 36);
-
+        
         // Disable our location
         glDisableVertexAttribArray(0);
         glBindVertexArray(0);
@@ -265,16 +267,20 @@ public class Cube implements WorldObject {
 
 	@Override
 	public void dispose() {
+		
+         fbCallback.release();
+         cpCallback.release();
+         sCallback.release();
+         mbCallback.release();
+		
 		 // Dispose the program
         shaderProgram.delete();
 
         // Dispose the vertex array
-        glBindVertexArray(0);
-        glDeleteVertexArrays(vaoID);
+        vao.delete();
 
         // Dispose the buffer object
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glDeleteBuffers(vboID);
+        vbo.delete();
 		
 	}
 

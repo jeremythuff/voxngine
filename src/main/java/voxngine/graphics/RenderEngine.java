@@ -5,14 +5,16 @@ import java.util.List;
 
 public class RenderEngine {
 	
-	List<Vbo> vbos = new ArrayList<Vbo>();
+	static List<float[]> verts = new ArrayList<float[]>();
 	
-	public void queVbo(Vbo vbo) {
-		vbos.add(vbo);
+	public static void queVbo(float[] vert) {
+		verts.add(vert);
 	}
 	
-	public void render() {
-		
+	public static void render() {
+		for(float[] vert : verts) {
+			System.out.println(vert.length);
+		}
 	}
 	
 	public static void init() {

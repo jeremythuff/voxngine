@@ -7,19 +7,22 @@ public class Vao {
 	private int id;
 	
 	public Vao() {
-		@SuppressWarnings("unused")
-		int id = glGenVertexArrays();
+		id = glGenVertexArrays();
 	}
 	
 	public void bind() {
 		glBindVertexArray(id);
 	}
 	
+	public void unbind() {
+		glBindVertexArray(0);
+	}
+	
 	 public void delete() {
 	    glDeleteVertexArrays(id);
 	 }
 	
-	public int getId() {
+	public int getID() {
 		return id;
 	}
 

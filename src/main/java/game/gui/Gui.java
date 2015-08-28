@@ -29,9 +29,9 @@ public class Gui implements GameObject {
 		
 	}
 
-	public void render(RenderEngine renderEngine) {
+	public void render() {
 		for(GuiObject guiObject : guiObjects) {
-			guiObject.render(renderEngine);
+			guiObject.render();
 		}
 	}
 

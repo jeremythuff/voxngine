@@ -81,11 +81,11 @@ public class Game extends Engine {
 	}
 
 	@Override
-	public void render(RenderEngine renderEngine) {
+	public void render() {
 		glClearColor(0.9f, 0.9f, 0.9f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		for(GameObject gameObjec : gameObjecs) {
-			gameObjec.render(renderEngine);
+			gameObjec.render();
 		}
 	}
 

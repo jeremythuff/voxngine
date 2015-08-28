@@ -1,7 +1,6 @@
 package game.world.sky;
 
 import game.world.WorldObject;
-import voxngine.graphics.RenderEngine;
 
 public class Moon implements WorldObject {
 
@@ -24,7 +23,7 @@ public class Moon implements WorldObject {
 	}
 
 	@Override
-	public void render(RenderEngine renderEngine) {
+	public void render() {
 		// TODO Auto-generated method stub
 		
 	}

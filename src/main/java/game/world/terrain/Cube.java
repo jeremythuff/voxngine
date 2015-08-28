@@ -35,7 +35,6 @@ import org.lwjgl.glfw.GLFWMouseButtonCallback;
 import org.lwjgl.glfw.GLFWScrollCallback;
 
 import game.world.WorldObject;
-import voxngine.graphics.RenderEngine;
 import voxngine.graphics.shaders.Shader;
 import voxngine.graphics.shaders.ShaderProgram;
 import voxngine.io.Window;
@@ -244,7 +243,7 @@ public class Cube implements WorldObject {
 	}
 
 	@Override
-	public void render(RenderEngine renderEngine) {
+	public void render() {
 		
 		glEnable(GL_DEPTH_TEST);
         // Use our program

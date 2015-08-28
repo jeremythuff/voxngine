@@ -33,8 +33,6 @@ public abstract class Engine
 		
 	public double lastX = 0, lastY = 0;
 	
-	public RenderEngine renderEngine;
-		
     public Engine()
     {
     	Window.init("Engine");
@@ -42,7 +40,7 @@ public abstract class Engine
         GLContext.createFromCurrent();
         glfwSwapInterval(0);
         
-        renderEngine = new RenderEngine();
+        RenderEngine.init();
         
     }
 
@@ -52,7 +50,7 @@ public abstract class Engine
 
     public abstract void update(float delta);
 
-    public abstract void render(RenderEngine renderEngine2);
+    public abstract void render();
 
     public abstract void dispose();
 
@@ -94,7 +92,7 @@ public abstract class Engine
             glViewport(0, 0, Window.WIDTH, Window.HEIGHT);
             // Clear the screen
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            render(renderEngine);
+            render();
             
             frames ++;
             

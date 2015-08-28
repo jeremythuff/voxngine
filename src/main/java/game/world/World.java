@@ -45,9 +45,9 @@ public class World implements GameObject {
 	}
 
 	@Override
-	public void render(RenderEngine renderEngine) {
+	public void render() {
 		for(WorldObject worldObject : worldObjects) {
-			worldObject.render(renderEngine);
+			worldObject.render();
 		}
 	}
 

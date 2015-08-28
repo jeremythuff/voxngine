@@ -1,7 +1,6 @@
 package game.world.terrain;
 
 import game.world.WorldObject;
-import voxngine.graphics.RenderEngine;
 
 public class Boxel implements WorldObject {
 
@@ -24,7 +23,7 @@ public class Boxel implements WorldObject {
 	}
 
 	@Override
-	public void render(RenderEngine renderEngine) {
+	public void render() {
 		// TODO Auto-generated method stub
 		
 	}

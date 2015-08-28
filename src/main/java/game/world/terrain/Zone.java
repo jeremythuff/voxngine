@@ -1,7 +1,6 @@
 package game.world.terrain;
 
 import game.world.WorldObject;
-import voxngine.graphics.RenderEngine;
 
 public class Zone implements WorldObject {
 
@@ -23,7 +22,7 @@ public class Zone implements WorldObject {
 	}
 
 	@Override
-	public void render(RenderEngine renderEngine) {
+	public void render() {
 		
 		
 		

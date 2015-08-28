@@ -18,7 +18,7 @@ public class DebugOverlay implements GuiObject {
 	}
 
 	@Override
-	public void render(RenderEngine renderEngine) {
+	public void render() {
 		
 		
 	}

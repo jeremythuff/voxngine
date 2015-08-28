@@ -1,5 +1,15 @@
 package game.world.terrain;
 
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
+import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
+import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
+import static org.lwjgl.glfw.GLFW.glfwSetCursorPosCallback;
+import static org.lwjgl.glfw.GLFW.glfwSetFramebufferSizeCallback;
+import static org.lwjgl.glfw.GLFW.glfwSetKeyCallback;
+import static org.lwjgl.glfw.GLFW.glfwSetMouseButtonCallback;
+import static org.lwjgl.glfw.GLFW.glfwSetScrollCallback;
+import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
@@ -21,7 +31,14 @@ import java.nio.FloatBuffer;
 
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
+import org.joml.camera.ArcBallCamera;
 import org.lwjgl.BufferUtils;
+import org.lwjgl.glfw.GLFWCursorPosCallback;
+import org.lwjgl.glfw.GLFWErrorCallback;
+import org.lwjgl.glfw.GLFWFramebufferSizeCallback;
+import org.lwjgl.glfw.GLFWKeyCallback;
+import org.lwjgl.glfw.GLFWMouseButtonCallback;
+import org.lwjgl.glfw.GLFWScrollCallback;
 
 import game.world.WorldObject;
 import voxngine.graphics.RenderEngine;
@@ -40,7 +57,21 @@ public class Cube implements WorldObject {
     int matLocation;
     
     /* Quaternion to rotate the cube */
-    private Quaternionf q = new Quaternionf();
+//    private Quaternionf q = new Quaternionf();
+    
+    ArcBallCamera cam = new ArcBallCamera();
+    
+    GLFWKeyCallback keyCallback;
+    GLFWFramebufferSizeCallback fbCallback;
+    GLFWCursorPosCallback cpCallback;
+    GLFWScrollCallback sCallback;
+    GLFWMouseButtonCallback mbCallback;
+
+    long window;
+    int x, y;
+    float zoom = 20;
+    int mouseX, mouseY;
+    boolean down;
     
 	@Override
 	public void init() {
@@ -66,48 +97,50 @@ public class Cube implements WorldObject {
         glBindVertexArray(vaoID);
         
         float vertices[] = {
-        		  -0.5f,  0.5f, -0.5f,	1, 0, 0, 1,
-        		  -0.5f, -0.5f, -0.5f,	1, 0, 0, 1,
-        		   0.5f, -0.5f, -0.5f,	1, 0, 0, 1,
-        		   0.5f, -0.5f, -0.5f,	1, 0, 0, 1,
-        		   0.5f,  0.5f, -0.5f,	1, 0, 0, 1,
-        		  -0.5f,  0.5f, -0.5f,	1, 0, 0, 1,
+        		   //Back
+        		  -0.5f,  0.5f, -0.5f,	0, 0.6f, 0, 1, //top right
+        		  -0.5f, -0.5f, -0.5f,	0.5f, 0.35f, 0.1f, 1, //bottom right
+        		   0.5f, -0.5f, -0.5f,	0.5f, 0.35f, 0.1f, 1, //bottom left
+        		   0.5f, -0.5f, -0.5f,	0.5f, 0.35f, 0.1f, 1, //bottom middle
+        		   0.5f,  0.5f, -0.5f,	0, 0.6f, 0, 1, //top middle
+        		  -0.5f,  0.5f, -0.5f,	0, 0.6f, 0, 1,//top left
+        		  //left
+        		  -0.5f, -0.5f,  0.5f,	0.5f, 0.35f, 0.1f, 1,//bottom right
+        		  -0.5f, -0.5f, -0.5f,	0.5f, 0.35f, 0.1f, 1, //bottom left
+        		  -0.5f,  0.5f, -0.5f,	0, 0.6f, 0, 1, //top left 
+        		  -0.5f,  0.5f, -0.5f,	0, 0.6f, 0, 1, //top left
+        		  -0.5f,  0.5f,  0.5f,	0, 0.6f, 0, 1, //top right
+        		  -0.5f, -0.5f,  0.5f,	0.5f, 0.35f, 0.1f, 1, //top right
         		  
-        		  -0.5f, -0.5f,  0.5f,	0, 1, 0, 1,
-        		  -0.5f, -0.5f, -0.5f,	0, 1, 0, 1,
-        		  -0.5f,  0.5f, -0.5f,	0, 1, 0, 1,
-        		  -0.5f,  0.5f, -0.5f,	0, 1, 0, 1,
-        		  -0.5f,  0.5f,  0.5f,	0, 1, 0, 1,
-        		  -0.5f, -0.5f,  0.5f,	0, 1, 0, 1,
-        		  
-        		   0.5f, -0.5f, -0.5f,	0, 0, 1, 1,
-        		   0.5f, -0.5f,  0.5f,	0, 0, 1, 1,
-        		   0.5f,  0.5f,  0.5f,	0, 0, 1, 1,
-        		   0.5f,  0.5f,  0.5f,	0, 0, 1, 1,
-        		   0.5f,  0.5f, -0.5f,	0, 0, 1, 1,
-        		   0.5f, -0.5f, -0.5f,	0, 0, 1, 1,
+        		  //right
+        		   0.5f, -0.5f, -0.5f,	0.5f, 0.35f, 0.1f, 1,
+        		   0.5f, -0.5f,  0.5f,	0.5f, 0.35f, 0.1f, 1,
+        		   0.5f,  0.5f,  0.5f,	0, 0.6f, 0, 1,
+        		   0.5f,  0.5f,  0.5f,	0, 0.6f, 0, 1,
+        		   0.5f,  0.5f, -0.5f,	0, 0.6f, 0, 1,
+        		   0.5f, -0.5f, -0.5f,	0.5f, 0.35f, 0.1f, 1,
         		   
         		   //front
-        		  -0.5f, -0.5f,  0.5f,	0, 1, 0, 1,
-        		  -0.5f,  0.5f,  0.5f,	0, 1, 1, 1,
-        		   0.5f,  0.5f,  0.5f,	0, 1, 1, 1,
-        		   0.5f,  0.5f,  0.5f,	0, 1, 1, 1,
-        		   0.5f, -0.5f,  0.5f,	0, 1, 1, 1,
-        		  -0.5f, -0.5f,  0.5f,	0, 1, 1, 1,
-        		  
-        		  -0.5f,  0.5f, -0.5f,	1, 0, 1, 1,
-        		   0.5f,  0.5f, -0.5f,	1, 0, 1, 1,
-        		   0.5f,  0.5f,  0.5f,	1, 0, 1, 1,
-        		   0.5f,  0.5f,  0.5f,	1, 0, 1, 1,
-        		  -0.5f,  0.5f,  0.5f,	1, 0, 1, 1,
-        		  -0.5f,  0.5f, -0.5f,	1, 0, 1, 1,
-        		  
-        		  -0.5f, -0.5f, -0.5f,	1, 1, 0, 1,
-        		  -0.5f, -0.5f,  0.5f,	1, 1, 0, 1,
-        		   0.5f, -0.5f, -0.5f,	1, 1, 0, 1,
-        		   0.5f, -0.5f, -0.5f,	1, 1, 0, 1,
-        		  -0.5f, -0.5f,  0.5f,	1, 1, 0, 1,
-        		   0.5f, -0.5f,  0.5f,	1, 1, 0, 1
+        		  -0.5f, -0.5f,  0.5f,	0.5f, 0.35f, 0.1f, 1, //bottom left
+        		  -0.5f,  0.5f,  0.5f,	0, 0.6f, 0, 1, //top left
+        		   0.5f,  0.5f,  0.5f,	0, 0.6f, 0, 1, //top middle 
+        		   0.5f,  0.5f,  0.5f,	0, 0.6f, 0, 1, //top right
+        		   0.5f, -0.5f,  0.5f,	0.5f, 0.35f, 0.1f, 1, //bottom right
+        		  -0.5f, -0.5f,  0.5f,	0.5f, 0.35f, 0.1f, 1, //bottom middle
+        		  //top
+        		  -0.5f,  0.5f, -0.5f,	0, 0.8f, 0, 1,
+        		   0.5f,  0.5f, -0.5f,	0, 0.8f, 0, 1,
+        		   0.5f,  0.5f,  0.5f,	0, 0.8f, 0, 1,
+        		   0.5f,  0.5f,  0.5f,	0, 0.8f, 0, 1,
+        		  -0.5f,  0.5f,  0.5f,	0, 0.8f, 0, 1,
+        		  -0.5f,  0.5f, -0.5f,	0, 0.8f, 0, 1,
+        		  //bottom
+        		  -0.5f, -0.5f, -0.5f,	0.5f, 0.35f, 0.1f, 1,
+        		  -0.5f, -0.5f,  0.5f,	0.5f, 0.35f, 0.1f, 1,
+        		   0.5f, -0.5f, -0.5f,	0.5f, 0.35f, 0.1f, 1,
+        		   0.5f, -0.5f, -0.5f,	0.5f, 0.35f, 0.1f, 1,
+        		  -0.5f, -0.5f,  0.5f,	0.5f, 0.35f, 0.1f, 1,
+        		   0.5f, -0.5f,  0.5f,	0.5f, 0.35f, 0.1f, 1
         		};
 
      // Create a FloatBuffer of vertices
@@ -131,7 +164,7 @@ public class Cube implements WorldObject {
 
         // The 'offset is the number of bytes from the start of the tuple
         final long offsetPosition = 0;
-        final long offsetColor    = 3;
+        final long offsetColor    = 3 * sizeOfFloat;
 
         // Setup pointers using 'stride' and 'offset' we calculated above
         glVertexAttribPointer(0, 3, GL_FLOAT, false, stride, offsetPosition);
@@ -142,6 +175,49 @@ public class Cube implements WorldObject {
         glEnableVertexAttribArray(1);
 
         glBindVertexArray(0);
+        
+        glfwSetFramebufferSizeCallback(Window.id, fbCallback = new GLFWFramebufferSizeCallback() {
+            @Override
+            public void invoke(long window, int w, int h) {
+                if (w > 0 && h > 0) {
+                	Window.WIDTH = w;
+                    Window.HEIGHT = h;
+                }
+            }
+        });
+        glfwSetCursorPosCallback(Window.id, cpCallback = new GLFWCursorPosCallback() {
+            @Override
+            public void invoke(long window, double xpos, double ypos) {
+                x = (int) xpos - Window.WIDTH / 2;
+                y = Window.HEIGHT / 2 - (int) ypos;
+            }
+        });
+        glfwSetMouseButtonCallback(Window.id, mbCallback = new GLFWMouseButtonCallback() {
+            @Override
+            public void invoke(long window, int button, int action, int mods) {
+                if (action == GLFW_PRESS) {
+                    down = true;
+                    mouseX = x;
+                    mouseY = y;
+                } else if (action == GLFW_RELEASE) {
+                    down = false;
+                }
+            }
+        });
+        glfwSetScrollCallback(Window.id, sCallback = new GLFWScrollCallback() {
+            @Override
+            public void invoke(long window, double xoffset, double yoffset) {
+                if (yoffset > 0) {
+                    zoom /= 1.1f;
+                } else {
+                    zoom *= 1.1f;
+                }
+            }
+        });
+        
+        cam.setAlpha((float) Math.toRadians(-20));
+        cam.setBeta((float) Math.toRadians(20));
+
         		
 	}
 	
@@ -154,16 +230,19 @@ public class Cube implements WorldObject {
 	@Override
 	public void update(float delta) {
 		
-        viewProjMatrix.setPerspective((float) Math.atan((32.5 * Window.HEIGHT / 1200) / 60.0),
-                                      (float) Window.WIDTH / Window.HEIGHT, 0.01f, 100.0f)
-                      .lookAt(0.0f, 4.0f, 10.0f,
-                              0.0f, 0.5f, 0.0f,
-                              0.0f, 1.0f, 0.0f)
-                      .get(fb);
+		 /* Set input values for the camera */
+        if (down) {
+            cam.setAlpha(cam.getAlpha() + Math.toRadians((x - mouseX) * 0.5f));
+            cam.setBeta(cam.getBeta() + Math.toRadians((mouseY - y) * 0.5f));
+            mouseX = x;
+            mouseY = y;
+        }
+        cam.zoom(zoom);
+        cam.update(delta);
 		
-        viewProjMatrix.translate(0.0f, 0.5f, 0.0f)
-                      .rotate(q.rotateY((float) Math.toRadians(45) * delta))
-                      .get(fb);
+		cam.viewMatrix(viewProjMatrix).setPerspective((float) Math.atan((32.5 * Window.HEIGHT / 1200) / 60.0),
+                (float) Window.WIDTH / Window.HEIGHT, 0.01f, 100.0f);
+		
 	}
 
 	@Override
@@ -176,7 +255,7 @@ public class Cube implements WorldObject {
         // Bind the vertex array and enable our location
         glBindVertexArray(vaoID);
         glEnableVertexAttribArray(0);
-        glUniformMatrix4fv(matLocation, false, fb);
+        glUniformMatrix4fv(matLocation, false, cam.viewMatrix(viewProjMatrix).get(fb));
         // Draw a triangle of 3 vertices
         glDrawArrays(GL_TRIANGLES, 0, 36);
 

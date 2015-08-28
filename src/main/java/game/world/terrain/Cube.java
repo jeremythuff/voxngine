@@ -1,15 +1,11 @@
 package game.world.terrain;
 
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
 import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
 import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
 import static org.lwjgl.glfw.GLFW.glfwSetCursorPosCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetFramebufferSizeCallback;
-import static org.lwjgl.glfw.GLFW.glfwSetKeyCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetMouseButtonCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetScrollCallback;
-import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
@@ -30,11 +26,9 @@ import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 import java.nio.FloatBuffer;
 
 import org.joml.Matrix4f;
-import org.joml.Quaternionf;
 import org.joml.camera.ArcBallCamera;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFWCursorPosCallback;
-import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWFramebufferSizeCallback;
 import org.lwjgl.glfw.GLFWKeyCallback;
 import org.lwjgl.glfw.GLFWMouseButtonCallback;
@@ -56,9 +50,6 @@ public class Cube implements WorldObject {
     FloatBuffer fb = BufferUtils.createFloatBuffer(16);
     int matLocation;
     
-    /* Quaternion to rotate the cube */
-//    private Quaternionf q = new Quaternionf();
-    
     ArcBallCamera cam = new ArcBallCamera();
     
     GLFWKeyCallback keyCallback;
@@ -72,6 +63,10 @@ public class Cube implements WorldObject {
     float zoom = 20;
     int mouseX, mouseY;
     boolean down;
+    
+    float cubeSize = 1f;
+    float topColor[] = {0.0f, 0.6f, 0.0f, 1.0f};
+    float bottomColor[] = {0.5f, 0.35f, 0.1f, 1.0f};
     
 	@Override
 	public void init() {
@@ -98,49 +93,52 @@ public class Cube implements WorldObject {
         
         float vertices[] = {
         		   //Back
-        		  -0.5f,  0.5f, -0.5f,	0, 0.6f, 0, 1, //top right
-        		  -0.5f, -0.5f, -0.5f,	0.5f, 0.35f, 0.1f, 1, //bottom right
-        		   0.5f, -0.5f, -0.5f,	0.5f, 0.35f, 0.1f, 1, //bottom left
-        		   0.5f, -0.5f, -0.5f,	0.5f, 0.35f, 0.1f, 1, //bottom middle
-        		   0.5f,  0.5f, -0.5f,	0, 0.6f, 0, 1, //top middle
-        		  -0.5f,  0.5f, -0.5f,	0, 0.6f, 0, 1,//top left
+        		  -cubeSize,  cubeSize, -cubeSize,		topColor[0], topColor[1], topColor[2], topColor[3], //top right
+        		  -cubeSize, -cubeSize, -cubeSize,		bottomColor[0], bottomColor[1], bottomColor[2], bottomColor[3], //bottom right
+        		  cubeSize, -cubeSize, -cubeSize,		bottomColor[0], bottomColor[1], bottomColor[2], bottomColor[3], //bottom left
+        		  cubeSize, -cubeSize, -cubeSize,		bottomColor[0], bottomColor[1], bottomColor[2], bottomColor[3], //bottom middle
+        		  cubeSize,  cubeSize, -cubeSize,		topColor[0], topColor[1], topColor[2], topColor[3], //top middle
+        		  -cubeSize,  cubeSize, -cubeSize,		topColor[0], topColor[1], topColor[2], topColor[3],//top left
+        		  
         		  //left
-        		  -0.5f, -0.5f,  0.5f,	0.5f, 0.35f, 0.1f, 1,//bottom right
-        		  -0.5f, -0.5f, -0.5f,	0.5f, 0.35f, 0.1f, 1, //bottom left
-        		  -0.5f,  0.5f, -0.5f,	0, 0.6f, 0, 1, //top left 
-        		  -0.5f,  0.5f, -0.5f,	0, 0.6f, 0, 1, //top left
-        		  -0.5f,  0.5f,  0.5f,	0, 0.6f, 0, 1, //top right
-        		  -0.5f, -0.5f,  0.5f,	0.5f, 0.35f, 0.1f, 1, //top right
+        		  -cubeSize, -cubeSize,  cubeSize,		bottomColor[0], bottomColor[1], bottomColor[2], bottomColor[3],//bottom right
+        		  -cubeSize, -cubeSize, -cubeSize,		bottomColor[0], bottomColor[1], bottomColor[2], bottomColor[3], //bottom left
+        		  -cubeSize,  cubeSize, -cubeSize,		topColor[0], topColor[1], topColor[2], topColor[3], //top left 
+        		  -cubeSize,  cubeSize, -cubeSize,		topColor[0], topColor[1], topColor[2], topColor[3], //top left
+        		  -cubeSize,  cubeSize,  cubeSize,		topColor[0], topColor[1], topColor[2], topColor[3], //top right
+        		  -cubeSize, -cubeSize,  cubeSize,		bottomColor[0], bottomColor[1], bottomColor[2], bottomColor[3], //bottom right
         		  
         		  //right
-        		   0.5f, -0.5f, -0.5f,	0.5f, 0.35f, 0.1f, 1,
-        		   0.5f, -0.5f,  0.5f,	0.5f, 0.35f, 0.1f, 1,
-        		   0.5f,  0.5f,  0.5f,	0, 0.6f, 0, 1,
-        		   0.5f,  0.5f,  0.5f,	0, 0.6f, 0, 1,
-        		   0.5f,  0.5f, -0.5f,	0, 0.6f, 0, 1,
-        		   0.5f, -0.5f, -0.5f,	0.5f, 0.35f, 0.1f, 1,
+        		  cubeSize, -cubeSize, -cubeSize,		bottomColor[0], bottomColor[1], bottomColor[2], bottomColor[3],
+        		  cubeSize, -cubeSize,  cubeSize,		bottomColor[0], bottomColor[1], bottomColor[2], bottomColor[3],
+        		  cubeSize,  cubeSize,  cubeSize,		topColor[0], topColor[1], topColor[2], topColor[3],
+        		  cubeSize,  cubeSize,  cubeSize,		topColor[0], topColor[1], topColor[2], topColor[3],
+        		  cubeSize,  cubeSize, -cubeSize,		topColor[0], topColor[1], topColor[2], topColor[3],
+        		  cubeSize, -cubeSize, -cubeSize,		bottomColor[0], bottomColor[1], bottomColor[2], bottomColor[3],
         		   
         		   //front
-        		  -0.5f, -0.5f,  0.5f,	0.5f, 0.35f, 0.1f, 1, //bottom left
-        		  -0.5f,  0.5f,  0.5f,	0, 0.6f, 0, 1, //top left
-        		   0.5f,  0.5f,  0.5f,	0, 0.6f, 0, 1, //top middle 
-        		   0.5f,  0.5f,  0.5f,	0, 0.6f, 0, 1, //top right
-        		   0.5f, -0.5f,  0.5f,	0.5f, 0.35f, 0.1f, 1, //bottom right
-        		  -0.5f, -0.5f,  0.5f,	0.5f, 0.35f, 0.1f, 1, //bottom middle
+        		  -cubeSize, -cubeSize, cubeSize,		bottomColor[0], bottomColor[1], bottomColor[2], bottomColor[3], //bottom left
+        		  -cubeSize,  cubeSize, cubeSize,		topColor[0], topColor[1], topColor[2], topColor[3], //top left
+        		  cubeSize,  cubeSize,  cubeSize,		topColor[0], topColor[1], topColor[2], topColor[3], //top middle 
+        		  cubeSize,  cubeSize,  cubeSize,		topColor[0], topColor[1], topColor[2], topColor[3], //top right
+        		  cubeSize, -cubeSize,  cubeSize,		bottomColor[0], bottomColor[1], bottomColor[2], bottomColor[3], //bottom right
+        		  -cubeSize, -cubeSize, cubeSize,		bottomColor[0], bottomColor[1], bottomColor[2], bottomColor[3], //bottom middle
+        		  
         		  //top
-        		  -0.5f,  0.5f, -0.5f,	0, 0.8f, 0, 1,
-        		   0.5f,  0.5f, -0.5f,	0, 0.8f, 0, 1,
-        		   0.5f,  0.5f,  0.5f,	0, 0.8f, 0, 1,
-        		   0.5f,  0.5f,  0.5f,	0, 0.8f, 0, 1,
-        		  -0.5f,  0.5f,  0.5f,	0, 0.8f, 0, 1,
-        		  -0.5f,  0.5f, -0.5f,	0, 0.8f, 0, 1,
+        		  -cubeSize,  cubeSize, -cubeSize,		0f, 0.8f, 0f, 1f,
+        		  cubeSize,  cubeSize, -cubeSize,		0f, 0.8f, 0f, 1f,
+        		  cubeSize,  cubeSize,  cubeSize,		0f, 0.8f, 0f, 1f,
+        		  cubeSize,  cubeSize,  cubeSize,		0f, 0.8f, 0f, 1f,
+        		  -cubeSize,  cubeSize,  cubeSize,		0f, 0.8f, 0f, 1f,
+        		  -cubeSize,  cubeSize, -cubeSize,		0f, 0.8f, 0f, 1f,
+        		  
         		  //bottom
-        		  -0.5f, -0.5f, -0.5f,	0.5f, 0.35f, 0.1f, 1,
-        		  -0.5f, -0.5f,  0.5f,	0.5f, 0.35f, 0.1f, 1,
-        		   0.5f, -0.5f, -0.5f,	0.5f, 0.35f, 0.1f, 1,
-        		   0.5f, -0.5f, -0.5f,	0.5f, 0.35f, 0.1f, 1,
-        		  -0.5f, -0.5f,  0.5f,	0.5f, 0.35f, 0.1f, 1,
-        		   0.5f, -0.5f,  0.5f,	0.5f, 0.35f, 0.1f, 1
+        		  -cubeSize, -cubeSize, -cubeSize,		bottomColor[0], bottomColor[1], bottomColor[2], bottomColor[3],
+        		  -cubeSize, -cubeSize, cubeSize,		bottomColor[0], bottomColor[1], bottomColor[2], bottomColor[3],
+        		  cubeSize, -cubeSize, -cubeSize,		bottomColor[0], bottomColor[1], bottomColor[2], bottomColor[3],
+        		  cubeSize, -cubeSize, -cubeSize,		bottomColor[0], bottomColor[1], bottomColor[2], bottomColor[3],
+        		  -cubeSize, -cubeSize, cubeSize,		bottomColor[0], bottomColor[1], bottomColor[2], bottomColor[3],
+        		  cubeSize, -cubeSize,  cubeSize,		bottomColor[0], bottomColor[1], bottomColor[2], bottomColor[3]
         		};
 
      // Create a FloatBuffer of vertices
@@ -175,7 +173,7 @@ public class Cube implements WorldObject {
         glEnableVertexAttribArray(1);
 
         glBindVertexArray(0);
-        
+
         glfwSetFramebufferSizeCallback(Window.id, fbCallback = new GLFWFramebufferSizeCallback() {
             @Override
             public void invoke(long window, int w, int h) {

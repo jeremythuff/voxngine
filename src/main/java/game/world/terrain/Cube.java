@@ -83,8 +83,6 @@ public class Cube implements WorldObject {
         shaderProgram.link();
         
         matLocation = shaderProgram.getUniformLocation("viewProjMatrix");
-
-        System.out.println(matLocation);
         
         // Generate and bind a Vertex Array
         vaoID = glGenVertexArrays();

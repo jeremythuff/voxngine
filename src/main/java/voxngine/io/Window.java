@@ -75,7 +75,6 @@ public class Window {
 	
 		ByteBuffer vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 			glfwSetWindowPos(id, (GLFWvidmode.width(vidmode) - WIDTH) / 2, (GLFWvidmode.height(vidmode) - HEIGHT) / 2);
-			System.out.println("Foo");
 	}
 	
 	public static void init(String name) {

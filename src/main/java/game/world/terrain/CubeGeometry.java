@@ -53,12 +53,12 @@ public class CubeGeometry {
      		  -cubeSize+coords.x,  cubeSize+coords.y, -cubeSize+coords.z,		topColor.x, topColor.y, topColor.z, topColor.w,
      		  
      		  //bottom
-     		  -cubeSize+coords.x, -cubeSize+coords.x, -cubeSize+coords.x,		bottomColor.x, bottomColor.y, bottomColor.z, bottomColor.w,
-     		  -cubeSize+coords.x, -cubeSize+coords.x, cubeSize+coords.x,		bottomColor.x, bottomColor.y, bottomColor.z, bottomColor.w,
-     		  cubeSize+coords.x, -cubeSize+coords.x, -cubeSize+coords.x,		bottomColor.x, bottomColor.y, bottomColor.z, bottomColor.w,
-     		  cubeSize+coords.x, -cubeSize+coords.x, -cubeSize+coords.x,		bottomColor.x, bottomColor.y, bottomColor.z, bottomColor.w,
-     		  -cubeSize+coords.x, -cubeSize+coords.x, cubeSize+coords.x,		bottomColor.x, bottomColor.y, bottomColor.z, bottomColor.w,
-     		  cubeSize+coords.x, -cubeSize+coords.x,  cubeSize+coords.x,		bottomColor.x, bottomColor.y, bottomColor.z, bottomColor.w
+     		  -cubeSize+coords.x, -cubeSize+coords.y, -cubeSize+coords.z,		bottomColor.x, bottomColor.y, bottomColor.z, bottomColor.w,
+     		  -cubeSize+coords.x, -cubeSize+coords.y, cubeSize+coords.z,		bottomColor.x, bottomColor.y, bottomColor.z, bottomColor.w,
+     		  cubeSize+coords.x, -cubeSize+coords.y, -cubeSize+coords.z,		bottomColor.x, bottomColor.y, bottomColor.z, bottomColor.w,
+     		  cubeSize+coords.x, -cubeSize+coords.y, -cubeSize+coords.z,		bottomColor.x, bottomColor.y, bottomColor.z, bottomColor.w,
+     		  -cubeSize+coords.x, -cubeSize+coords.y, cubeSize+coords.z,		bottomColor.x, bottomColor.y, bottomColor.z, bottomColor.w,
+     		  cubeSize+coords.x, -cubeSize+coords.y,  cubeSize+coords.z,		bottomColor.x, bottomColor.y, bottomColor.z, bottomColor.w
      		};
 		
 		return vertices;

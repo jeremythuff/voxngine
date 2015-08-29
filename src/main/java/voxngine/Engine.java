@@ -78,7 +78,7 @@ public abstract class Engine
         running = true;
         
         init();
-
+        
         // Loop continuously and render and update
         while (running && glfwWindowShouldClose(Window.id) != GL_TRUE)
         {
@@ -91,15 +91,22 @@ public abstract class Engine
             // Poll the events and swap the buffers
             glfwPollEvents();
             glfwSwapBuffers(Window.id);
+            
             input();
+            RenderEngine.input();
+            
+            Keyboard.endEvents();
             Mouse.endEvents();
             
             update(delta);
+            RenderEngine.update(delta);
             
             glViewport(0, 0, Window.WIDTH, Window.HEIGHT);
             // Clear the screen
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            
             render();
+            RenderEngine.render();
             
             frames ++;
             

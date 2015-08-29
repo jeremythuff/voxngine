@@ -8,8 +8,8 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 import java.nio.ByteBuffer;
 
 import org.lwjgl.glfw.GLFWvidmode;
-import org.lwjgl.opengl.ContextCapabilities;
-import org.lwjgl.opengl.GL;
+//import org.lwjgl.opengl.ContextCapabilities;
+//import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GLContext;
 
 public class Window {
@@ -21,7 +21,7 @@ public class Window {
 
     private boolean vsync = true;
 	
-	public Window(String name) {
+	private Window(String name) {
 		
 		 if (glfwInit() != GL_TRUE)
         {
@@ -37,7 +37,7 @@ public class Window {
 		glfwMakeContextCurrent(temp);
 		GLContext.createFromCurrent();
 		
-		ContextCapabilities caps = GL.getCapabilities();
+		//ContextCapabilities caps = GL.getCapabilities();
 		glfwDestroyWindow(temp);
 		
 		 /* Reset and set window hints */

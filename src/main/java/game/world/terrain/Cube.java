@@ -1,11 +1,8 @@
 package game.world.terrain;
 
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_F;
 import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
 import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
-import static org.lwjgl.glfw.GLFW.glfwSetCursorPosCallback;
-import static org.lwjgl.glfw.GLFW.glfwSetFramebufferSizeCallback;
-import static org.lwjgl.glfw.GLFW.glfwSetMouseButtonCallback;
-import static org.lwjgl.glfw.GLFW.glfwSetScrollCallback;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
@@ -16,19 +13,14 @@ import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
-import static org.lwjgl.opengl.GL30.glDeleteVertexArrays;
-import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
 import java.nio.FloatBuffer;
 
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 import org.joml.camera.ArcBallCamera;
 import org.lwjgl.BufferUtils;
-import org.lwjgl.glfw.GLFWCursorPosCallback;
 import org.lwjgl.glfw.GLFWFramebufferSizeCallback;
-import org.lwjgl.glfw.GLFWKeyCallback;
-import org.lwjgl.glfw.GLFWMouseButtonCallback;
-import org.lwjgl.glfw.GLFWScrollCallback;
 
 import game.world.WorldObject;
 import voxngine.graphics.RenderEngine;
@@ -36,6 +28,8 @@ import voxngine.graphics.Vao;
 import voxngine.graphics.Vbo;
 import voxngine.graphics.shaders.Shader;
 import voxngine.graphics.shaders.ShaderProgram;
+import voxngine.io.Keyboard;
+import voxngine.io.Mouse;
 import voxngine.io.Window;
 
 public class Cube implements WorldObject {
@@ -51,11 +45,9 @@ public class Cube implements WorldObject {
     
     ArcBallCamera cam = new ArcBallCamera();
     
-    GLFWKeyCallback keyCallback;
     GLFWFramebufferSizeCallback fbCallback;
-    GLFWCursorPosCallback cpCallback;
-    GLFWScrollCallback sCallback;
-    GLFWMouseButtonCallback mbCallback;
+
+	boolean wireframe;
 
     long window;
     int x, y;
@@ -83,58 +75,11 @@ public class Cube implements WorldObject {
         shaderProgram.link();
         
         matLocation = shaderProgram.getUniformLocation("viewProjMatrix");
+     
+        // Create a FloatBuffer of vertices
         
-        float vertices[] = {
-        		   //Back
-        		  -cubeSize,  cubeSize, -cubeSize,		topColor[0], topColor[1], topColor[2], topColor[3], //top right
-        		  -cubeSize, -cubeSize, -cubeSize,		bottomColor[0], bottomColor[1], bottomColor[2], bottomColor[3], //bottom right
-        		  cubeSize, -cubeSize, -cubeSize,		bottomColor[0], bottomColor[1], bottomColor[2], bottomColor[3], //bottom left
-        		  cubeSize, -cubeSize, -cubeSize,		bottomColor[0], bottomColor[1], bottomColor[2], bottomColor[3], //bottom middle
-        		  cubeSize,  cubeSize, -cubeSize,		topColor[0], topColor[1], topColor[2], topColor[3], //top middle
-        		  -cubeSize,  cubeSize, -cubeSize,		topColor[0], topColor[1], topColor[2], topColor[3],//top left
-        		  
-        		  //left
-        		  -cubeSize, -cubeSize,  cubeSize,		bottomColor[0], bottomColor[1], bottomColor[2], bottomColor[3],//bottom right
-        		  -cubeSize, -cubeSize, -cubeSize,		bottomColor[0], bottomColor[1], bottomColor[2], bottomColor[3], //bottom left
-        		  -cubeSize,  cubeSize, -cubeSize,		topColor[0], topColor[1], topColor[2], topColor[3], //top left 
-        		  -cubeSize,  cubeSize, -cubeSize,		topColor[0], topColor[1], topColor[2], topColor[3], //top left
-        		  -cubeSize,  cubeSize,  cubeSize,		topColor[0], topColor[1], topColor[2], topColor[3], //top right
-        		  -cubeSize, -cubeSize,  cubeSize,		bottomColor[0], bottomColor[1], bottomColor[2], bottomColor[3], //bottom right
-        		  
-        		  //right
-        		  cubeSize, -cubeSize, -cubeSize,		bottomColor[0], bottomColor[1], bottomColor[2], bottomColor[3],
-        		  cubeSize, -cubeSize,  cubeSize,		bottomColor[0], bottomColor[1], bottomColor[2], bottomColor[3],
-        		  cubeSize,  cubeSize,  cubeSize,		topColor[0], topColor[1], topColor[2], topColor[3],
-        		  cubeSize,  cubeSize,  cubeSize,		topColor[0], topColor[1], topColor[2], topColor[3],
-        		  cubeSize,  cubeSize, -cubeSize,		topColor[0], topColor[1], topColor[2], topColor[3],
-        		  cubeSize, -cubeSize, -cubeSize,		bottomColor[0], bottomColor[1], bottomColor[2], bottomColor[3],
-        		   
-        		   //front
-        		  -cubeSize, -cubeSize, cubeSize,		bottomColor[0], bottomColor[1], bottomColor[2], bottomColor[3], //bottom left
-        		  -cubeSize,  cubeSize, cubeSize,		topColor[0], topColor[1], topColor[2], topColor[3], //top left
-        		  cubeSize,  cubeSize,  cubeSize,		topColor[0], topColor[1], topColor[2], topColor[3], //top middle 
-        		  cubeSize,  cubeSize,  cubeSize,		topColor[0], topColor[1], topColor[2], topColor[3], //top right
-        		  cubeSize, -cubeSize,  cubeSize,		bottomColor[0], bottomColor[1], bottomColor[2], bottomColor[3], //bottom right
-        		  -cubeSize, -cubeSize, cubeSize,		bottomColor[0], bottomColor[1], bottomColor[2], bottomColor[3], //bottom middle
-        		  
-        		  //top
-        		  -cubeSize,  cubeSize, -cubeSize,		topColor[0], topColor[1], topColor[2], topColor[3],
-        		  cubeSize,  cubeSize, -cubeSize,		topColor[0], topColor[1], topColor[2], topColor[3],
-        		  cubeSize,  cubeSize,  cubeSize,		topColor[0], topColor[1], topColor[2], topColor[3],
-        		  cubeSize,  cubeSize,  cubeSize,		topColor[0], topColor[1], topColor[2], topColor[3],
-        		  -cubeSize,  cubeSize,  cubeSize,		topColor[0], topColor[1], topColor[2], topColor[3],
-        		  -cubeSize,  cubeSize, -cubeSize,		topColor[0], topColor[1], topColor[2], topColor[3],
-        		  
-        		  //bottom
-        		  -cubeSize, -cubeSize, -cubeSize,		bottomColor[0], bottomColor[1], bottomColor[2], bottomColor[3],
-        		  -cubeSize, -cubeSize, cubeSize,		bottomColor[0], bottomColor[1], bottomColor[2], bottomColor[3],
-        		  cubeSize, -cubeSize, -cubeSize,		bottomColor[0], bottomColor[1], bottomColor[2], bottomColor[3],
-        		  cubeSize, -cubeSize, -cubeSize,		bottomColor[0], bottomColor[1], bottomColor[2], bottomColor[3],
-        		  -cubeSize, -cubeSize, cubeSize,		bottomColor[0], bottomColor[1], bottomColor[2], bottomColor[3],
-        		  cubeSize, -cubeSize,  cubeSize,		bottomColor[0], bottomColor[1], bottomColor[2], bottomColor[3]
-        		};
-
-     // Create a FloatBuffer of vertices
+        float[] vertices = new CubeGeometry().getGeometry(new Vector3f(0f,0f,0f));
+        
         FloatBuffer interleavedBuffer = BufferUtils.createFloatBuffer(vertices.length);
         interleavedBuffer.put(vertices).flip();
         
@@ -158,8 +103,6 @@ public class Cube implements WorldObject {
         final long offsetColor    = 3 * sizeOfFloat;
         
         // Generate and bind a Vertex Array
-        
-        
         vao = new Vao();
         vao.bind();
 
@@ -173,44 +116,43 @@ public class Cube implements WorldObject {
 
         vao.unbind();
 
-        glfwSetFramebufferSizeCallback(Window.id, fbCallback = new GLFWFramebufferSizeCallback() {
-            @Override
-            public void invoke(long window, int w, int h) {
-                if (w > 0 && h > 0) {
-                	Window.WIDTH = w;
-                    Window.HEIGHT = h;
-                }
-            }
-        });
-        glfwSetCursorPosCallback(Window.id, cpCallback = new GLFWCursorPosCallback() {
-            @Override
-            public void invoke(long window, double xpos, double ypos) {
-                x = (int) xpos - Window.WIDTH / 2;
-                y = Window.HEIGHT / 2 - (int) ypos;
-            }
-        });
-        glfwSetMouseButtonCallback(Window.id, mbCallback = new GLFWMouseButtonCallback() {
-            @Override
-            public void invoke(long window, int button, int action, int mods) {
-                if (action == GLFW_PRESS) {
-                    down = true;
-                    mouseX = x;
-                    mouseY = y;
-                } else if (action == GLFW_RELEASE) {
-                    down = false;
-                }
-            }
-        });
-        glfwSetScrollCallback(Window.id, sCallback = new GLFWScrollCallback() {
-            @Override
-            public void invoke(long window, double xoffset, double yoffset) {
-                if (yoffset > 0) {
-                    zoom /= 1.1f;
-                } else {
-                    zoom *= 1.1f;
-                }
-            }
-        });
+//        glfwSetFramebufferSizeCallback(Window.id, fbCallback = new GLFWFramebufferSizeCallback() {
+//            @Override
+//            public void invoke(long window, int w, int h) {
+//                if (w > 0 && h > 0) {
+//                	Window.WIDTH = w;
+//                    Window.HEIGHT = h;
+//                }
+//            }
+//        });
+//        glfwSetCursorPosCallback(Window.id, cpCallback = new GLFWCursorPosCallback() {
+//            @Override
+//            public void invoke(long window, double xpos, double ypos) {
+//                
+//            }
+//        });
+//        glfwSetMouseButtonCallback(Window.id, mbCallback = new GLFWMouseButtonCallback() {
+//            @Override
+//            public void invoke(long window, int button, int action, int mods) {
+//                if (action == GLFW_PRESS) {
+//                    down = true;
+//                    mouseX = x;
+//                    mouseY = y;
+//                } else if (action == GLFW_RELEASE) {
+//                    down = false;
+//                }
+//            }
+//        });
+//        glfwSetScrollCallback(Window.id, sCallback = new GLFWScrollCallback() {
+//            @Override
+//            public void invoke(long window, double xoffset, double yoffset) {
+//                if (yoffset > 0) {
+//                    zoom /= 1.1f;
+//                } else {
+//                    zoom *= 1.1f;
+//                }
+//            }
+//        });
         
         cam.setAlpha((float) Math.toRadians(-20));
         cam.setBeta((float) Math.toRadians(20));
@@ -220,7 +162,33 @@ public class Cube implements WorldObject {
 	
 	@Override
 	public void input() {
-		// TODO Auto-generated method stub
+		
+		if(Keyboard.isKeyDown(GLFW_KEY_F)) {
+		
+			if(wireframe) {
+				wireframe = false;
+				glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+			} else {
+				wireframe = true;
+			}
+		}
+		
+		x = (int) Mouse.getPos().x - Window.WIDTH / 2;
+		y = Window.HEIGHT / 2 - (int) Mouse.getPos().y;
+		
+		if (Mouse.actionIs(GLFW_PRESS)) {
+			down = true;
+			mouseX = x;
+			mouseY = y;
+		} else if (Mouse.actionIs(GLFW_RELEASE)) {
+			down = false;
+		}
+		
+		if (Mouse.getScrollDelta().y > 0) {
+			zoom /= 1.1f;
+		} else {
+		    zoom *= 1.1f;
+		}
 		
 	}
 
@@ -231,9 +199,10 @@ public class Cube implements WorldObject {
         if (down) {
             cam.setAlpha(cam.getAlpha() + Math.toRadians((x - mouseX) * 0.5f));
             cam.setBeta(cam.getBeta() + Math.toRadians((mouseY - y) * 0.5f));
-            mouseX = x;
-            mouseY = y;
+            mouseX = (int)Mouse.getPos().x;
+            mouseY = (int)Mouse.getPos().y;
         }
+        
         cam.zoom(zoom);
         cam.update(delta);
 		
@@ -262,16 +231,11 @@ public class Cube implements WorldObject {
 
         // Un-bind our program
         shaderProgram.unbind();
-		
+             	
 	}
 
 	@Override
 	public void dispose() {
-		
-         fbCallback.release();
-         cpCallback.release();
-         sCallback.release();
-         mbCallback.release();
 		
 		 // Dispose the program
         shaderProgram.delete();

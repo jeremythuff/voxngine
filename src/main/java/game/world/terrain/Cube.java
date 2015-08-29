@@ -49,15 +49,12 @@ public class Cube implements WorldObject {
 
 	boolean wireframe;
 
-    long window;
     int x, y;
     float zoom = 20;
     int mouseX, mouseY;
     boolean down;
     
     float cubeSize = 1f;
-    float topColor[] = {0.0f, 0.6f, 0.0f, 1.0f};
-    float bottomColor[] = {0.5f, 0.35f, 0.1f, 1.0f};
     
 	@Override
 	public void init() {
@@ -115,44 +112,6 @@ public class Cube implements WorldObject {
         glEnableVertexAttribArray(1);
 
         vao.unbind();
-
-//        glfwSetFramebufferSizeCallback(Window.id, fbCallback = new GLFWFramebufferSizeCallback() {
-//            @Override
-//            public void invoke(long window, int w, int h) {
-//                if (w > 0 && h > 0) {
-//                	Window.WIDTH = w;
-//                    Window.HEIGHT = h;
-//                }
-//            }
-//        });
-//        glfwSetCursorPosCallback(Window.id, cpCallback = new GLFWCursorPosCallback() {
-//            @Override
-//            public void invoke(long window, double xpos, double ypos) {
-//                
-//            }
-//        });
-//        glfwSetMouseButtonCallback(Window.id, mbCallback = new GLFWMouseButtonCallback() {
-//            @Override
-//            public void invoke(long window, int button, int action, int mods) {
-//                if (action == GLFW_PRESS) {
-//                    down = true;
-//                    mouseX = x;
-//                    mouseY = y;
-//                } else if (action == GLFW_RELEASE) {
-//                    down = false;
-//                }
-//            }
-//        });
-//        glfwSetScrollCallback(Window.id, sCallback = new GLFWScrollCallback() {
-//            @Override
-//            public void invoke(long window, double xoffset, double yoffset) {
-//                if (yoffset > 0) {
-//                    zoom /= 1.1f;
-//                } else {
-//                    zoom *= 1.1f;
-//                }
-//            }
-//        });
         
         cam.setAlpha((float) Math.toRadians(-20));
         cam.setBeta((float) Math.toRadians(20));
@@ -163,31 +122,39 @@ public class Cube implements WorldObject {
 	@Override
 	public void input() {
 		
-		if(Keyboard.isKeyDown(GLFW_KEY_F)) {
-		
-			if(wireframe) {
-				wireframe = false;
-				glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-			} else {
-				wireframe = true;
+		if(Keyboard.activeKeyEvent()) {
+			if(Keyboard.isKeyDown(GLFW_KEY_F)) {
+				if(wireframe) {
+					wireframe = false;
+					glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+				} else {
+					glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+					wireframe = true;
+				}
 			}
 		}
 		
-		x = (int) Mouse.getPos().x - Window.WIDTH / 2;
-		y = Window.HEIGHT / 2 - (int) Mouse.getPos().y;
-		
-		if (Mouse.actionIs(GLFW_PRESS)) {
-			down = true;
-			mouseX = x;
-			mouseY = y;
-		} else if (Mouse.actionIs(GLFW_RELEASE)) {
-			down = false;
+		if(Mouse.activeMoveEvent()) {
+			x = (int) Mouse.getPos().x - Window.WIDTH / 2;
+			y = Window.HEIGHT / 2 - (int) Mouse.getPos().y;
 		}
 		
-		if (Mouse.getScrollDelta().y > 0) {
-			zoom /= 1.1f;
-		} else {
-		    zoom *= 1.1f;
+		if(Mouse.activeClickEvent()) {
+			if (Mouse.actionIs(GLFW_PRESS)) {
+				down = true;
+				mouseX = x;
+				mouseY = y;
+			} else if (Mouse.actionIs(GLFW_RELEASE)) {
+				down = false;
+			}
+		}
+		
+		if(Mouse.activeScrollEvent()) {
+			if (Mouse.getScrollDelta().y > 0) {
+				zoom /= 1.1f;
+			} else {
+			    zoom *= 1.1f;
+			}
 		}
 		
 	}
@@ -199,8 +166,8 @@ public class Cube implements WorldObject {
         if (down) {
             cam.setAlpha(cam.getAlpha() + Math.toRadians((x - mouseX) * 0.5f));
             cam.setBeta(cam.getBeta() + Math.toRadians((mouseY - y) * 0.5f));
-            mouseX = (int)Mouse.getPos().x;
-            mouseY = (int)Mouse.getPos().y;
+            mouseX = x;
+            mouseY = y;
         }
         
         cam.zoom(zoom);

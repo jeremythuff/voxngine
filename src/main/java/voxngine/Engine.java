@@ -88,7 +88,12 @@ public abstract class Engine
             delta = now - last;
             last = now;
             
+            // Poll the events and swap the buffers
+            glfwPollEvents();
+            glfwSwapBuffers(Window.id);
             input();
+            Mouse.endEvents();
+            
             update(delta);
             
             glViewport(0, 0, Window.WIDTH, Window.HEIGHT);
@@ -107,10 +112,6 @@ public abstract class Engine
             int error = glGetError();
     		if (error != GL_NO_ERROR)
     			System.err.println(error);
-    		
-            // Poll the events and swap the buffers
-            glfwPollEvents();
-            glfwSwapBuffers(Window.id);
             
         }
         

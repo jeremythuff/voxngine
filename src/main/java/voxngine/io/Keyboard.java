@@ -9,14 +9,15 @@ import org.lwjgl.glfw.GLFWKeyCallback;
 public class Keyboard {
 	
 	private static GLFWKeyCallback keyCallback;
-	
-	public static boolean[] keys = new boolean[65536];
+	private static boolean keyEvent = false;
+	private static boolean[] keys = new boolean[65536];
 
 	private Keyboard() {
 		glfwSetKeyCallback(Window.id, keyCallback = new GLFWKeyCallback() {
 			@Override
 			public void invoke(long window, int key, int scancode, int action, int mods) {
-				keys[key] = action != GLFW.GLFW_RELEASE; 
+				keys[key] = action != GLFW.GLFW_RELEASE;
+				keyEvent = true;
 			}
         });
 	}
@@ -28,6 +29,14 @@ public class Keyboard {
 	public static void init() {
 		new Keyboard();
 	}
+	
+	public static void endEvents() {
+    	keyEvent = false;
+    }
+    
+    public static boolean activeKeyEvent() {
+    	return keyEvent;
+    }
 	
     public static void destroy() {
     	keyCallback.release();

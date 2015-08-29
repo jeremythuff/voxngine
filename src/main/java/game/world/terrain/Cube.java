@@ -36,7 +36,7 @@ public class Cube implements WorldObject {
 	@Override
 	public void update(float delta) {
 	}
-
+ 
 	@Override
 	public void render() {
 	}

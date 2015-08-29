@@ -127,7 +127,9 @@ public abstract class Engine
 
         errorCallback.release();
         Mouse.destroy();
-        Keyboard.init();
+        Keyboard.destroy();
+        
+        RenderEngine.dispose();
 
         // Destroy the window
         glfwDestroyWindow(Window.id);

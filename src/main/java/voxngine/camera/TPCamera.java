@@ -28,13 +28,15 @@ public class TPCamera extends AbstractCamera {
 	
 	long window;
 	int x, y;
-	float zoom = 20;
+	float zoom = 200;
 	int mouseX, mouseY;
 	boolean down;
 	
 	public void init() {
-		cam.setAlpha((float) Math.toRadians(-20));
-		cam.setBeta((float) Math.toRadians(20));
+		cam.setAlpha((float) Math.toRadians(-45));
+		cam.setBeta((float) Math.toRadians(15));
+		cam.zoom(zoom); 
+		cam.update(100);
 	}
 	
 	public void input() {
@@ -65,9 +67,9 @@ public class TPCamera extends AbstractCamera {
 		
 		if(Mouse.activeScrollEvent()) {
 			if (Mouse.getScrollDelta().y > 0) {
-				zoom /= 1.1f;
+				zoom /= 1.05f;
 			} else {
-			    zoom *= 1.1f;
+			    zoom *= 1.05f;
 			}
 		}
 	}
@@ -82,7 +84,7 @@ public class TPCamera extends AbstractCamera {
 	      }
 	      
 	      cam.zoom(zoom);
-	      cam.update(delta);
+	      cam.update((float) (delta*2));
 			
 		  cam.viewMatrix(viewProjMatrix).setPerspective((float) Math.atan((32.5 * Window.HEIGHT / 1200) / 60.0),
 	              (float) Window.WIDTH / Window.HEIGHT, 0.01f, 1000.0f);

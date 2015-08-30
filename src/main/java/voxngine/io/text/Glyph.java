@@ -1,4 +1,4 @@
-package voxngine.graphics.text;
+package voxngine.io.text;
 
 public class Glyph {
     public final int width;

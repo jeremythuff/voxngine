@@ -113,7 +113,7 @@ public class RenderEngine {
 	
 	public static void render() {
 		
-		glEnable(GL_DEPTH_TEST);
+			glEnable(GL_DEPTH_TEST);
 		
         //for(Vao vao : vaos) {
 			vaos.get(0).bind();

@@ -115,7 +115,7 @@ public abstract class Engine
 		        fps = frames;
 				frames = 0;
 			}
-            
+            //System.out.println(fps);
             int error = glGetError();
     		if (error != GL_NO_ERROR)
     			System.err.println(error);

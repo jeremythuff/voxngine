@@ -22,7 +22,7 @@ public class World implements GameObject {
 			System.out.println("Initialiazing the "+ worldObject.getClass().getSimpleName() +" Object...");
 			worldObject.init();
 		}
-		
+		RenderEngine.initVbos();
 	}
 	
 	@Override
@@ -30,7 +30,6 @@ public class World implements GameObject {
 		for(WorldObject worldObject : worldObjects) {
 			worldObject.input();
 		}
-		RenderEngine.initVbos();
 	}
 
 	@Override

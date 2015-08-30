@@ -1,6 +1,11 @@
 package voxngine.camera;
 
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE;
 import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
 import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
 import static org.lwjgl.opengl.GL11.GL_FILL;
@@ -11,6 +16,7 @@ import static org.lwjgl.opengl.GL11.glPolygonMode;
 import java.nio.FloatBuffer;
 
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 import org.joml.camera.ArcBallCamera;
 import org.lwjgl.BufferUtils;
 
@@ -28,6 +34,11 @@ public class TPCamera extends AbstractCamera {
 	
 	long window;
 	int x, y;
+	
+	float xMove=0.0f;
+	float yMove=0.0f;
+	float zMove=0.0f;
+	
 	float zoom = 200;
 	int mouseX, mouseY;
 	boolean down;
@@ -40,14 +51,41 @@ public class TPCamera extends AbstractCamera {
 	}
 	
 	public void input() {
-		if(Keyboard.isKeyDown(GLFW_KEY_F)) {
-			if(wireframe) {
-				wireframe = false;
-				glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-			} else {
-				glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-				wireframe = true;
+		if(Keyboard.activeKeyEvent()) {
+			if(Keyboard.isKeyDown(GLFW_KEY_F)) {
+				if(wireframe) {
+					wireframe = false;
+					glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+				} else {
+					glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+					wireframe = true;
+				}			
 			}
+			
+			if(Keyboard.isKeyDown(GLFW_KEY_SPACE)) {
+				if(yMove < 0.1f) {
+					yMove = 1f;
+				}
+			}
+			
+			if(Keyboard.isKeyDown(GLFW_KEY_W)) { 
+				zMove = -1f;
+				xMove = -1f;
+			} else if(Keyboard.isKeyDown(GLFW_KEY_A)) { 
+				zMove = 1f;
+				xMove = -1f;
+			} else if(Keyboard.isKeyDown(GLFW_KEY_S)) { 
+				zMove = 1f;
+				xMove = 1f;
+			} else if(Keyboard.isKeyDown(GLFW_KEY_D)) { 
+				zMove = -1f;
+				xMove = 1f;
+			} else {
+				xMove = 0f;
+				zMove = 0f;
+			}
+			
+			
 		}
 		
 		if(Mouse.activeMoveEvent()) {
@@ -85,12 +123,19 @@ public class TPCamera extends AbstractCamera {
 	      
 	      cam.zoom(zoom);
 	      cam.update((float) (delta*2));
+	      
+	      if(yMove > 0.0f) {
+	    	  yMove -= 0.1f;
+	      }
+	      
+	      Vector3f currentPos = cam.centerMover.current;
+	      cam.center(currentPos.x+xMove, currentPos.y=yMove, currentPos.z+zMove);
 			
 		  cam.viewMatrix(viewProjMatrix).setPerspective((float) Math.atan((32.5 * Window.HEIGHT / 1200) / 60.0),
 	              (float) Window.WIDTH / Window.HEIGHT, 0.01f, 1000.0f);
 	}
 	
-	public FloatBuffer getVPMatrix() {
+	public FloatBuffer getMVMatrix() {
 		return cam.viewMatrix(viewProjMatrix).get(fb);
 	}
 

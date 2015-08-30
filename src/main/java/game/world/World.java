@@ -16,7 +16,8 @@ public class World implements GameObject {
 	public void init() {
 		
 		worldObjects.add(new Zone());
-		worldObjects.add(new Cube());
+		worldObjects.add(new Cube(100, 4, 100, 50, 25, 50));
+		//worldObjects.add(new Cube(10, 4, 10, -15, 4, 5));
 	
 		for(WorldObject worldObject : worldObjects) {			
 			System.out.println("Initialiazing the "+ worldObject.getClass().getSimpleName() +" Object...");

@@ -10,8 +10,6 @@ import org.lwjgl.glfw.GLFWCursorPosCallback;
 import org.lwjgl.glfw.GLFWMouseButtonCallback;
 import org.lwjgl.glfw.GLFWScrollCallback;
 
-import voxngine.utils.math.Vector3i;
-
 public class Mouse {
 
 	private static GLFWCursorPosCallback   	cursorPosCallback;

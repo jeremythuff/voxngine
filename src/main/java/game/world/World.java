@@ -9,8 +9,6 @@ import voxngine.graphics.RenderEngine;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.joml.Vector3f;
-
 public class World implements GameObject {
 		
 	List<WorldObject> worldObjects = new ArrayList<WorldObject>();
@@ -18,14 +16,7 @@ public class World implements GameObject {
 	public void init() {
 		
 		worldObjects.add(new Zone());
-		
-		for(float x = 0; x < 3 ; x ++) {
-			for(float z = 0; z < 3 ; z ++) {
-				for(float y = 0; y < 3 ; y ++) {
-					worldObjects.add(new Cube(new Vector3f(-x,y,-z)));
-				}
-			}
-		}
+		worldObjects.add(new Cube());
 	
 		for(WorldObject worldObject : worldObjects) {			
 			System.out.println("Initialiazing the "+ worldObject.getClass().getSimpleName() +" Object...");

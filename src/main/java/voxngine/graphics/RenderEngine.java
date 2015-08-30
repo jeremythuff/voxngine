@@ -12,7 +12,6 @@ import static org.lwjgl.opengl.GL20.GL_VERTEX_SHADER;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
-import static org.lwjgl.opengl.GL30.glBindVertexArray;
 
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
@@ -25,9 +24,10 @@ import voxngine.graphics.shaders.ShaderProgram;
 public class RenderEngine {
 	
 	private static List<FloatBuffer> buffers = new ArrayList<FloatBuffer>();
+	private static List<Vao> vaos = new ArrayList<Vao>();
 	
 	private static ShaderProgram shaderProgram;
-	private static Vao vao = new Vao();
+	//private static Vao vao = new Vao();
 	private static int matLocation;
 	
 	private static TPCamera cam = new TPCamera();
@@ -51,8 +51,8 @@ public class RenderEngine {
 		
 	}
 	
-	public static void queBuffer(FloatBuffer vbo) {
-		buffers.add(vbo);
+	public static void queBuffer(FloatBuffer buffer) {
+		buffers.add(buffer);
 	}
 	
 	public static void initVbos() {
@@ -65,12 +65,15 @@ public class RenderEngine {
 	
 	private static void buildVbos() {
 		
-		for(FloatBuffer interleavedBuffer : buffers) {
-    		
+		//for(FloatBuffer interleavedBuffer : buffers) {
+			Vao vao = new Vao();
+			vaos.add(vao);
+			vao.bind();
+			
 			// Create a Buffer Object and upload the vertices buffer   
 	        Vbo vbo = new Vbo();
 	        vbo.bind(GL_ARRAY_BUFFER);
-	        vbo.uploadData(GL_ARRAY_BUFFER, interleavedBuffer, GL_STATIC_DRAW);
+	        vbo.uploadData(GL_ARRAY_BUFFER, buffers.get(0), GL_STATIC_DRAW);
 	        
 	        // The size of float, in bytes (will be 4)
 	        final int sizeOfFloat = Float.SIZE / Byte.SIZE;
@@ -85,8 +88,7 @@ public class RenderEngine {
 	        // The 'offset is the number of bytes from the start of the tuple
 	        final long offsetPosition = 0;
 	        final long offsetColor    = 3 * sizeOfFloat;
-	      
-	        vao.bind();
+	        
 	        // Setup pointers using 'stride' and 'offset' we calculated above
 	        glVertexAttribPointer(0, 3, GL_FLOAT, false, stride, offsetPosition);
 	        glVertexAttribPointer(1, 4, GL_FLOAT, false, stride, offsetColor);
@@ -96,9 +98,8 @@ public class RenderEngine {
 	        glEnableVertexAttribArray(1);
 	   
 	        vao.unbind();
-	        vbo.delete();
-	        
-		}
+	        //break;
+		//}
 		
 	}
 	
@@ -114,26 +115,22 @@ public class RenderEngine {
 		
 		glEnable(GL_DEPTH_TEST);
 		
-        // Use our program
-        shaderProgram.bind();
-        
-        // Bind the vertex array and enable our location
-        vao.bind();
-        
-        glUniformMatrix4fv(matLocation, false, cam.getVPMatrix());
-        
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-        
-        // Disable our location
-        vao.unbind();
-        glBindVertexArray(0);
-        
-        // Un-bind our program
-        shaderProgram.unbind();
+        //for(Vao vao : vaos) {
+			vaos.get(0).bind();
+            shaderProgram.bind();
+            glUniformMatrix4fv(matLocation, false, cam.getVPMatrix());
+        	glDrawArrays(GL_TRIANGLES, 0, 36*9000);
+            shaderProgram.unbind();
+            vaos.get(0).unbind();
+        //}
 	}
 	
 	public static void dispose() {
-		vao.delete();
+		 for(Vao vao : vaos) { 
+			 vao.delete();
+		 }
+		 
+		vaos.get(0).delete();;
 		shaderProgram.delete();
 		
 	}

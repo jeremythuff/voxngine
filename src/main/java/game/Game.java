@@ -15,7 +15,6 @@ import game.world.World;
 import voxngine.Engine;
 import voxngine.graphics.RenderEngine;
 import voxngine.io.Controlls;
-import voxngine.io.Keyboard;
 import voxngine.io.Window;
 
 public class Game extends Engine {
@@ -39,10 +38,11 @@ public class Game extends Engine {
 		gameObjecs.add(new World());
 		gameObjecs.add(new Gui());
 		
-		for(GameObject gameObjec : gameObjecs) {
-			gameObjec.init(renderer);
-		}
-				
+		
+		gameObjecs.stream().forEach(gameObject -> {
+			gameObject.init(renderer);
+		});
+		
 		System.out.println("Initialization Done!\n");
 	}
 	
@@ -55,16 +55,16 @@ public class Game extends Engine {
 			}
 		}
 		
-		for(GameObject gameObjec : gameObjecs) {
-			gameObjec.input(controlls);
-		}
+		gameObjecs.parallelStream().forEach(gameObject -> {
+			gameObject.input(controlls);
+		});
 	}
 
 	@Override
 	public void update(float delta) {
-		for(GameObject gameObjec : gameObjecs) {
-			gameObjec.update(delta);
-		}
+		gameObjecs.parallelStream().forEach(gameObject -> {
+			gameObject.update(delta);
+		});
 	}
 
 	@Override
@@ -73,17 +73,17 @@ public class Game extends Engine {
 		glClearColor(0.9f, 0.9f, 0.9f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
-		for(GameObject gameObjec : gameObjecs) {
-			gameObjec.render(renderer);
-		}
+		gameObjecs.parallelStream().forEach(gameObject -> {
+			gameObject.render(renderer);
+		});
 	}
 	
 	@Override
 	public void dispose() {
 		System.out.println("Shutting down...");
-		for(GameObject gameObjec : gameObjecs) {
-			gameObjec.dispose();
-		}
+		gameObjecs.parallelStream().forEach(gameObject -> {
+			gameObject.dispose();
+		});
 		System.out.println("Game Ended!");
 	}
 	

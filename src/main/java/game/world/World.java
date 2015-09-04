@@ -17,43 +17,41 @@ public class World implements GameObject {
 	public void init(RenderEngine renderer) {
 		
 		worldObjects.add(new Zone());
-		worldObjects.add(new Cube(100, 8, 100, 50, 4, 50));
+		worldObjects.add(new Cube(200, 1, 200, 0, 0, 0));
 	
-		for(WorldObject worldObject : worldObjects) {			
+		worldObjects.parallelStream().forEach(worldObject -> {		
 			System.out.println("Initialiazing the "+ worldObject.getClass().getSimpleName() +" Object...");
 			worldObject.init(renderer);
-		}
-		
-		
+		});
 		renderer.initVbos();
 	}
 	
 	@Override
 	public void input(Controlls controlls) {
-		for(WorldObject worldObject : worldObjects) {
+		worldObjects.parallelStream().forEach(worldObject -> {
 			worldObject.input(controlls);
-		}
+		});
 	}
 
 	@Override
 	public void update(float delta) {
-		for(WorldObject worldObject : worldObjects) {
+		worldObjects.parallelStream().forEach(worldObject -> {
 			worldObject.update(delta);
-		}
+		});
 	}
 
 	@Override
 	public void render(RenderEngine renderer) {
-		for(WorldObject worldObject : worldObjects) {
+		worldObjects.parallelStream().forEach(worldObject -> {
 			worldObject.render(renderer);
-		}
+		});
 	}
 
 	public void dispose() {
-		for(WorldObject worldObject : worldObjects) {
+		worldObjects.parallelStream().forEach(worldObject -> {
 			System.out.println("Disposing of the "+ worldObject.getClass().getSimpleName() +" Object...");
 			worldObject.dispose();
-		}
+		});
 	}
 
 	

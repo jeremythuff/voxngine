@@ -23,8 +23,6 @@ import org.lwjgl.opengl.GLContext;
 
 import voxngine.graphics.RenderEngine;
 import voxngine.io.Controlls;
-import voxngine.io.Keyboard;
-import voxngine.io.Mouse;
 import voxngine.io.Window;
 
 
@@ -116,9 +114,10 @@ public abstract class Engine
             if (glfwGetTime() - timer > 1) {
 				timer += 1;
 		        fps = frames;
+		        System.out.print(fps+" ");
 				frames = 0;
 			}
-            //System.out.println(fps);
+                     
             int error = glGetError();
     		if (error != GL_NO_ERROR)
     			System.err.println(error);

@@ -17,6 +17,7 @@ import java.nio.FloatBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
+import voxngine.camera.Camera;
 import voxngine.camera.TPCamera;
 import voxngine.graphics.shaders.Shader;
 import voxngine.graphics.shaders.ShaderProgram;
@@ -30,7 +31,7 @@ public class RenderEngine {
 	private ShaderProgram shaderProgram;
 	private int matLocation;
 	
-	private TPCamera cam = new TPCamera();
+	private Camera cam = new TPCamera();
 	
 	public RenderEngine() {
 		shaderProgram = new ShaderProgram();
@@ -127,6 +128,10 @@ public class RenderEngine {
             shaderProgram.unbind();
             vaos.get(entityCount).unbind();
         }
+	}
+	
+	public Camera getCamera() {
+		return this.cam;
 	}
 	
 	public void dispose() {

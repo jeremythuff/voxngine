@@ -18,18 +18,19 @@ import java.nio.FloatBuffer;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.camera.ArcBallCamera;
+import org.joml.FrustumCuller;
+
 import org.lwjgl.BufferUtils;
 
 import voxngine.io.Controlls;
-import voxngine.io.Keyboard;
-import voxngine.io.Mouse;
 import voxngine.io.Window;
 
-public class TPCamera extends AbstractCamera {
+public class TPCamera implements Camera {
 	
 	ArcBallCamera cam = new ArcBallCamera();
-	private static Matrix4f viewProjMatrix = new Matrix4f();
-	private static FloatBuffer fb = BufferUtils.createFloatBuffer(16);
+	private Matrix4f viewProjMatrix = new Matrix4f();
+	private FloatBuffer fb = BufferUtils.createFloatBuffer(16);
+	private FrustumCuller fc = new FrustumCuller(); 
 	
 	static boolean wireframe;
 	
@@ -44,13 +45,15 @@ public class TPCamera extends AbstractCamera {
 	int mouseX, mouseY;
 	boolean down;
 	
+	@Override
 	public void init() {
-		cam.setAlpha((float) Math.toRadians(-45));
-		cam.setBeta((float) Math.toRadians(15));
+		cam.setAlpha((float) Math.toRadians(-35));
+		cam.setBeta((float) Math.toRadians(5));
 		cam.zoom(zoom); 
 		cam.update(100);
 	}
 	
+	@Override
 	public void input(Controlls controlls) {
 		if(controlls.getKeyboad().activeKeyEvent()) {
 			if(controlls.getKeyboad().isKeyDown(GLFW_KEY_F)) {
@@ -113,7 +116,11 @@ public class TPCamera extends AbstractCamera {
 		}
 	}
 	
+	@Override
 	public void update(float delta) {
+		
+		
+		
 		 /* Set input values for the camera */
 	      if (down) {
 	          cam.setAlpha(cam.getAlpha() + Math.toRadians((x - mouseX) * 0.5f));
@@ -134,10 +141,18 @@ public class TPCamera extends AbstractCamera {
 			
 		  cam.viewMatrix(viewProjMatrix).setPerspective((float) Math.atan((32.5 * Window.HEIGHT / 1200) / 60.0),
 	              (float) Window.WIDTH / Window.HEIGHT, 0.01f, 1000.0f);
+		  
+		  fc = viewProjMatrix.getFrustum(fc);
 	}
 	
+	@Override
 	public FloatBuffer getMVMatrix() {
 		return cam.viewMatrix(viewProjMatrix).get(fb);
+	}
+	
+	@Override
+	public boolean frustumCulled(Vector3f point) {		
+		return fc.isPointInsideFrustum(point);
 	}
 
 }

@@ -33,7 +33,12 @@ public class RenderEngine {
 	
 	private Camera cam = new TPCamera();
 	
-	public RenderEngine() {
+	public void queBuffer(int entityCount, FloatBuffer buffer) {
+		bufferMap.put(entityCount, buffer);
+	}
+	
+	public void initVbos() {
+		
 		shaderProgram = new ShaderProgram();
         
 		Shader vShad = shaderProgram.loadShader(GL_VERTEX_SHADER, "src/main/resources/shaders/default.vs");
@@ -50,13 +55,6 @@ public class RenderEngine {
 		
 		cam.init();
 		
-	}
-	
-	public void queBuffer(int entityCount, FloatBuffer buffer) {
-		bufferMap.put(entityCount, buffer);
-	}
-	
-	public void initVbos() {
 		buildVbos();
 	}
 	

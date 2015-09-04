@@ -76,6 +76,7 @@ public class Game extends Engine {
 		gameObjecs.parallelStream().forEach(gameObject -> {
 			gameObject.render(renderer);
 		});
+		
 	}
 	
 	@Override

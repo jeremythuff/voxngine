@@ -8,11 +8,11 @@ import org.lwjgl.glfw.GLFWKeyCallback;
 
 public class Keyboard {
 	
-	private static GLFWKeyCallback keyCallback;
-	private static boolean keyEvent = false;
-	private static boolean[] keys = new boolean[65536];
+	private GLFWKeyCallback keyCallback;
+	private boolean keyEvent = false;
+	private boolean[] keys = new boolean[65536];
 
-	private Keyboard() {
+	Keyboard() {
 		glfwSetKeyCallback(Window.id, keyCallback = new GLFWKeyCallback() {
 			@Override
 			public void invoke(long window, int key, int scancode, int action, int mods) {
@@ -22,23 +22,23 @@ public class Keyboard {
         });
 	}
 
-	public static boolean isKeyDown(int keycode) {
+	public boolean isKeyDown(int keycode) {
 		return keys[keycode];
 	}
 	
-	public static void init() {
+	public void init() {
 		new Keyboard();
 	}
 	
-	public static void endEvents() {
+	public void endEvents() {
     	keyEvent = false;
     }
     
-    public static boolean activeKeyEvent() {
+    public boolean activeKeyEvent() {
     	return keyEvent;
     }
 	
-    public static void destroy() {
+    public void destroy() {
     	keyCallback.release();
 	}
 	

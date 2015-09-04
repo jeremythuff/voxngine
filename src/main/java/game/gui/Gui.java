@@ -6,18 +6,19 @@ import java.util.List;
 import game.GameObject;
 import game.gui.overlays.DebugOverlay;
 import voxngine.graphics.RenderEngine;
+import voxngine.io.Controlls;
 
 public class Gui implements GameObject {
 		
 	List<GuiObject> guiObjects = new ArrayList<GuiObject>();
 
-	public void init() {		
+	public void init(RenderEngine renderer) {		
 		
 		guiObjects.add(new DebugOverlay());
 	
 		for(GuiObject guiObject : guiObjects) {			
 			System.out.println("Initialiazing the "+ guiObject.getClass().getSimpleName() +" Object...");
-			guiObject.init();
+			guiObject.init(renderer);
 		}
 		
 	}
@@ -29,9 +30,9 @@ public class Gui implements GameObject {
 		
 	}
 
-	public void render() {
+	public void render(RenderEngine renderer) {
 		for(GuiObject guiObject : guiObjects) {
-			guiObject.render();
+			guiObject.render(renderer);
 		}
 	}
 
@@ -43,7 +44,7 @@ public class Gui implements GameObject {
 	}
 
 	@Override
-	public void input() {
+	public void input(Controlls controlls) {
 		// TODO Auto-generated method stub
 		
 	}

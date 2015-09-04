@@ -12,21 +12,21 @@ import org.lwjgl.glfw.GLFWScrollCallback;
 
 public class Mouse {
 
-	private static GLFWCursorPosCallback   	cursorPosCallback;
-    private static GLFWMouseButtonCallback 	mouseButtonCallback;
-    private static GLFWScrollCallback  		scrollCallback;
+	private GLFWCursorPosCallback   	cursorPosCallback;
+    private GLFWMouseButtonCallback 	mouseButtonCallback;
+    private GLFWScrollCallback  		scrollCallback;
     
-    private static boolean moveEvent = false;
-    private static boolean clickEvent = false;
-    private static boolean scrollEvent = false;
+    private boolean moveEvent = false;
+    private boolean clickEvent = false;
+    private boolean scrollEvent = false;
     
-    private static Vector2d mousePos = new Vector2d();
-    private static Vector2d scrollDelta = new Vector2d();
+    private Vector2d mousePos = new Vector2d();
+    private Vector2d scrollDelta = new Vector2d();
     private static int action = 0;
     
-    private static boolean[] buttons = new boolean[500];
+    private boolean[] buttons = new boolean[500];
 	
-	private Mouse() {
+	Mouse() {
 		
 		glfwSetCursorPosCallback(Window.id, cursorPosCallback = new GLFWCursorPosCallback() {
             @Override
@@ -35,7 +35,7 @@ public class Mouse {
             	moveEvent = true;
             }
         });
-        glfwSetMouseButtonCallback(Window.id, mouseButtonCallback = new GLFWMouseButtonCallback() {
+        glfwSetMouseButtonCallback(Window.id, mouseButtonCallback = new GLFWMouseButtonCallback() {  		
             @Override
             public void invoke(long window, int button, int action, int mods) {            	
             	Mouse.action = action;
@@ -52,47 +52,47 @@ public class Mouse {
         });
 	}
     
-    public static Vector2d getPos() {
+    public Vector2d getPos() {
     	return mousePos;
     }
     
-    public static Vector2d getScrollDelta() {
+    public Vector2d getScrollDelta() {
     	return scrollDelta;
     }
     
-    public static boolean actionIs(int action) {
+    public boolean actionIs(int action) {
     	return Mouse.action==action;
     }
     
-    public static boolean isButtonDown(int buttonCode) {
+    public boolean isButtonDown(int buttonCode) {
     	return buttons[buttonCode];
     }
     
-    public static void endEvents() {
+    public void endEvents() {
     	moveEvent = false;
     	clickEvent = false;
     	scrollEvent = false;
     }
     
-    public static boolean activeMoveEvent() {
+    public boolean activeMoveEvent() {
     	return moveEvent;
     }
     
-    public static boolean activeClickEvent() {
+    public boolean activeClickEvent() {
     	return clickEvent;
     }
     
-    public static boolean activeScrollEvent() {
+    public boolean activeScrollEvent() {
     	return scrollEvent;
     }
     
-    public static void destroy() {
+    public void destroy() {
         cursorPosCallback.release();
         mouseButtonCallback.release();
         scrollCallback.release();
 	}
     
-    public static void init() {
+    public  void init() {
     	new Mouse();
     }
 	

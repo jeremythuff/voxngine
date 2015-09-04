@@ -23,8 +23,10 @@ import java.nio.FloatBuffer;
 import org.lwjgl.BufferUtils;
 
 import game.world.WorldObject;
+import voxngine.graphics.RenderEngine;
 import voxngine.graphics.shaders.Shader;
 import voxngine.graphics.shaders.ShaderProgram;
+import voxngine.io.Controlls;
 
 public class Triangle implements WorldObject {
 	
@@ -33,7 +35,7 @@ public class Triangle implements WorldObject {
     private int vboID;
 
 	@Override
-	public void init() {
+	public void init(RenderEngine renderer) {
 		
 		shaderProgram = new ShaderProgram();
         
@@ -77,7 +79,7 @@ public class Triangle implements WorldObject {
 	}
 	
 	@Override
-	public void input() {
+	public void input(Controlls controlls) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -89,7 +91,7 @@ public class Triangle implements WorldObject {
 	}
 
 	@Override
-	public void render() {
+	public void render(RenderEngine renderer) {
 
         // Use our program
         shaderProgram.bind();

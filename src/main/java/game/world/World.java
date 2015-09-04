@@ -5,6 +5,7 @@ import game.world.World;
 import game.world.terrain.Cube;
 import game.world.terrain.Zone;
 import voxngine.graphics.RenderEngine;
+import voxngine.io.Controlls;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,23 +14,24 @@ public class World implements GameObject {
 		
 	List<WorldObject> worldObjects = new ArrayList<WorldObject>();
 
-	public void init() {
+	public void init(RenderEngine renderer) {
 		
 		worldObjects.add(new Zone());
-		worldObjects.add(new Cube(100, 4, 100, 50, 25, 50));
-		//worldObjects.add(new Cube(10, 4, 10, -15, 4, 5));
+		worldObjects.add(new Cube(100, 8, 100, 50, 4, 50));
 	
 		for(WorldObject worldObject : worldObjects) {			
 			System.out.println("Initialiazing the "+ worldObject.getClass().getSimpleName() +" Object...");
-			worldObject.init();
+			worldObject.init(renderer);
 		}
-		RenderEngine.initVbos();
+		
+		
+		renderer.initVbos();
 	}
 	
 	@Override
-	public void input() {
+	public void input(Controlls controlls) {
 		for(WorldObject worldObject : worldObjects) {
-			worldObject.input();
+			worldObject.input(controlls);
 		}
 	}
 
@@ -41,9 +43,9 @@ public class World implements GameObject {
 	}
 
 	@Override
-	public void render() {
+	public void render(RenderEngine renderer) {
 		for(WorldObject worldObject : worldObjects) {
-			worldObject.render();
+			worldObject.render(renderer);
 		}
 	}
 

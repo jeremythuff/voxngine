@@ -22,6 +22,7 @@ import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GLContext;
 
 import voxngine.graphics.RenderEngine;
+import voxngine.io.Controlls;
 import voxngine.io.Keyboard;
 import voxngine.io.Mouse;
 import voxngine.io.Window;
@@ -37,6 +38,9 @@ public abstract class Engine
     public double timer = 0;
 	public int frames = 0;
 	public int fps;
+	
+	private RenderEngine renderer;
+	private Controlls controlls;
 			
     public Engine()
     {
@@ -47,20 +51,20 @@ public abstract class Engine
         GLContext.createFromCurrent();
         glfwSwapInterval(0);
     	
-        RenderEngine.init();
-        Mouse.init();
-        Keyboard.init();
+        renderer = new RenderEngine();
+        controlls = new Controlls();
+       
 
         
     }
 
-    public abstract void init();
+    public abstract void init(RenderEngine renderer);
     
-    public abstract void input();
+    public abstract void input(Controlls controlls);
 
     public abstract void update(float delta);
 
-    public abstract void render();
+    public abstract void render(RenderEngine renderer2);
 
     public abstract void dispose();
 
@@ -77,7 +81,7 @@ public abstract class Engine
         glfwSetErrorCallback(errorCallback);
         running = true;
         
-        init();
+        init(renderer);
         
         // Loop continuously and render and update
         while (running && glfwWindowShouldClose(Window.id) != GL_TRUE)
@@ -92,21 +96,20 @@ public abstract class Engine
             glfwPollEvents();
             glfwSwapBuffers(Window.id);
             
-            input();
-            RenderEngine.input();
+            input(controlls);
+            renderer.input(controlls);
             
-            Keyboard.endEvents();
-            Mouse.endEvents();
+            controlls.endEvents();
             
             update(delta);
-            RenderEngine.update(delta);
+            renderer.update(delta);
             
             glViewport(0, 0, Window.WIDTH, Window.HEIGHT);
             // Clear the screen
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             
-            render();
-            RenderEngine.render();
+            render(renderer);
+            renderer.render();
             
             frames ++;
             
@@ -126,16 +129,18 @@ public abstract class Engine
         dispose();
 
         errorCallback.release();
-        Mouse.destroy();
-        Keyboard.destroy();
-        
-        RenderEngine.dispose();
+        controlls.destroy();
+        renderer.dispose();
 
         // Destroy the window
         glfwDestroyWindow(Window.id);
         glfwTerminate();
 
         System.exit(0);
+    }
+    
+    protected RenderEngine getRenderer() {
+    	return this.renderer;
     }
 
 	public void end() {

@@ -20,6 +20,7 @@ import org.joml.Vector3f;
 import org.joml.camera.ArcBallCamera;
 import org.lwjgl.BufferUtils;
 
+import voxngine.io.Controlls;
 import voxngine.io.Keyboard;
 import voxngine.io.Mouse;
 import voxngine.io.Window;
@@ -50,9 +51,9 @@ public class TPCamera extends AbstractCamera {
 		cam.update(100);
 	}
 	
-	public void input() {
-		if(Keyboard.activeKeyEvent()) {
-			if(Keyboard.isKeyDown(GLFW_KEY_F)) {
+	public void input(Controlls controlls) {
+		if(controlls.getKeyboad().activeKeyEvent()) {
+			if(controlls.getKeyboad().isKeyDown(GLFW_KEY_F)) {
 				if(wireframe) {
 					wireframe = false;
 					glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -62,22 +63,22 @@ public class TPCamera extends AbstractCamera {
 				}			
 			}
 			
-			if(Keyboard.isKeyDown(GLFW_KEY_SPACE)) {
+			if(controlls.getKeyboad().isKeyDown(GLFW_KEY_SPACE)) {
 				if(yMove < 0.1f) {
 					yMove = 1f;
 				}
 			}
 			
-			if(Keyboard.isKeyDown(GLFW_KEY_W)) { 
+			if(controlls.getKeyboad().isKeyDown(GLFW_KEY_W)) { 
 				zMove = -1f;
 				xMove = -1f;
-			} else if(Keyboard.isKeyDown(GLFW_KEY_A)) { 
+			} else if(controlls.getKeyboad().isKeyDown(GLFW_KEY_A)) { 
 				zMove = 1f;
 				xMove = -1f;
-			} else if(Keyboard.isKeyDown(GLFW_KEY_S)) { 
+			} else if(controlls.getKeyboad().isKeyDown(GLFW_KEY_S)) { 
 				zMove = 1f;
 				xMove = 1f;
-			} else if(Keyboard.isKeyDown(GLFW_KEY_D)) { 
+			} else if(controlls.getKeyboad().isKeyDown(GLFW_KEY_D)) { 
 				zMove = -1f;
 				xMove = 1f;
 			} else {
@@ -88,23 +89,23 @@ public class TPCamera extends AbstractCamera {
 			
 		}
 		
-		if(Mouse.activeMoveEvent()) {
-			x = (int) Mouse.getPos().x - Window.WIDTH / 2;
-			y = Window.HEIGHT / 2 - (int) Mouse.getPos().y;
+		if(controlls.getMouse().activeMoveEvent()) {
+			x = (int) controlls.getMouse().getPos().x - Window.WIDTH / 2;
+			y = Window.HEIGHT / 2 - (int) controlls.getMouse().getPos().y;
 		}
 		
-		if(Mouse.activeClickEvent()) {
-			if (Mouse.actionIs(GLFW_PRESS)) {
+		if(controlls.getMouse().activeClickEvent()) {
+			if (controlls.getMouse().actionIs(GLFW_PRESS)) {
 				down = true;
 				mouseX = x;
 				mouseY = y;
-			} else if (Mouse.actionIs(GLFW_RELEASE)) {
+			} else if (controlls.getMouse().actionIs(GLFW_RELEASE)) {
 				down = false;
 			}
 		}
 		
-		if(Mouse.activeScrollEvent()) {
-			if (Mouse.getScrollDelta().y > 0) {
+		if(controlls.getMouse().activeScrollEvent()) {
+			if (controlls.getMouse().getScrollDelta().y > 0) {
 				zoom /= 1.05f;
 			} else {
 			    zoom *= 1.05f;

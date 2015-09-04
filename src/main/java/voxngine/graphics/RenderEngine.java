@@ -20,18 +20,19 @@ import java.util.Map;
 import voxngine.camera.TPCamera;
 import voxngine.graphics.shaders.Shader;
 import voxngine.graphics.shaders.ShaderProgram;
+import voxngine.io.Controlls;
 
 public class RenderEngine {
 	
-	private static Map<Integer, FloatBuffer> bufferMap = new HashMap<Integer, FloatBuffer>();
-	private static Map<Integer, Vao> vaos = new HashMap<Integer, Vao>();
+	private Map<Integer, FloatBuffer> bufferMap = new HashMap<Integer, FloatBuffer>();
+	private Map<Integer, Vao> vaos = new HashMap<Integer, Vao>();
 	
-	private static ShaderProgram shaderProgram;
-	private static int matLocation;
+	private ShaderProgram shaderProgram;
+	private int matLocation;
 	
-	private static TPCamera cam = new TPCamera();
+	private TPCamera cam = new TPCamera();
 	
-	private RenderEngine() {
+	public RenderEngine() {
 		shaderProgram = new ShaderProgram();
         
 		Shader vShad = shaderProgram.loadShader(GL_VERTEX_SHADER, "src/main/resources/shaders/default.vs");
@@ -50,19 +51,19 @@ public class RenderEngine {
 		
 	}
 	
-	public static void queBuffer(int entityCount, FloatBuffer buffer) {
+	public void queBuffer(int entityCount, FloatBuffer buffer) {
 		bufferMap.put(entityCount, buffer);
 	}
 	
-	public static void initVbos() {
+	public void initVbos() {
 		buildVbos();
 	}
 	
-	public static void updateVbos() {
+	public void updateVbos() {
 		buildVbos();
 	}
 	
-	private static void buildVbos() {
+	private void buildVbos() {
 		
 		for(int key : bufferMap.keySet()) {
 			
@@ -104,38 +105,36 @@ public class RenderEngine {
 		
 	}
 	
-	public static void input() {
-		cam.input();
+	public void input(Controlls controlls) {
+		cam.input(controlls);
 	}
 
-	public static void update(float delta) {
+	public void update(float delta) {
 		cam.update(delta);
 	}
 	
-	public static void render() {
+	public void render() {
 		
-			glEnable(GL_DEPTH_TEST);
+		glEnable(GL_DEPTH_TEST);
+		
+		FloatBuffer fb = cam.getMVMatrix();
 		
         for(int entityCount : bufferMap.keySet()) {
 			vaos.get(entityCount).bind();
             shaderProgram.bind();
-            glUniformMatrix4fv(matLocation, false, cam.getMVMatrix());
+            glUniformMatrix4fv(matLocation, false, fb);
         	glDrawArrays(GL_TRIANGLES, 0, 36*entityCount);
             shaderProgram.unbind();
             vaos.get(entityCount).unbind();
         }
 	}
 	
-	public static void dispose() {
+	public void dispose() {
 		 for(int key : vaos.keySet()) { 
 			 vaos.get(key).delete();
 		 }
 		shaderProgram.delete();
 		
-	}
-	
-	public static void init() {
-		new RenderEngine();
 	}
 	
 }

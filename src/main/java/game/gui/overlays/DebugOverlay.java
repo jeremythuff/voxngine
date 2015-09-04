@@ -1,11 +1,13 @@
 package game.gui.overlays;
 
 import game.gui.GuiObject;
+import voxngine.graphics.RenderEngine;
+import voxngine.io.Controlls;
 
 public class DebugOverlay implements GuiObject {
 
 	@Override
-	public void init() {
+	public void init(RenderEngine renderer) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -17,7 +19,7 @@ public class DebugOverlay implements GuiObject {
 	}
 
 	@Override
-	public void render() {
+	public void render(RenderEngine renderer) {
 		
 		
 	}
@@ -29,7 +31,7 @@ public class DebugOverlay implements GuiObject {
 	}
 
 	@Override
-	public void input() {
+	public void input(Controlls controlls) {
 		// TODO Auto-generated method stub
 		
 	}

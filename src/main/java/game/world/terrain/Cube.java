@@ -7,6 +7,7 @@ import org.lwjgl.BufferUtils;
 
 import game.world.WorldObject;
 import voxngine.graphics.RenderEngine;
+import voxngine.io.Controlls;
 
 public class Cube implements WorldObject {
 	
@@ -36,7 +37,7 @@ public class Cube implements WorldObject {
 	}
 			
 	@Override
-	public void init() {
+	public void init(RenderEngine renderer) {
 		
         CubeGeometry cubeGeo = new CubeGeometry();
         int geoLength = cubeGeo.getGeometry(new Vector3f(0,0,0)).length;
@@ -58,12 +59,12 @@ public class Cube implements WorldObject {
               
         interleavedBuffer.flip();
         
-        RenderEngine.queBuffer(totalCubes, interleavedBuffer);
+        renderer.queBuffer(totalCubes, interleavedBuffer);
         
 	}
 		
 	@Override
-	public void input() {
+	public void input(Controlls controlls) {
 	}
 
 	@Override
@@ -71,7 +72,7 @@ public class Cube implements WorldObject {
 	}
  
 	@Override
-	public void render() {
+	public void render(RenderEngine renderer) {
 	}
 
 	@Override

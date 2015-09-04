@@ -66,7 +66,7 @@ public class RenderEngine {
 	
 	private void buildVbos() {
 		
-		for(int key : bufferMap.keySet()) {
+		bufferMap.keySet().stream().forEach(key -> {
 			
 			FloatBuffer buffer = bufferMap.get(key);
 			
@@ -102,7 +102,8 @@ public class RenderEngine {
 	        glEnableVertexAttribArray(1);
 	        vao.unbind();
 	        //break;
-		}
+			
+		});
 		
 	}
 	
@@ -120,14 +121,14 @@ public class RenderEngine {
 		
 		FloatBuffer fb = cam.getMVMatrix();
 		
-        for(int entityCount : bufferMap.keySet()) {
+		bufferMap.keySet().stream().forEach(entityCount -> {	
 			vaos.get(entityCount).bind();
             shaderProgram.bind();
             glUniformMatrix4fv(matLocation, false, fb);
         	glDrawArrays(GL_TRIANGLES, 0, 36*entityCount);
             shaderProgram.unbind();
             vaos.get(entityCount).unbind();
-        }
+        });
 	}
 	
 	public Camera getCamera() {

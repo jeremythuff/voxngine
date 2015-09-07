@@ -16,36 +16,38 @@ public class Gui implements GameObject {
 		
 		guiObjects.add(new DebugOverlay());
 	
-		for(GuiObject guiObject : guiObjects) {			
+		guiObjects.parallelStream().forEach(guiObject -> {			
 			System.out.println("Initialiazing the "+ guiObject.getClass().getSimpleName() +" Object...");
 			guiObject.init(renderer);
-		}
+		});
 		
 	}
 
 	public void update(float delta) {
-		for(GuiObject guiObject : guiObjects) {
+		guiObjects.parallelStream().forEach(guiObject -> {
 			guiObject.update(delta);
-		}
+		});
 		
 	}
 
 	public void render(RenderEngine renderer) {
-		for(GuiObject guiObject : guiObjects) {
+		guiObjects.parallelStream().forEach(guiObject -> {
 			guiObject.render(renderer);
-		}
+		});
 	}
 
 	public void dispose() {
-		for(GuiObject guiObject : guiObjects) {
+		guiObjects.parallelStream().forEach(guiObject -> {
 			System.out.println("Disposing of the "+ guiObject.getClass().getSimpleName() +" Object...");
 			guiObject.dispose();
-		}
+		});
 	}
 
 	@Override
 	public void input(Controlls controlls) {
-		// TODO Auto-generated method stub
+		guiObjects.parallelStream().forEach(guiObject -> {
+			guiObject.input(controlls);
+		});
 		
 	}
 	

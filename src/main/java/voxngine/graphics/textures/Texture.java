@@ -31,7 +31,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
+
 import javax.imageio.ImageIO;
+
 import org.lwjgl.BufferUtils;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -65,7 +67,7 @@ public class Texture {
      * @param height Height of the texture
      * @param data Picture Data in RGBA format
      */
-    public Texture(int width, int height, ByteBuffer data) {
+    public Texture(int width, int height, int format, ByteBuffer data) {
         id = glGenTextures();
         this.width = width;
         this.height = height;
@@ -76,9 +78,15 @@ public class Texture {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+        
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+		
     }
+    
+    public int getId() {
+    	return this.id;
+    }
+    
 
     /**
      * Binds the texture.
@@ -162,7 +170,7 @@ public class Texture {
             /* Do not forget to flip the buffer! */
             buffer.flip();
 
-            return new Texture(width, height, buffer);
+            return new Texture(width, height, GL_RGBA8, buffer);
         } else {
             throw new RuntimeException("File extension not supported!"
                     + System.lineSeparator() + "The following file extensions "

@@ -128,7 +128,7 @@ public class ShaderProgram {
      * attribute in bytes
      */
     public void pointVertexAttribute(int location, int size, int stride, int offset) {
-        glVertexAttribPointer(location, size, GL_FLOAT, false, stride, offset);
+    	glVertexAttribPointer(location, size, GL_FLOAT, false, stride, offset);
     }
 
     /**

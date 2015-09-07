@@ -1,8 +1,12 @@
 package voxngine.graphics;
 
+import static org.lwjgl.opengl.GL11.GL_BLEND;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
+import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
+import static org.lwjgl.opengl.GL11.glBlendFunc;
 import static org.lwjgl.opengl.GL11.glDrawArrays;
 import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
@@ -69,6 +73,7 @@ public class RenderEngine {
 			FloatBuffer buffer = bufferMap.get(key);
 			
 			Vao vao = new Vao();
+			vao.bind();
 			vaos.put(key, vao);
 			vao.bind();
 			
@@ -137,7 +142,7 @@ public class RenderEngine {
 		 for(int key : vaos.keySet()) { 
 			 vaos.get(key).delete();
 		 }
-		shaderProgram.delete();
+		if(shaderProgram!=null)shaderProgram.delete();
 		
 	}
 	

@@ -6,6 +6,10 @@ import static org.lwjgl.opengl.GL11.GL_TRUE;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.lwjgl.glfw.GLFWvidmode;
 //import org.lwjgl.opengl.ContextCapabilities;
@@ -15,6 +19,8 @@ import org.lwjgl.opengl.GLContext;
 public class Window {
 	
 	public static long id;
+	
+	public static Map<String, List<ScreenMessage>> screenMessageQue = new HashMap<String, List<ScreenMessage>>();
 	
 	public static int WIDTH = 1280;
 	public static int HEIGHT = 720;
@@ -75,6 +81,31 @@ public class Window {
 	
 		ByteBuffer vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 			glfwSetWindowPos(id, (GLFWvidmode.width(vidmode) - WIDTH) / 2, (GLFWvidmode.height(vidmode) - HEIGHT) / 2);
+	}
+	
+	public static void queScreenMessage(String destination, ScreenMessage screenMessage) {
+		
+		if(screenMessageQue.containsKey(destination)) {
+			screenMessageQue.get(destination).add(screenMessage);
+		} else {	
+			List<ScreenMessage> newMessageList = new ArrayList<ScreenMessage>();
+			newMessageList.add(screenMessage);
+			screenMessageQue.put(destination, newMessageList);
+		}
+	}
+	
+	public static List<ScreenMessage> getScreenMessages(String destination) {
+		return screenMessageQue.get(destination);
+	}
+	
+	public static ScreenMessage popMessage(String destination) {
+		
+		for(ScreenMessage screenMassage : getScreenMessages(destination)) {
+			getScreenMessages(destination).remove(screenMassage);
+			return screenMassage;
+		}
+		
+		return null;
 	}
 	
 	public static void init(String name) {

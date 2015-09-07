@@ -8,6 +8,8 @@ import org.lwjgl.BufferUtils;
 import game.world.WorldObject;
 import voxngine.graphics.RenderEngine;
 import voxngine.io.Controlls;
+import voxngine.io.ScreenMessage;
+import voxngine.io.Window;
 
 public class Cube implements WorldObject {
 	
@@ -55,8 +57,6 @@ public class Cube implements WorldObject {
         	}
         }
         
-        System.out.println(i);
-              
         interleavedBuffer.flip();
         
         renderer.queBuffer(totalCubes, interleavedBuffer);
@@ -73,6 +73,7 @@ public class Cube implements WorldObject {
  
 	@Override
 	public void render(RenderEngine renderer) {
+		Window.queScreenMessage("DebugOverlay", new ScreenMessage("Total Depicted Cubes: "+totalCubes));
 	}
 
 	@Override

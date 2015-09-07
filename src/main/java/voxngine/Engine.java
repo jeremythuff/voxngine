@@ -23,6 +23,7 @@ import org.lwjgl.opengl.GLContext;
 
 import voxngine.graphics.RenderEngine;
 import voxngine.io.Controlls;
+import voxngine.io.ScreenMessage;
 import voxngine.io.Window;
 
 
@@ -114,9 +115,10 @@ public abstract class Engine
             if (glfwGetTime() - timer > 1) {
 				timer += 1;
 		        fps = frames;
-		        System.out.print(fps+" ");
 				frames = 0;
 			}
+            
+            Window.queScreenMessage("DebugOverlay", new ScreenMessage("FPS: "+fps));
                      
             int error = glGetError();
     		if (error != GL_NO_ERROR)

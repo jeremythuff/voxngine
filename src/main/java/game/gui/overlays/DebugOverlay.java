@@ -1,19 +1,44 @@
 package game.gui.overlays;
 
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_F;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_CONTROL;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_P;
+import static org.lwjgl.opengl.GL11.GL_BLEND;
+import static org.lwjgl.opengl.GL11.GL_FILL;
+import static org.lwjgl.opengl.GL11.GL_FRONT_AND_BACK;
+import static org.lwjgl.opengl.GL11.GL_LINE;
+import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11.GL_RED;
+import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
+import static org.lwjgl.opengl.GL11.glBlendFunc;
+import static org.lwjgl.opengl.GL11.glDrawArrays;
+import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL11.glPolygonMode;
+import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
+import static org.lwjgl.opengl.GL15.GL_DYNAMIC_DRAW;
+import static org.lwjgl.opengl.GL20.GL_FRAGMENT_SHADER;
+import static org.lwjgl.opengl.GL20.GL_VERTEX_SHADER;
+import static org.lwjgl.stb.STBTruetype.stbtt_GetPackedQuad;
+import static org.lwjgl.stb.STBTruetype.stbtt_PackBegin;
+import static org.lwjgl.stb.STBTruetype.stbtt_PackEnd;
+import static org.lwjgl.stb.STBTruetype.stbtt_PackFontRange;
+import static org.lwjgl.stb.STBTruetype.stbtt_PackSetOversampling;
+import game.gui.GuiObject;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
+import java.util.List;
+import java.util.Map;
 
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
-import org.lwjgl.glfw.GLFW;
 import org.lwjgl.stb.STBTTAlignedQuad;
 import org.lwjgl.stb.STBTTPackContext;
 import org.lwjgl.stb.STBTTPackedchar;
-import org.lwjgl.system.MemoryUtil;
 
-import game.gui.GuiObject;
 import voxngine.graphics.RenderEngine;
 import voxngine.graphics.Vao;
 import voxngine.graphics.Vbo;
@@ -21,24 +46,16 @@ import voxngine.graphics.shaders.Shader;
 import voxngine.graphics.shaders.ShaderProgram;
 import voxngine.graphics.textures.Texture;
 import voxngine.io.Controlls;
+import voxngine.io.ScreenMessage;
 import voxngine.io.Window;
 import voxngine.utils.FileUtils;
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL15.*;
-import static org.lwjgl.opengl.GL20.GL_FRAGMENT_SHADER;
-import static org.lwjgl.opengl.GL20.GL_VERTEX_SHADER;
-import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
-import static org.lwjgl.stb.STBTruetype.stbtt_GetPackedQuad;
-import static org.lwjgl.stb.STBTruetype.stbtt_PackBegin;
-import static org.lwjgl.stb.STBTruetype.stbtt_PackEnd;
-import static org.lwjgl.stb.STBTruetype.stbtt_PackFontRange;
-import static org.lwjgl.stb.STBTruetype.stbtt_PackSetOversampling;
 
 
 public class DebugOverlay implements GuiObject {
 	
 private ShaderProgram shaderProgram;
-		int count;
+	
+	int count;
     private int numVertices;
 	
     private Vao vao;
@@ -53,14 +70,7 @@ private ShaderProgram shaderProgram;
 		24.0f,
 		14.0f
 	};
-
-	private final int[] sf = {
-		0, 1, 2,
-		0, 1, 2,
-	};
-
-	// ----
-
+	
 	private final STBTTAlignedQuad q  = new STBTTAlignedQuad();
 	private final FloatBuffer      xb = BufferUtils.createFloatBuffer(1);
 	private final FloatBuffer      yb = BufferUtils.createFloatBuffer(1);
@@ -68,13 +78,10 @@ private ShaderProgram shaderProgram;
 	private Texture font_tex;
 
 	private ByteBuffer chardata;
-
-	private int font = 3;
 	
-	private double mousex = 0;
-	private double mousey = 0;
-
-	private boolean show_tex;
+	private float lastLine = 100f;
+	
+	private boolean show_tex = true;
 
 	@Override
 	public void init(RenderEngine renderer) {
@@ -153,22 +160,42 @@ private ShaderProgram shaderProgram;
 		count = 0;
 		
 	}
+	
+	@Override
+	public void input(Controlls controlls) {
+		
+		if(controlls.getKeyboad().activeKeyEvent()) {
+			if(controlls.getKeyboad().isKeyDown(GLFW_KEY_LEFT_CONTROL) &&controlls.getKeyboad().isKeyDown(GLFW_KEY_P)) {
+				if(show_tex) {
+					show_tex = false;
+				} else {
+					show_tex = true;
+				}			
+			}
+		}
+		
+		
+		Window.queScreenMessage("DebugOverlay", new ScreenMessage("Mouse x: "+(int)controlls.getMouse().getPos().x));
+		Window.queScreenMessage("DebugOverlay", new ScreenMessage("Mouse Y: "+(int)controlls.getMouse().getPos().y));
+		
+		
+	}
 
 	@Override
 	public void update(float delta) {
-		// TODO Auto-generated method stub
+		if(Window.getScreenMessages("DebugOverlay") != null)
+		for(int i = 0 ; i < Window.getScreenMessages("DebugOverlay").size() ; i++) {
+			ScreenMessage screenMessage = Window.popMessage("DebugOverlay");
+			print(100f, lastLine, font_tex.getId(), screenMessage.getMessage());
+			lastLine += 20;
+		}
+		lastLine = 100;
 	}
 
 	@Override
 	public void render(RenderEngine renderer) {
 		
-//		glEnable(GL_BLEND);
-//		glBlendFunc(GL_SRC_COLOR, GL_ONE_MINUS_SRC_COLOR);
-		
-		glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		
-		if (numVertices > 0) {
+		if (numVertices > 0 && show_tex) {
             vertices.flip();
 
              vao.bind();
@@ -183,9 +210,12 @@ private ShaderProgram shaderProgram;
             glDrawArrays(GL_TRIANGLES, 0, numVertices);
 
             /* Clear vertex data for next batch */
-            vertices.clear();
+            
             numVertices = 0;
         }
+		
+		vertices.clear();
+		
 	}
 
 	@Override
@@ -195,16 +225,8 @@ private ShaderProgram shaderProgram;
         shaderProgram.delete();
 		
 	}
-
-	@Override
-	public void input(Controlls controlls) {
-		print(100f, 100f, font_tex.getId(), "Mouse X: "+(int)controlls.getMouse().getPos().x);
-		print(100f, 120f, font_tex.getId(), "Mouse Y: "+(int)controlls.getMouse().getPos().y);
-		
-	}
 	
 	private void load_fonts() {
-		
 		chardata = BufferUtils.createByteBuffer(6 * 128 * STBTTPackedchar.SIZEOF);
 
 		try {
@@ -233,16 +255,19 @@ private ShaderProgram shaderProgram;
 			font_tex = new Texture(BITMAP_W, BITMAP_H, GL_RED, bitmap);
 			font_tex.bind();
 			
+			glEnable(GL_BLEND);
+	        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			
 			
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
 	
-	private void drawBoxTC(float x1, float y1, float x2, float y2, float s1, float t1, float s2, float t2) {
-		float r = 1.0f;//c.getRed() / 255f;
-        float g = 1.0f;//c.getGreen() / 255f;
-        float b = 1.0f;//c.getBlue() / 255f;
+	private void drawBoxTC(float x1, float y1, float x2, float y2, float s1, float t1, float s2, float t2, Vector3f c) {
+		float r = c.x;
+        float g = c.y;
+        float b = c.z;
 
         vertices.put(x1).put(y1).put(r).put(g).put(b).put(s1).put(t1);
         vertices.put(x1).put(y2).put(r).put(g).put(b).put(s1).put(t2);
@@ -267,7 +292,8 @@ private ShaderProgram shaderProgram;
 			stbtt_GetPackedQuad(chardata, BITMAP_W, BITMAP_H, text.charAt(i), xb, yb, q.buffer(), 0);
 			drawBoxTC(
 				q.getX0(), q.getY0(), q.getX1(), q.getY1(),
-				q.getS0(), q.getT0(), q.getS1(), q.getT1()
+				q.getS0(), q.getT0(), q.getS1(), q.getT1(),
+				new Vector3f(1f,1f,1f)
 			);
 		}
 	}

@@ -79,7 +79,7 @@ private ShaderProgram shaderProgram;
 
 	private ByteBuffer chardata;
 	
-	private float lastLine = 100f;
+	private float lineStart = 50f;
 	
 	private boolean show_tex = true;
 
@@ -183,13 +183,21 @@ private ShaderProgram shaderProgram;
 
 	@Override
 	public void update(float delta) {
+		
+		float lineIncr = lineStart;
 		if(Window.getScreenMessages("DebugOverlay") != null)
 		for(int i = 0 ; i < Window.getScreenMessages("DebugOverlay").size() ; i++) {
 			ScreenMessage screenMessage = Window.popMessage("DebugOverlay");
-			print(100f, lastLine, font_tex.getId(), screenMessage.getMessage());
-			lastLine += 20;
+			
+			if(screenMessage.getType().equals("GENERAL")) {
+				print(50f, lineIncr, font_tex.getId(), screenMessage.getMessage());
+				lineIncr += 20;
+			} else if(screenMessage.getType().equals("TITLE")) {
+				float center = (Window.WIDTH/2)-((screenMessage.getMessage().length()*12)/2);
+				print(center, 50f, font_tex.getId(), screenMessage.getMessage());
+			}
+			
 		}
-		lastLine = 100;
 	}
 
 	@Override

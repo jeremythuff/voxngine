@@ -20,6 +20,8 @@ public class Window {
 	
 	public static long id;
 	
+	private static String name;
+	
 	public static Map<String, List<ScreenMessage>> screenMessageQue = new HashMap<String, List<ScreenMessage>>();
 	
 	public static int WIDTH = 1280;
@@ -29,7 +31,9 @@ public class Window {
 	
 	private Window(String name) {
 		
-		 if (glfwInit() != GL_TRUE)
+		this.name = name;
+		
+		if (glfwInit() != GL_TRUE)
         {
             System.err.println("Error initializing GLFW");
             System.exit(1);
@@ -106,6 +110,15 @@ public class Window {
 		}
 		
 		return null;
+	}
+	
+	public static void setName(String name) {
+		glfwSetWindowTitle(Window.id, name);
+		Window.name = name;
+	}
+	
+	public static String getName() {
+		return Window.name;
 	}
 	
 	public static void init(String name) {

@@ -2,6 +2,7 @@ package game;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowTitle;
+
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.glClear;
@@ -15,6 +16,7 @@ import game.world.World;
 import voxngine.Engine;
 import voxngine.graphics.RenderEngine;
 import voxngine.io.Controlls;
+import voxngine.io.ScreenMessage;
 import voxngine.io.Window;
 
 public class Game extends Engine {
@@ -31,7 +33,7 @@ public class Game extends Engine {
 		
 		this.renderer = renderer;
 		
-		glfwSetWindowTitle(Window.id, "Voxel Game");
+		Window.setName("Voxel Game");
 		
 		System.out.println("Game Started...");
 		
@@ -70,6 +72,8 @@ public class Game extends Engine {
 	@Override
 	public void render(RenderEngine renderer) {
 	
+		Window.queScreenMessage("DebugOverlay", new ScreenMessage("TITLE", "DEBUG: "+ Window.getName()));
+		
 		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		

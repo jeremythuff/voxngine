@@ -10,7 +10,7 @@ public class ScreenMessage {
 		this.message = message;
 	}
 	
-	ScreenMessage(String type, String message) {
+	public ScreenMessage(String type, String message) {
 		this.type = type;
 		this.message = message;
 	}

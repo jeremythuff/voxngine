@@ -1,25 +1,19 @@
 package voxngine.camera;
 
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_F;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
 import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
 import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
-import static org.lwjgl.opengl.GL11.GL_FILL;
-import static org.lwjgl.opengl.GL11.GL_FRONT_AND_BACK;
-import static org.lwjgl.opengl.GL11.GL_LINE;
-import static org.lwjgl.opengl.GL11.glPolygonMode;
 
 import java.nio.FloatBuffer;
 
+import org.joml.FrustumCuller;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.camera.ArcBallCamera;
-import org.joml.FrustumCuller;
-
 import org.lwjgl.BufferUtils;
 
 import voxngine.io.Controlls;
@@ -31,9 +25,7 @@ public class TPCamera implements Camera {
 	private Matrix4f viewProjMatrix = new Matrix4f();
 	private FloatBuffer fb = BufferUtils.createFloatBuffer(16);
 	private FrustumCuller fc = new FrustumCuller(); 
-	
-	static boolean wireframe;
-	
+		
 	long window;
 	int x, y;
 	
@@ -56,15 +48,7 @@ public class TPCamera implements Camera {
 	@Override
 	public void input(Controlls controlls) {
 		if(controlls.getKeyboad().activeKeyEvent()) {
-			if(controlls.getKeyboad().isKeyDown(GLFW_KEY_F)) {
-				if(wireframe) {
-					wireframe = false;
-					glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-				} else {
-					glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-					wireframe = true;
-				}			
-			}
+			
 			
 			if(controlls.getKeyboad().isKeyDown(GLFW_KEY_SPACE)) {
 				if(yMove < 0.1f) {

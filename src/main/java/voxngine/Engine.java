@@ -34,10 +34,10 @@ public abstract class Engine
     // The callbacks
     private GLFWErrorCallback       errorCallback;
         
-    public double timer = 0;
-	public int frames = 0;
-	public int fps;
-	public int ups;
+    public static final int TARGET_FPS = 60;
+    public static final int TARGET_UPS = 30;
+    
+    protected Timer timer;
 	
 	private RenderEngine renderer;
 	private Controlls controlls;
@@ -51,6 +51,9 @@ public abstract class Engine
         GLContext.createFromCurrent();
         glfwSwapInterval(0);
     	
+        timer = new Timer();
+        timer.init();
+
         renderer = new RenderEngine();
         controlls = new Controlls();
         
@@ -87,7 +90,7 @@ public abstract class Engine
         	        	
             // Get the time
             now = (float) glfwGetTime();
-            delta = now - last;
+            delta = timer.getDelta();
             last = now;
             
             // Poll the events and swap the buffers
@@ -101,6 +104,7 @@ public abstract class Engine
             
             update(delta);
             renderer.update(delta);
+            timer.updateUPS();
             
             glViewport(0, 0, Window.WIDTH, Window.HEIGHT);
             // Clear the screen
@@ -109,16 +113,13 @@ public abstract class Engine
             
             render(renderer);
             renderer.render();
+            timer.updateFPS();
             
-            frames ++;
+            timer.update();
             
-            if (glfwGetTime() - timer > 1) {
-				timer += 1;
-		        fps = frames;
-				frames = 0;
-			}
+            Window.queScreenMessage("DebugOverlay", new ScreenMessage("FPS: "+timer.getFPS()));
             
-            Window.queScreenMessage("DebugOverlay", new ScreenMessage("FPS: "+fps));
+            sync(TARGET_FPS); 
                      
             int error = glGetError();
     		if (error != GL_NO_ERROR)
@@ -139,6 +140,33 @@ public abstract class Engine
 
         System.exit(0);
     }
+    
+    /**
+     * Synchronizes the game at specified frames per second.
+     *
+     * @param fps Frames per second
+     */
+    public void sync(int fps) {
+        double lastLoopTime = timer.getLastLoopTime();
+        double now = timer.getTime();
+        float targetTime = 1f / fps;
+
+        while (now - lastLoopTime < targetTime) {
+            Thread.yield();
+
+            /* This is optional if you want your game to stop consuming too much
+             CPU but you will loose some accuracy because Thread.sleep(1) could
+             sleep longer than 1 millisecond */
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException ex) {
+               System.out.println(Engine.class.getName());
+            }
+
+            now = timer.getTime();
+        }
+    }
+    
     
     protected RenderEngine getRenderer() {
     	return this.renderer;

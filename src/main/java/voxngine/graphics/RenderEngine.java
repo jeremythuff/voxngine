@@ -1,5 +1,6 @@
 package voxngine.graphics;
 
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_F;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.*;
@@ -21,6 +22,7 @@ import voxngine.graphics.shaders.Shader;
 import voxngine.graphics.shaders.ShaderProgram;
 import voxngine.graphics.textures.Font;
 import voxngine.io.Controlls;
+import voxngine.io.ScreenMessage;
 import voxngine.io.Window;
 
 public class RenderEngine {
@@ -42,6 +44,8 @@ public class RenderEngine {
 	private int matLocation;
 	
 	private Camera cam = new TPCamera();
+	static boolean wireframe;
+
 	
 	//private Font debugFont;
 	
@@ -192,10 +196,19 @@ public class RenderEngine {
 	
 	public void input(Controlls controlls) {
 		cam.input(controlls);
+		
+		if(controlls.getKeyboad().isKeyDown(GLFW_KEY_F)) {
+			if(wireframe) {
+				wireframe = false;
+			} else {
+				wireframe = true;
+			}			
+		}
 	}
 
 	public void update(float delta) {
 		cam.update(delta);
+		
 	}
 	
 	
@@ -208,6 +221,12 @@ public class RenderEngine {
 		
 		glEnable(GL_DEPTH_TEST);
 		
+		if(wireframe) {
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		} else {
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		}
+		
 		FloatBuffer fb = cam.getMVMatrix();
 		
 		bufferMap.keySet().stream().forEach(entityCount -> {	
@@ -217,12 +236,14 @@ public class RenderEngine {
         	glDrawArrays(GL_TRIANGLES, 0, 36*entityCount);
             shaderProgram.unbind();
             vaos.get(entityCount).unbind();
+            
         });
 	}
 	
 	private void renderText() {
 		
 		if (numVertices > 0) {
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
             textVertices.flip();
             textVao.bind();
             textShaderProgram.bind();

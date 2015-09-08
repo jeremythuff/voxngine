@@ -33,7 +33,7 @@ public class Gui implements GameObject {
 	}
 
 	public void render(RenderEngine renderer) {
-		guiObjects.parallelStream().forEach(guiObject -> {
+		guiObjects.stream().forEach(guiObject -> {
 			guiObject.render(renderer);
 		});
 	}

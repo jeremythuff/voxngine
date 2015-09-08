@@ -46,11 +46,9 @@ public class Cube implements WorldObject {
         
         FloatBuffer interleavedBuffer = BufferUtils.createFloatBuffer(totalCubes*geoLength);
         
-        int i=0;
         for(float x=0 ; x < (float)xCubes ; x++) {
         	for (float y=0 ; y < (float)yCubes ; y++) {
         		for (float z=0; z < (float)zCubes ; z++) {
-        			i++;
         			float[] vertices = cubeGeo.getGeometry(new Vector3f(x-xOrigin,y-yOrigin,z-zOrigin));
         	        interleavedBuffer.put(vertices);
         		}

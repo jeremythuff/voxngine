@@ -55,8 +55,6 @@ public class Cube implements WorldObject {
         	}
         }
         
-        
-        
         interleavedBuffer.flip();
         
         renderer.queBuffer(totalCubes, interleavedBuffer);

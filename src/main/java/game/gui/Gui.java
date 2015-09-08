@@ -16,7 +16,7 @@ public class Gui implements GameObject {
 		
 		guiObjects.add(new DebugOverlay());
 	
-		guiObjects.parallelStream().forEach(guiObject -> {			
+		guiObjects.stream().forEach(guiObject -> {			
 			System.out.println("Initialiazing the "+ guiObject.getClass().getSimpleName() +" Object...");
 			guiObject.init(renderer);
 		});
@@ -26,7 +26,7 @@ public class Gui implements GameObject {
 	}
 
 	public void update(float delta) {
-		guiObjects.parallelStream().forEach(guiObject -> {
+		guiObjects.stream().forEach(guiObject -> {
 			guiObject.update(delta);
 		});
 		
@@ -39,7 +39,7 @@ public class Gui implements GameObject {
 	}
 
 	public void dispose() {
-		guiObjects.parallelStream().forEach(guiObject -> {
+		guiObjects.stream().forEach(guiObject -> {
 			System.out.println("Disposing of the "+ guiObject.getClass().getSimpleName() +" Object...");
 			guiObject.dispose();
 		});
@@ -47,7 +47,7 @@ public class Gui implements GameObject {
 
 	@Override
 	public void input(Controlls controlls) {
-		guiObjects.parallelStream().forEach(guiObject -> {
+		guiObjects.stream().forEach(guiObject -> {
 			guiObject.input(controlls);
 		});
 		

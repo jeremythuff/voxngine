@@ -91,6 +91,7 @@ public class Window {
 		
 		if(screenMessageQue.containsKey(destination)) {
 			screenMessageQue.get(destination).add(screenMessage);
+		
 		} else {	
 			List<ScreenMessage> newMessageList = new ArrayList<ScreenMessage>();
 			newMessageList.add(screenMessage);

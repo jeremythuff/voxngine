@@ -145,7 +145,6 @@ public class RenderEngine {
         int uniProjection = textShaderProgram.getUniformLocation("projection");
         textShaderProgram.setUniform(uniProjection, projection.ortho(0.0f, Window.WIDTH, Window.HEIGHT, 0.0f, -1.0f, 1.0f));
         		
-		count = 0;
 	}
 	
 	public void updateVbos() {
@@ -295,8 +294,12 @@ public class RenderEngine {
 	
         numTextVertices += 6;
 	}
-
+	
 	public void print(float x, float y, Font font, String text) {
+		print(x, y, font, text, new Vector3f(1f,1f,1f));
+	}
+
+	public void print(float x, float y, Font font, String text, Vector3f vector3f) {
 		xb.put(0, x);
 		yb.put(0, y);
 
@@ -309,7 +312,7 @@ public class RenderEngine {
 			drawBoxTC(
 				q.getX0(), q.getY0(), q.getX1(), q.getY1(),
 				q.getS0(), q.getT0(), q.getS1(), q.getT1(),
-				new Vector3f(1f,1f,1f)
+				vector3f
 			);
 		}
 	}

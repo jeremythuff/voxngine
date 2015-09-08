@@ -49,11 +49,13 @@ public class Cube implements WorldObject {
         for(float x=0 ; x < (float)xCubes ; x++) {
         	for (float y=0 ; y < (float)yCubes ; y++) {
         		for (float z=0; z < (float)zCubes ; z++) {
-        			float[] vertices = cubeGeo.getGeometry(new Vector3f(x-xOrigin,y-yOrigin,z-zOrigin));
+        			float[] vertices = cubeGeo.getGeometry(new Vector3f((x-xOrigin),(y-yOrigin),(z-zOrigin)));
         	        interleavedBuffer.put(vertices);
         		}
         	}
         }
+        
+        
         
         interleavedBuffer.flip();
         

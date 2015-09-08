@@ -28,8 +28,10 @@ import voxngine.io.Window;
 public class RenderEngine {
 	
 	int count;
+	int c = 0;
 	
-	private int numVertices;
+	private int numTextVertices;
+	private int num3DVertices;
 		
     private Vao textVao;
     private Vbo textVbo;
@@ -94,7 +96,7 @@ public class RenderEngine {
         textVbo.uploadData(GL_ARRAY_BUFFER, size, GL_DYNAMIC_DRAW);
         
         /* Initialize variables */
-        numVertices = 0;
+        numTextVertices = 0;
         
         textShaderProgram = new ShaderProgram();
         
@@ -218,7 +220,7 @@ public class RenderEngine {
 	}
 	
 	private void render3d() {
-		
+
 		glEnable(GL_DEPTH_TEST);
 		
 		if(wireframe) {
@@ -229,20 +231,23 @@ public class RenderEngine {
 		
 		FloatBuffer fb = cam.getMVMatrix();
 		
-		bufferMap.keySet().stream().forEach(entityCount -> {	
+		num3DVertices=0;
+		bufferMap.keySet().stream().forEach(entityCount -> {
 			vaos.get(entityCount).bind();
             shaderProgram.bind();
             glUniformMatrix4fv(matLocation, false, fb);
         	glDrawArrays(GL_TRIANGLES, 0, 36*entityCount);
             shaderProgram.unbind();
             vaos.get(entityCount).unbind();
-            
+            num3DVertices+=(36*entityCount);
         });
+		
+		Window.queScreenMessage("DebugOverlay", new ScreenMessage("Verts: "+num3DVertices));
 	}
 	
 	private void renderText() {
 		
-		if (numVertices > 0) {
+		if (numTextVertices > 0) {
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
             textVertices.flip();
             textVao.bind();
@@ -251,9 +256,9 @@ public class RenderEngine {
             textVbo.bind(GL_ARRAY_BUFFER);
             textVbo.uploadSubData(GL_ARRAY_BUFFER, 0, textVertices);
             /* Draw batch */
-            glDrawArrays(GL_TRIANGLES, 0, numVertices);
+            glDrawArrays(GL_TRIANGLES, 0, numTextVertices);
             /* Clear vertex data for next batch */
-            numVertices = 0;
+            numTextVertices = 0;
         }
 		
 		textVertices.clear();
@@ -288,7 +293,7 @@ public class RenderEngine {
         textVertices.put(x2).put(y2).put(r).put(g).put(b).put(s2).put(t2);
         textVertices.put(x2).put(y1).put(r).put(g).put(b).put(s2).put(t1);
 	
-        numVertices += 6;
+        numTextVertices += 6;
 	}
 
 	public void print(float x, float y, Font font, String text) {

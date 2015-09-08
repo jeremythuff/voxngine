@@ -19,7 +19,6 @@ public class World implements GameObject {
 	public void init(RenderEngine renderer) {
 		
 		worldObjects.add(new Zone());
-		worldObjects.add(new Cube(10, 10, 10, 5, 5, 5));
 		worldObjects.add(new Cube(50, 10, 50, 25, 10, 25));
 	
 		worldObjects.stream().forEach(worldObject -> {		

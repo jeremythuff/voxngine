@@ -119,6 +119,9 @@ public abstract class Engine
             
             Window.queScreenMessage("DebugOverlay", new ScreenMessage("FPS: "+timer.getFPS()));
             
+            Window.queScreenMessage("DebugOverlay", new ScreenMessage("UPS: "+timer.getUPS()));
+
+            
             sync(TARGET_FPS); 
                      
             int error = glGetError();

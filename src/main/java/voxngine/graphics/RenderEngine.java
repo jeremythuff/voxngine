@@ -86,7 +86,8 @@ public class RenderEngine {
 		textVbo = new Vbo();
 		
 		 /* Create FloatBuffer */
-        textVertices = BufferUtils.createFloatBuffer(4096);
+		//We need to flush the render when we exceed this buffers capacity
+        textVertices = BufferUtils.createFloatBuffer(4096*2);
 
         textVao.bind();
         

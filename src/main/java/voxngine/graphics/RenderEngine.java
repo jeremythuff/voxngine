@@ -130,6 +130,10 @@ public class RenderEngine {
         });
 	}
 	
+	public void renderText() {
+		
+	}
+	
 	public Camera getCamera() {
 		return this.cam;
 	}

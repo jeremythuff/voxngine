@@ -37,6 +37,7 @@ public abstract class Engine
     public double timer = 0;
 	public int frames = 0;
 	public int fps;
+	public int ups;
 	
 	private RenderEngine renderer;
 	private Controlls controlls;
@@ -52,8 +53,6 @@ public abstract class Engine
     	
         renderer = new RenderEngine();
         controlls = new Controlls();
-       
-
         
     }
 
@@ -105,6 +104,7 @@ public abstract class Engine
             
             glViewport(0, 0, Window.WIDTH, Window.HEIGHT);
             // Clear the screen
+           
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             
             render(renderer);

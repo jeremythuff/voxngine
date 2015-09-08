@@ -57,14 +57,14 @@ public class Game extends Engine {
 			}
 		}
 		
-		gameObjecs.parallelStream().forEach(gameObject -> {
+		gameObjecs.stream().forEach(gameObject -> {
 			gameObject.input(controlls);
 		});
 	}
 
 	@Override
 	public void update(float delta) {
-		gameObjecs.parallelStream().forEach(gameObject -> {
+		gameObjecs.stream().forEach(gameObject -> {
 			gameObject.update(delta);
 		});
 	}
@@ -77,7 +77,7 @@ public class Game extends Engine {
 		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
-		gameObjecs.parallelStream().forEach(gameObject -> {
+		gameObjecs.stream().forEach(gameObject -> {
 			gameObject.render(renderer);
 		});
 		
@@ -86,7 +86,7 @@ public class Game extends Engine {
 	@Override
 	public void dispose() {
 		System.out.println("Shutting down...");
-		gameObjecs.parallelStream().forEach(gameObject -> {
+		gameObjecs.stream().forEach(gameObject -> {
 			gameObject.dispose();
 		});
 		System.out.println("Game Ended!");

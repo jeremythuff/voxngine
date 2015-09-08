@@ -21,6 +21,8 @@ public class Gui implements GameObject {
 			guiObject.init(renderer);
 		});
 		
+		renderer.initText();
+		
 	}
 
 	public void update(float delta) {

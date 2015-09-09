@@ -5,8 +5,6 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.stb.STBTruetype.stbtt_GetPackedQuad;
-import static org.lwjgl.opengl.GL11.glDrawElements;
-
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -43,7 +41,6 @@ public class RenderEngine {
     
     private FloatBuffer textVertices;
 	
-	private Map<Integer, FloatBuffer> bufferMap = new HashMap<Integer, FloatBuffer>();
 	private Map<Integer, Vao> vaos = new HashMap<Integer, Vao>();
 	
 	private List<Map<String, RenderObject>> rbos = new ArrayList<Map<String, RenderObject>>();

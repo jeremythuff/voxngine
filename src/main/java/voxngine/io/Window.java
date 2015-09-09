@@ -31,7 +31,7 @@ public class Window {
 	
 	private Window(String name) {
 		
-		this.name = name;
+		Window.name = name;
 		
 		if (glfwInit() != GL_TRUE)
         {

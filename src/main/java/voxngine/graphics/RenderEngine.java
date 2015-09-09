@@ -62,10 +62,6 @@ public class RenderEngine {
 	private final FloatBuffer      xb = BufferUtils.createFloatBuffer(1);
 	private final FloatBuffer      yb = BufferUtils.createFloatBuffer(1);
 	
-	public void queBuffer(int entityCount, FloatBuffer buffer) {
-		bufferMap.put(entityCount, buffer);
-	}
-	
 	public void queRenderObjec(int entityCount, FloatBuffer verticesBuffer, IntBuffer entityBuffer) {
 				
 		Vao vao = new Vao();

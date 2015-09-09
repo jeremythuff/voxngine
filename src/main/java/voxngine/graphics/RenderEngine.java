@@ -224,7 +224,9 @@ public class RenderEngine {
 	
 	private void render3d() {
 
+		
 		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_CULL_FACE);
 		
 		if(wireframe) {
 			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -249,9 +251,6 @@ public class RenderEngine {
             
             shaderProgram.unbind();
             vao.unbind();
-                        
-            glDisableVertexAttribArray(0);
-    		glDisableVertexAttribArray(1);
             
             num3DVertices+=(36*vao.getCount());
 			
@@ -263,8 +262,9 @@ public class RenderEngine {
 	private void renderText() {
 		
 		if (numTextVertices > 0) {
+			glDisable(GL_CULL_FACE);
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-            textVertices.flip();
+			textVertices.flip();
             textVao.bind();
             textShaderProgram.bind();
             /* Upload the new vertex data */

@@ -14,12 +14,13 @@ public class CubeGeometry {
 		int stride = 8*index;
 		 
 		int indices[] = { 
-			stride+0, stride+1, stride+2, stride+3, stride+2, stride+1, // Front face
-			stride+1, stride+4, stride+3, stride+3, stride+5, stride+4, // Right face
-			stride+4, stride+6, stride+5, stride+5, stride+7, stride+6, // Back face
-			stride+6, stride+0, stride+7, stride+7, stride+2, stride+0, // Left face
-			stride+6, stride+4, stride+0, stride+0, stride+1, stride+4, // Top face
-			stride+7, stride+5, stride+2, stride+2, stride+3, stride+5  // Bottom face
+			stride+0, stride+1, stride+3, stride+0, stride+3, stride+2, // Front face
+			stride+1, stride+5, stride+7, stride+1, stride+7, stride+3, // Right face
+			stride+5, stride+4, stride+6, stride+5, stride+6, stride+7, // Back face
+			stride+4, stride+0, stride+2, stride+4, stride+2, stride+6, // Left face
+			stride+4, stride+5, stride+1, stride+4, stride+1, stride+0,  // Bottom face,
+			stride+2, stride+3, stride+7, stride+2, stride+7, stride+6 // Top face
+			
 		};
 		 
 		return indices;
@@ -77,14 +78,14 @@ public class CubeGeometry {
 	    
 	    
 	    float vertices[] = {
+		    posX, posY, posZ,		topRed, topGreen, topBlue, topAlpha, //top front right
 	    	negX, posY, posZ,		topRed, topGreen, topBlue, topAlpha, //top front left
-	    	posX, posY, posZ,		topRed, topGreen, topBlue, topAlpha, //top front right
-			negX, negY, posZ,		botRed, botGreen, botBlue, botAlpha, //bottom front left
 			posX, negY, posZ,		botRed, botGreen, botBlue, botAlpha, // bottom front right
+	    	negX, negY, posZ,		botRed, botGreen, botBlue, botAlpha, //bottom front left
 			posX, posY, negZ,		topRed, topGreen, topBlue, topAlpha, // top back right
+	    	negX, posY, negZ,		topRed, topGreen, topBlue, topAlpha, // top back left
 			posX, negY, negZ,		botRed, botGreen, botBlue, botAlpha, // bottom back right
-			negX, posY, negZ,		topRed, topGreen, topBlue, topAlpha, // top back left
-			negX, negY, negZ,		botRed, botGreen, botBlue, botAlpha, // bottom back right
+			negX, negY, negZ,		botRed, botGreen, botBlue, botAlpha, // bottom back left
 		};
 	    
 		return vertices;

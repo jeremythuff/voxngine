@@ -109,9 +109,7 @@ public class RenderEngine {
 		rboMap.put("VAO", vao);
 		rboMap.put("VBO", vbo);
 		rboMap.put("EBO", ebo);
-		
-		System.out.println("foo");
-		
+				
 		rbos.add(rboMap);		
 	}
 	

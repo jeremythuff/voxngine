@@ -2,9 +2,10 @@ package voxngine.graphics;
 
 import static org.lwjgl.opengl.GL30.*;
 
-public class Vao {
+public class Vao implements RenderObject {
 
 	private int id;
+	private int count;
 	
 	public Vao() {
 		id = glGenVertexArrays();
@@ -24,6 +25,14 @@ public class Vao {
 	
 	public int getID() {
 		return id;
+	}
+	
+	public int getCount() {
+		return count;
+	}
+	
+	public void setCount(int count) {
+		this.count = count;
 	}
 
 }

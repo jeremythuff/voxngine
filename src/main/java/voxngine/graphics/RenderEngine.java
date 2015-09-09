@@ -10,7 +10,9 @@ import static org.lwjgl.opengl.GL11.glDrawElements;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.joml.Matrix4f;
@@ -37,12 +39,14 @@ public class RenderEngine {
 	private int num3DVertices;
 		
     private Vao textVao;
-    private Vbo textVbo;
+    private Rbo textVbo;
     
     private FloatBuffer textVertices;
 	
 	private Map<Integer, FloatBuffer> bufferMap = new HashMap<Integer, FloatBuffer>();
 	private Map<Integer, Vao> vaos = new HashMap<Integer, Vao>();
+	
+	private List<Map<String, RenderObject>> rbos = new ArrayList<Map<String, RenderObject>>();
 	
 	private ShaderProgram textShaderProgram;
 	private ShaderProgram shaderProgram;
@@ -62,7 +66,60 @@ public class RenderEngine {
 		bufferMap.put(entityCount, buffer);
 	}
 	
-	public void initVbos() {
+	public void queRenderObjec(int entityCount, FloatBuffer verticesBuffer, IntBuffer entityBuffer) {
+				
+		Vao vao = new Vao();
+		vao.setCount(entityCount);
+		vao.bind();
+		
+		// Create a Buffer Object and upload the vertices buffer   
+        Rbo vbo = new Rbo(GL_ARRAY_BUFFER);
+        vbo.bind();
+        vbo.uploadData(verticesBuffer, GL_STATIC_DRAW);
+        vbo.setCount(entityCount);
+        
+        // Create a Buffer Object and upload the vertices buffer   
+        Rbo ebo = new Rbo(GL_ELEMENT_ARRAY_BUFFER);
+        ebo.bind();
+        ebo.uploadData(entityBuffer, GL_STATIC_DRAW);
+        ebo.setCount(entityCount);
+        
+        // The size of float, in bytes (will be 4)
+        final int sizeOfFloat = Float.SIZE / Byte.SIZE;
+
+        // The sizes of the vertex and color components
+        final int vertexSize = 3 * sizeOfFloat;
+        final int colorSize  = 4 * sizeOfFloat;
+
+        // The 'stride' is the sum of the sizes of individual components
+        final int stride = vertexSize + colorSize;
+
+        // The 'offset is the number of bytes from the start of the tuple
+        final long offsetPosition = 0;
+        final long offsetColor    = 3 * sizeOfFloat;
+        
+        // Setup pointers using 'stride' and 'offset' we calculated above
+        glVertexAttribPointer(0, 3, GL_FLOAT, false, stride, offsetPosition);
+        glVertexAttribPointer(1, 4, GL_FLOAT, false, stride, offsetColor);
+
+		 // Enable the vertex attribute locations
+        glEnableVertexAttribArray(0);
+        glEnableVertexAttribArray(1);
+        
+        vao.unbind();
+		
+		Map<String, RenderObject> rboMap = new HashMap<String, RenderObject>();
+		
+		rboMap.put("VAO", vao);
+		rboMap.put("VBO", vbo);
+		rboMap.put("EBO", ebo);
+		
+		System.out.println("foo");
+		
+		rbos.add(rboMap);		
+	}
+	
+	public void initShaders() {
 		
 		shaderProgram = new ShaderProgram();
         
@@ -80,13 +137,13 @@ public class RenderEngine {
 		
 		cam.init();
 		
-		buildVbos();
+		//buildVbos();
 	}
 	
 	public void initText() {
 		textVao = new Vao();
 		
-		textVbo = new Vbo();
+		textVbo = new Rbo(GL_ARRAY_BUFFER);
 		
 		 /* Create FloatBuffer */
 		//We need to flush the render when we exceed this buffers capacity
@@ -96,8 +153,8 @@ public class RenderEngine {
         
         /* Upload null data to allocate storage for the VBO */
         long size = textVertices.capacity() * Float.BYTES;
-        textVbo.bind(GL_ARRAY_BUFFER);
-        textVbo.uploadData(GL_ARRAY_BUFFER, size, GL_DYNAMIC_DRAW);
+        textVbo.bind();
+        textVbo.uploadData(size, GL_DYNAMIC_DRAW);
         
         /* Initialize variables */
         numTextVertices = 0;
@@ -151,70 +208,6 @@ public class RenderEngine {
         		
 	}
 	
-	public void updateVbos() {
-		buildVbos();
-	}
-	
-	private void buildVbos() {
-		
-		bufferMap.keySet().stream().forEach(key -> {
-			
-			FloatBuffer buffer = bufferMap.get(key);
-			
-			Vao vao = new Vao();
-			vao.bind();
-			vaos.put(key, vao);
-			vao.bind();
-			
-			// Create a Buffer Object and upload the vertices buffer   
-	        Vbo vbo = new Vbo();
-	        vbo.bind(GL_ARRAY_BUFFER);
-	        vbo.uploadData(GL_ARRAY_BUFFER, buffer, GL_STATIC_DRAW);
-	        
-	        IntBuffer eboBuffer = BufferUtils.createIntBuffer(36);
-	        eboBuffer.put(new int[] { 
-	        	0, 1, 2, 3, 2, 1, // Front face
-	        	1, 4, 3, 3, 5, 4, // Right face
-	        	4, 6, 5, 5, 7, 6, // Back face
-	        	6, 0, 7, 7, 2, 0, // Left face
-	        	6, 4, 0, 0, 1, 4, // Top face
-	        	7, 5, 2, 2, 3, 5 // Bottom face
-			});
-	        eboBuffer.flip();
-	        
-	        // Create a Buffer Object and upload the vertices buffer   
-	        Vbo ebo = new Vbo();
-	        ebo.bind(GL_ELEMENT_ARRAY_BUFFER);
-	        ebo.uploadData(GL_ELEMENT_ARRAY_BUFFER, eboBuffer, GL_STATIC_DRAW);
-	        
-	        // The size of float, in bytes (will be 4)
-	        final int sizeOfFloat = Float.SIZE / Byte.SIZE;
-
-	        // The sizes of the vertex and color components
-	        final int vertexSize = 3 * sizeOfFloat;
-	        final int colorSize  = 4 * sizeOfFloat;
-
-	        // The 'stride' is the sum of the sizes of individual components
-	        final int stride = vertexSize + colorSize;
-
-	        // The 'offset is the number of bytes from the start of the tuple
-	        final long offsetPosition = 0;
-	        final long offsetColor    = 3 * sizeOfFloat;
-	        
-	        // Setup pointers using 'stride' and 'offset' we calculated above
-	        glVertexAttribPointer(0, 3, GL_FLOAT, false, stride, offsetPosition);
-	        glVertexAttribPointer(1, 4, GL_FLOAT, false, stride, offsetColor);
-
-			 // Enable the vertex attribute locations
-	        glEnableVertexAttribArray(0);
-	        glEnableVertexAttribArray(1);
-	        
-	        vao.unbind();
-			
-		});
-		
-	}
-	
 	public void input(Controlls controlls) {
 		cam.input(controlls);
 		
@@ -251,23 +244,27 @@ public class RenderEngine {
 		FloatBuffer fb = cam.getMVMatrix();
 		
 		num3DVertices=0;
-		bufferMap.keySet().stream().forEach(entityCount -> {
-			vaos.get(entityCount).bind();
+		
+		rbos.stream().forEach(rboMap -> {
+			
+			Vao vao = (Vao) rboMap.get("VAO");
+			
+			vao.bind();
 			
             shaderProgram.bind();
             
             glUniformMatrix4fv(matLocation, false, fb);
-            glDrawElements(GL_TRIANGLES, 36*entityCount, GL_UNSIGNED_INT, num3DVertices);
-            //glDrawArrays(GL_TRIANGLES, 0, 36*entityCount);//
+            glDrawElements(GL_TRIANGLES, 36*vao.getCount(), GL_UNSIGNED_INT, num3DVertices);
             
             shaderProgram.unbind();
-            vaos.get(entityCount).unbind();
-            
+            vao.unbind();
+                        
             glDisableVertexAttribArray(0);
     		glDisableVertexAttribArray(1);
             
-            num3DVertices+=(36*entityCount);
-        });
+            num3DVertices+=(36*vao.getCount());
+			
+		});
 		
 		Window.queScreenMessage("DebugOverlay", new ScreenMessage("Verts: "+num3DVertices));
 	}
@@ -280,8 +277,8 @@ public class RenderEngine {
             textVao.bind();
             textShaderProgram.bind();
             /* Upload the new vertex data */
-            textVbo.bind(GL_ARRAY_BUFFER);
-            textVbo.uploadSubData(GL_ARRAY_BUFFER, 0, textVertices);
+            textVbo.bind();
+            textVbo.uploadSubData(0, textVertices);
             /* Draw batch */
             glDrawArrays(GL_TRIANGLES, 0, numTextVertices);
             /* Clear vertex data for next batch */
@@ -296,7 +293,14 @@ public class RenderEngine {
 	}
 	
 	public void dispose() {
-		 for(int key : vaos.keySet()) { 
+		 
+		rbos.stream().forEach(rbo -> {
+			((Vao) rbo.get("VAO")).unbind();
+			((Rbo) rbo.get("VBO")).unbind();
+			((Rbo) rbo.get("EBO")).unbind();
+		});
+		
+		for(int key : vaos.keySet()) { 
 			 vaos.get(key).delete();
 		 }
 		if(shaderProgram!=null)shaderProgram.delete();
@@ -327,7 +331,7 @@ public class RenderEngine {
 		print(x, y, font, text, new Vector3f(1f,1f,1f));
 	}
 
-	public void print(float x, float y, Font font, String text, Vector3f vector3f) {
+	public void print(float x, float y, Font font, String text, Vector3f color) {
 		xb.put(0, x);
 		yb.put(0, y);
 
@@ -340,7 +344,7 @@ public class RenderEngine {
 			drawBoxTC(
 				q.getX0(), q.getY0(), q.getX1(), q.getY1(),
 				q.getS0(), q.getT0(), q.getS1(), q.getT1(),
-				vector3f
+				color
 			);
 		}
 	}

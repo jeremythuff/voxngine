@@ -35,28 +35,40 @@ import static org.lwjgl.opengl.GL15.*;
  *
  * @author Heiko Brumme
  */
-public class Vbo {
-
+public class Rbo implements RenderObject {
+	
     /**
-     * Stores the handle of the VBO.
+     * Stores the handle of the RBO.
      */
     private final int id;
-
+    
+    private final int target;
+    
     /**
-     * Creates a Vertex Buffer Object (VBO).
+     * Stores the number of vertices or indices in the RBO.
      */
-    public Vbo() {
+	private int count;
+	
+    /**
+     * Creates a Vertex Buffer Object (RBO).
+     */
+    public Rbo(int target) {
         id = glGenBuffers();
+        this.target = target;
     }
 
     /**
-     * Binds this VBO with specified target. The target in the tutorial should
+     * Binds this RBO with specified target. The target in the tutorial should
      * be <code>GL_ARRAY_BUFFER</code> most of the time.
      *
      * @param target Target to bind
      */
-    public void bind(int target) {
+    public void bind() {
         glBindBuffer(target, id);
+    }
+    
+    public void unbind() {
+    	glBindBuffer(target, 0);
     }
     
     /**
@@ -68,25 +80,25 @@ public class Vbo {
      * @param data Buffer with the data to upload
      * @param usage Usage of the data
      */
-    public void uploadData(int target, FloatBuffer data, int usage) {
+    public void uploadData(FloatBuffer data, int usage) {
         glBufferData(target, data, usage);
     }
 
     /**
-     * Upload null data to this VBO with specified target, size and usage. The
+     * Upload null data to this RBO with specified target, size and usage. The
      * target in the tutorial should be <code>GL_ARRAY_BUFFER</code> and usage
      * should be <code>GL_STATIC_DRAW</code> most of the time.
      *
      * @param target Target to upload
-     * @param size Size in bytes of the VBO data store
+     * @param size Size in bytes of the RBO data store
      * @param usage Usage of the data
      */
-    public void uploadData(int target, long size, int usage) {
+    public void uploadData(long size, int usage) {
         glBufferData(target, size, usage);
     }
 
     /**
-     * Upload sub data to this VBO with specified target, offset and data. The
+     * Upload sub data to this RBO with specified target, offset and data. The
      * target in the tutorial should be <code>GL_ARRAY_BUFFER</code> most of the
      * time.
      *
@@ -94,12 +106,12 @@ public class Vbo {
      * @param offset Offset where the data should go in bytes
      * @param data Buffer with the data to upload
      */
-    public void uploadSubData(int target, long offset, FloatBuffer data) {
+    public void uploadSubData(long offset, FloatBuffer data) {
         glBufferSubData(target, offset, data);
     }
 
     /**
-     * Upload element data to this EBO with specified target, data and usage.
+     * Upload element data to this RBO with specified target, data and usage.
      * The target in the tutorial should be <code>GL_ELEMENT_ARRAY_BUFFER</code>
      * and usage should be <code>GL_STATIC_DRAW</code> most of the time.
      *
@@ -107,7 +119,7 @@ public class Vbo {
      * @param data Buffer with the data to upload
      * @param usage Usage of the data
      */
-    public void uploadData(int target, IntBuffer data, int usage) {
+    public void uploadData(IntBuffer data, int usage) {
         glBufferData(target, data, usage);
     }
 
@@ -121,9 +133,17 @@ public class Vbo {
     /**
      * Getter for the Vertex Buffer Object ID.
      *
-     * @return Handle of the VBO
+     * @return Handle of the RBO
      */
     public int getID() {
         return id;
+    }
+    
+    public int getCount() {
+    	return count;
+    }
+    
+    public void setCount(int count) {
+    	this.count = count;
     }
 }

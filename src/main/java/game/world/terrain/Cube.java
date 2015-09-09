@@ -1,6 +1,7 @@
 package game.world.terrain;
 
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 
 import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
@@ -44,20 +45,29 @@ public class Cube implements WorldObject {
         CubeGeometry cubeGeo = new CubeGeometry();
         int geoLength = cubeGeo.getVertices(new Vector3f(0,0,0)).length;
         
-        FloatBuffer interleavedBuffer = BufferUtils.createFloatBuffer(totalCubes*geoLength);
+        FloatBuffer vertBuffer = BufferUtils.createFloatBuffer(totalCubes*geoLength);
+        IntBuffer indecesBuffer = BufferUtils.createIntBuffer(totalCubes*36);
         
+        int index = 0;
         for(float x=0 ; x < (float)xCubes ; x++) {
         	for (float y=0 ; y < (float)yCubes ; y++) {
         		for (float z=0; z < (float)zCubes ; z++) {
+        			
         			float[] vertices = cubeGeo.getVertices(new Vector3f((x-xOrigin),(y-yOrigin),(z-zOrigin)));
-        	        interleavedBuffer.put(vertices);
+        	        vertBuffer.put(vertices);
+        		
+        	        int[] indeces = cubeGeo.getIndices(index);
+        	        indecesBuffer.put(indeces);
+        	        index++;
+        	        
         		}
         	}
         }
         
-        interleavedBuffer.flip();
+        vertBuffer.flip();        
+        indecesBuffer.flip(); 
         
-        renderer.queBuffer(totalCubes, interleavedBuffer);
+        renderer.queRenderObjec(totalCubes, vertBuffer, indecesBuffer);
         
 	}
 		

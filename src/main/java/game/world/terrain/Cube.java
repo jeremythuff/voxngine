@@ -42,14 +42,14 @@ public class Cube implements WorldObject {
 	public void init(RenderEngine renderer) {
 		
         CubeGeometry cubeGeo = new CubeGeometry();
-        int geoLength = cubeGeo.getGeometry(new Vector3f(0,0,0)).length;
+        int geoLength = cubeGeo.getVertices(new Vector3f(0,0,0)).length;
         
         FloatBuffer interleavedBuffer = BufferUtils.createFloatBuffer(totalCubes*geoLength);
         
         for(float x=0 ; x < (float)xCubes ; x++) {
         	for (float y=0 ; y < (float)yCubes ; y++) {
         		for (float z=0; z < (float)zCubes ; z++) {
-        			float[] vertices = cubeGeo.getGeometry(new Vector3f((x-xOrigin),(y-yOrigin),(z-zOrigin)));
+        			float[] vertices = cubeGeo.getVertices(new Vector3f((x-xOrigin),(y-yOrigin),(z-zOrigin)));
         	        interleavedBuffer.put(vertices);
         		}
         	}

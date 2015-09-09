@@ -5,8 +5,11 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.stb.STBTruetype.stbtt_GetPackedQuad;
+import static org.lwjgl.opengl.GL11.glDrawElements;
+
 
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -168,6 +171,22 @@ public class RenderEngine {
 	        vbo.bind(GL_ARRAY_BUFFER);
 	        vbo.uploadData(GL_ARRAY_BUFFER, buffer, GL_STATIC_DRAW);
 	        
+	        IntBuffer eboBuffer = BufferUtils.createIntBuffer(36);
+	        eboBuffer.put(new int[] { 
+	        	0, 1, 2, 3, 2, 1, // Front face
+	        	1, 4, 3, 3, 5, 4, // Right face
+	        	4, 6, 5, 5, 7, 6, // Back face
+	        	6, 0, 7, 7, 2, 0, // Left face
+	        	6, 4, 0, 0, 1, 4, // Top face
+	        	7, 5, 2, 2, 3, 5 // Bottom face
+			});
+	        eboBuffer.flip();
+	        
+	        // Create a Buffer Object and upload the vertices buffer   
+	        Vbo ebo = new Vbo();
+	        ebo.bind(GL_ELEMENT_ARRAY_BUFFER);
+	        ebo.uploadData(GL_ELEMENT_ARRAY_BUFFER, eboBuffer, GL_STATIC_DRAW);
+	        
 	        // The size of float, in bytes (will be 4)
 	        final int sizeOfFloat = Float.SIZE / Byte.SIZE;
 
@@ -186,11 +205,11 @@ public class RenderEngine {
 	        glVertexAttribPointer(0, 3, GL_FLOAT, false, stride, offsetPosition);
 	        glVertexAttribPointer(1, 4, GL_FLOAT, false, stride, offsetColor);
 
-	        // Enable the vertex attribute locations
+			 // Enable the vertex attribute locations
 	        glEnableVertexAttribArray(0);
 	        glEnableVertexAttribArray(1);
+	        
 	        vao.unbind();
-	        //break;
 			
 		});
 		
@@ -234,11 +253,19 @@ public class RenderEngine {
 		num3DVertices=0;
 		bufferMap.keySet().stream().forEach(entityCount -> {
 			vaos.get(entityCount).bind();
+			
             shaderProgram.bind();
+            
             glUniformMatrix4fv(matLocation, false, fb);
-        	glDrawArrays(GL_TRIANGLES, 0, 36*entityCount);
+            glDrawElements(GL_TRIANGLES, 36*entityCount, GL_UNSIGNED_INT, num3DVertices);
+            //glDrawArrays(GL_TRIANGLES, 0, 36*entityCount);//
+            
             shaderProgram.unbind();
             vaos.get(entityCount).unbind();
+            
+            glDisableVertexAttribArray(0);
+    		glDisableVertexAttribArray(1);
+            
             num3DVertices+=(36*entityCount);
         });
 		

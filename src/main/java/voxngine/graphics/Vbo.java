@@ -26,6 +26,7 @@ package voxngine.graphics;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.nio.ShortBuffer;
 
 import static org.lwjgl.opengl.GL15.*;
 

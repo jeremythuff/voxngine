@@ -111,6 +111,9 @@ public abstract class Engine
            
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             
+            
+            sync(TARGET_FPS); 
+
             render(renderer);
             renderer.render();
             timer.updateFPS();
@@ -122,7 +125,6 @@ public abstract class Engine
             Window.queScreenMessage("DebugOverlay", new ScreenMessage("UPS: "+timer.getUPS()));
 
             
-            sync(TARGET_FPS); 
                      
             int error = glGetError();
     		if (error != GL_NO_ERROR)

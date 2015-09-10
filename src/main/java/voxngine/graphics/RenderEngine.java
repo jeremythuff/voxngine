@@ -8,9 +8,7 @@ import static org.lwjgl.stb.STBTruetype.stbtt_GetPackedQuad;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.joml.Matrix4f;
@@ -41,9 +39,10 @@ public class RenderEngine {
     
     private FloatBuffer textVertices;
 	
-	private Map<Integer, Vao> vaos = new HashMap<Integer, Vao>();
-	
-	private List<Map<String, RenderObject>> rbos = new ArrayList<Map<String, RenderObject>>();
+    
+    private Map<Integer, Map<String, RenderObject>> renderObjects = new HashMap<Integer, Map<String, RenderObject>>();
+    
+	//private List<Map<String, RenderObject>> rbos = new ArrayList<Map<String, RenderObject>>();
 	
 	private ShaderProgram textShaderProgram;
 	private ShaderProgram shaderProgram;
@@ -59,8 +58,25 @@ public class RenderEngine {
 	private final FloatBuffer      xb = BufferUtils.createFloatBuffer(1);
 	private final FloatBuffer      yb = BufferUtils.createFloatBuffer(1);
 	
-	public void queRenderObjec(int entityCount, FloatBuffer verticesBuffer, IntBuffer entityBuffer) {
+	public int registerRenderObject(int entityCount, FloatBuffer verticesBuffer, IntBuffer entityBuffer) {
 				
+		Map<String, RenderObject> roMap = buildRenderObject(entityCount, verticesBuffer, entityBuffer);
+		
+		int id = renderObjects.size();
+		
+		renderObjects.put(id, roMap);
+				
+		return id;
+	}
+	
+	public void updateRenderObject(int id, int entityCount, FloatBuffer verticesBuffer, IntBuffer entityBuffer) {
+		Map<String, RenderObject> newRoMap = buildRenderObject(entityCount, verticesBuffer, entityBuffer);
+		renderObjects.replace(id, renderObjects.get(id), newRoMap);
+	}
+
+	
+	private Map<String, RenderObject> buildRenderObject(int entityCount, FloatBuffer verticesBuffer, IntBuffer entityBuffer) {
+		
 		Vao vao = new Vao();
 		vao.setCount(entityCount);
 		vao.bind();
@@ -68,13 +84,13 @@ public class RenderEngine {
 		// Create a Buffer Object and upload the vertices buffer   
         Rbo vbo = new Rbo(GL_ARRAY_BUFFER);
         vbo.bind();
-        vbo.uploadData(verticesBuffer, GL_STATIC_DRAW);
+        vbo.uploadData(verticesBuffer, GL_DYNAMIC_DRAW);
         vbo.setCount(entityCount);
         
         // Create a Buffer Object and upload the vertices buffer   
         Rbo ebo = new Rbo(GL_ELEMENT_ARRAY_BUFFER);
         ebo.bind();
-        ebo.uploadData(entityBuffer, GL_STATIC_DRAW);
+        ebo.uploadData(entityBuffer, GL_DYNAMIC_DRAW);
         ebo.setCount(entityCount);
         
         // The size of float, in bytes (will be 4)
@@ -106,8 +122,8 @@ public class RenderEngine {
 		rboMap.put("VAO", vao);
 		rboMap.put("VBO", vbo);
 		rboMap.put("EBO", ebo);
-				
-		rbos.add(rboMap);		
+		
+		return rboMap;
 	}
 	
 	public void initShaders() {
@@ -238,7 +254,7 @@ public class RenderEngine {
 		
 		num3DVertices=0;
 		
-		rbos.stream().forEach(rboMap -> {
+		renderObjects.values().stream().forEach(rboMap -> {
 			
 			Vao vao = (Vao) rboMap.get("VAO");
 			
@@ -285,15 +301,12 @@ public class RenderEngine {
 	
 	public void dispose() {
 		 
-		rbos.stream().forEach(rbo -> {
+		renderObjects.values().stream().forEach(rbo -> {
 			((Vao) rbo.get("VAO")).unbind();
 			((Rbo) rbo.get("VBO")).unbind();
 			((Rbo) rbo.get("EBO")).unbind();
 		});
 		
-		for(int key : vaos.keySet()) { 
-			 vaos.get(key).delete();
-		 }
 		if(shaderProgram!=null)shaderProgram.delete();
 		
 		textVao.delete();

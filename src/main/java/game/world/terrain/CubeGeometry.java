@@ -39,11 +39,11 @@ public class CubeGeometry {
 	    
 	    float negZ = -cubeSize+coords.z;
 	    float posZ = cubeSize+coords.z;
-//		
-//		Random rand = new Random();
-//
-//		int  n = rand.nextInt(6) + 1;
-//	    
+		
+		Random rand = new Random();
+
+		int  n = rand.nextInt(6) + 1;
+	    
 //	    Vector4f topColor = new Vector4f(0.0f, 0.6f, 0.0f, 1.0f);
 //	    
 //	    switch(n) {
@@ -62,30 +62,16 @@ public class CubeGeometry {
 //	    }
 //	    
 //	    Vector4f bottomColor = topColor;
-	    
-	    float topRed = topColor.x;
-	    float topGreen = topColor.y;
-	    float topBlue = topColor.z;
-	    float topAlpha = topColor.w;
-	    
-	    float botRed = bottomColor.x;
-	    float botGreen = bottomColor.y;
-	    float botBlue = bottomColor.z;
-	    float botAlpha = bottomColor.w;
-
 		
-		
-	    
-	    
 	    float vertices[] = {
-		    posX, posY, posZ,		topRed, topGreen, topBlue, topAlpha, //top front right
-	    	negX, posY, posZ,		topRed, topGreen, topBlue, topAlpha, //top front left
-			posX, negY, posZ,		botRed, botGreen, botBlue, botAlpha, // bottom front right
-	    	negX, negY, posZ,		botRed, botGreen, botBlue, botAlpha, //bottom front left
-			posX, posY, negZ,		topRed, topGreen, topBlue, topAlpha, // top back right
-	    	negX, posY, negZ,		topRed, topGreen, topBlue, topAlpha, // top back left
-			posX, negY, negZ,		botRed, botGreen, botBlue, botAlpha, // bottom back right
-			negX, negY, negZ,		botRed, botGreen, botBlue, botAlpha, // bottom back left
+		    posX, posY, posZ,		topColor.x, topColor.y, topColor.z, topColor.w, //top front right
+	    	negX, posY, posZ,		topColor.x, topColor.y, topColor.z, topColor.w, //top front left
+			posX, negY, posZ,		bottomColor.x, bottomColor.y, bottomColor.z, bottomColor.w, // bottom front right
+	    	negX, negY, posZ,		bottomColor.x, bottomColor.y, bottomColor.z, bottomColor.w, //bottom front left
+			posX, posY, negZ,		topColor.x, topColor.y, topColor.z, topColor.w, // top back right
+	    	negX, posY, negZ,		topColor.x, topColor.y, topColor.z, topColor.w, // top back left
+			posX, negY, negZ,		bottomColor.x, bottomColor.y, bottomColor.z, bottomColor.w, // bottom back right
+			negX, negY, negZ,		bottomColor.x, bottomColor.y, bottomColor.z, bottomColor.w, // bottom back left
 		};
 	    
 		return vertices;

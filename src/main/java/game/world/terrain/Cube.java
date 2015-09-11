@@ -3,19 +3,23 @@ package game.world.terrain;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_UP;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_DOWN;
 
-
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
 
 import game.world.WorldObject;
+import voxngine.graphics.Mesh;
 import voxngine.graphics.RenderEngine;
 import voxngine.io.Controlls;
 
@@ -25,9 +29,6 @@ public class Cube implements WorldObject {
 	
 	private RenderEngine renderer;
 	private int renderObjectId;
-	
-	private FloatBuffer vertBuffer;
-	private IntBuffer indecesBuffer;
 	
 	private HashSet<String> culledCoords = new HashSet<String>();
 	
@@ -41,16 +42,16 @@ public class Cube implements WorldObject {
 	private int yOrigin;
 	private int zOrigin;
 	
+	int geoLength;
+	
 	private int totalCubes;
 
 	boolean buildingBuffers = false;
 	boolean isDone = false;
-    private boolean rebuildEvent = false;
-
-
-	
-	float tick = 0;
-	
+    private boolean rebuildEvent;
+    
+    private Mesh mesh;
+		
 	public Cube(int xCubes, int yCubes, int zCubes, 
 				int xOrigin, int yOrigin, int zOrigin) {
 		
@@ -63,21 +64,34 @@ public class Cube implements WorldObject {
 		this.zOrigin = zOrigin;
 		
 		totalCubes = xCubes*yCubes*zCubes;
+		cubeGeo = new CubeGeometry();
+        geoLength = cubeGeo.getVertices(new Vector3f(0,0,0)).length;
+        
+        mesh = new Mesh();
+
 	}
 			
 	@Override
 	public void init(RenderEngine renderer) {
+     
+        mesh.setVertBuffer(BufferUtils.createFloatBuffer(totalCubes*geoLength));
+		mesh.setIndecesBuffer(BufferUtils.createIntBuffer(totalCubes*36));
+        
+		buildingBuffers = true;
+		Future<Mesh> fMesh = executor.submit(new CubeMaker(mesh));
 		
-		cubeGeo = new CubeGeometry();
-        int geoLength = cubeGeo.getVertices(new Vector3f(0,0,0)).length;
+		try {
+			mesh = fMesh.get();
+			if(mesh != null) {
+		        renderObjectId = renderer.registerRenderObject(totalCubes, mesh.getVertBuffer(), mesh.getIndecesBuffer());
+			} 
+		} catch (Exception e) {
+			System.out.println("Exception returning from callable!");
+			e.printStackTrace();
+		}
         
-        vertBuffer = BufferUtils.createFloatBuffer(totalCubes*geoLength);
-        indecesBuffer = BufferUtils.createIntBuffer(totalCubes*36);
-        
-        buildBuffers();
-        
-        renderObjectId = renderer.registerRenderObject(totalCubes, vertBuffer, indecesBuffer);
         this.renderer = renderer;
+        rebuildEvent = true;
         
 	}
 		
@@ -94,27 +108,36 @@ public class Cube implements WorldObject {
 				rebuildEvent = true;
 			}
 		}
-		
-		
 	}
 
 	@Override
 	public void update(float delta) {
 		
-		if(!buildingBuffers)  {
+		if(!buildingBuffers && rebuildEvent)  {
 			
-			buildingBuffers = true;
-			executor.submit(new Runnable() {
-				@Override
-				public void run() {
-					buildBuffers();
-					isDone = true;
-				}
-			});
+			int updated = (xCubes*yCubes*zCubes) - (culledCoords.size()/2);
+			totalCubes = updated;
+			
+			
+			BufferUtils.zeroBuffer(mesh.getVertBuffer());
+			BufferUtils.zeroBuffer(mesh.getIndecesBuffer());
+			
+			mesh.setVertBuffer(BufferUtils.createFloatBuffer(updated*geoLength));
+			mesh.setIndecesBuffer(BufferUtils.createIntBuffer(updated*36));
 	        
-	        if(isDone) {
-	        	renderer.updateRenderObject(renderObjectId, totalCubes, vertBuffer, indecesBuffer);
-	        }
+			buildingBuffers = true;
+			Future<Mesh> fMesh = executor.submit(new CubeMaker(mesh));
+			
+			try {
+				mesh = fMesh.get();
+				if(mesh != null) {
+		        	renderer.updateRenderObject(renderObjectId, totalCubes, mesh.getVertBuffer(), mesh.getIndecesBuffer());
+				} 
+			} catch (Exception e) {
+				System.out.println("Exception returning from callable!");
+				e.printStackTrace();
+			}
+	     
 		}
 	         
 	}
@@ -127,73 +150,66 @@ public class Cube implements WorldObject {
 		
 	}
 	
-	private void buildBuffers() {
+	class CubeMaker implements Callable<Mesh> {
 		
-		int geoLength = cubeGeo.getVertices(new Vector3f(0,0,0)).length;
+		private Mesh mesh;
 		
-    	int updated = (xCubes*yCubes*zCubes) - (culledCoords.size()/2);
-    	    	
-		vertBuffer = BufferUtils.createFloatBuffer(updated*geoLength);
-        indecesBuffer = BufferUtils.createIntBuffer(updated*36);
-
-        
-		Map<String, Integer> cullables = new HashMap<String, Integer>();
-		Vector3f vector = new Vector3f();
-		
-		HashSet<String> workingCulledCoords = culledCoords;
-		
-		if(rebuildEvent) {
-			culledCoords = new HashSet<String>();
+		public CubeMaker(Mesh buffers) {
+			this.mesh = buffers;
 		}
-				
-        int index = 0;
-        for(float x=0 ; x < (float)xCubes ; x++) {
 
-        	for (float y=0 ; y < (float)yCubes ; y++) {
+		@Override
+		public Mesh call() throws Exception {
+			Map<String, Integer> cullables = new HashMap<String, Integer>();
+			Vector3f vector = new Vector3f();
+			
+			HashSet<String> workingCulledCoords = culledCoords;
+			culledCoords = new HashSet<String>();
+					
+	        int index = 0;
+	        for(float x=0 ; x < (float)xCubes ; x++) {
 
-        		for (float z=0; z < (float)zCubes ; z++) {
+	        	for (float y=0 ; y < (float)yCubes ; y++) {
 
-        			Vector3f coords = new Vector3f((x-xOrigin),(y-yOrigin),(z-zOrigin));
-        			
-        			if(!workingCulledCoords.contains(coords.x+"-"+coords.y+"-"+coords.z)) {
-        				float[] vertices = cubeGeo.getVertices(coords);
-        				vertBuffer.put(vertices);
-                		
-            	        int[] indeces = cubeGeo.getIndices(index);
-            	        indecesBuffer.put(indeces);
-            	        index++;
-                	} else if(!rebuildEvent) {
-                		continue;
-                	}
-        			
-        			cullables = cullTest(cullables, vector.set((x-xOrigin),(y-yOrigin)-1,(z-zOrigin)));        			
-        			cullables = cullTest(cullables, vector.set((x-xOrigin)+1,(y-yOrigin)-1,(z-zOrigin)+1));
-        			cullables = cullTest(cullables, vector.set((x-xOrigin)+1,(y-yOrigin)-1,(z-zOrigin)-1));
-        			
-        			cullables = cullTest(cullables, vector.set((x-xOrigin)-1,(y-yOrigin)-1,(z-zOrigin)+1));
-        			cullables = cullTest(cullables, vector.set((x-xOrigin)-1,(y-yOrigin)-1,(z-zOrigin)-1));
-        			cullables = cullTest(cullables, vector.set((x-xOrigin)-1,(y-yOrigin)-1,(z-zOrigin)));
-        			
-        			cullables = cullTest(cullables, vector.set((x-xOrigin)+1,(y-yOrigin)-1,(z-zOrigin)));
-        			cullables = cullTest(cullables, vector.set((x-xOrigin),(y-yOrigin)-1,(z-zOrigin)-1));
-        			cullables = cullTest(cullables, vector.set((x-xOrigin),(y-yOrigin)-1,(z-zOrigin)+1));
-        			
-        			
-        		}
-        	}
-        }
-				
-        vertBuffer.flip();        
-        indecesBuffer.flip();
-		
-        totalCubes = updated;
-        
-        buildingBuffers = false;
-        
-        if(rebuildEvent) rebuildEvent=false;
-		
-		
-		
+	        		for (float z=0; z < (float)zCubes ; z++) {
+
+	        			vector.set((x-xOrigin),(y-yOrigin),(z-zOrigin));
+
+	        			cullables = cullTest(cullables, vector.set((x-xOrigin),(y-yOrigin)-1,(z-zOrigin)));        			
+	        			cullables = cullTest(cullables, vector.set((x-xOrigin)+1,(y-yOrigin)-1,(z-zOrigin)+1));
+	        			cullables = cullTest(cullables, vector.set((x-xOrigin)+1,(y-yOrigin)-1,(z-zOrigin)-1));
+	        			
+	        			cullables = cullTest(cullables, vector.set((x-xOrigin)-1,(y-yOrigin)-1,(z-zOrigin)+1));
+	        			cullables = cullTest(cullables, vector.set((x-xOrigin)-1,(y-yOrigin)-1,(z-zOrigin)-1));
+	        			cullables = cullTest(cullables, vector.set((x-xOrigin)-1,(y-yOrigin)-1,(z-zOrigin)));
+	        			
+	        			cullables = cullTest(cullables, vector.set((x-xOrigin)+1,(y-yOrigin)-1,(z-zOrigin)));
+	        			cullables = cullTest(cullables, vector.set((x-xOrigin),(y-yOrigin)-1,(z-zOrigin)-1));
+	        			cullables = cullTest(cullables, vector.set((x-xOrigin),(y-yOrigin)-1,(z-zOrigin)+1));
+	        			
+	        			if(!workingCulledCoords.contains(vector.x+"-"+vector.y+"-"+vector.z)) {
+	        				float[] vertices = cubeGeo.getVertices(vector);
+	        				mesh.getVertBuffer().put(vertices);
+	                		
+	            	        int[] indeces = cubeGeo.getIndices(index);
+	            	        mesh.getIndecesBuffer().put(indeces);
+	            	        index++;
+	                	} 
+	        			
+	        		}
+	        	}
+	        }
+					
+	        mesh.getVertBuffer().flip();        
+	        mesh.getIndecesBuffer().flip();
+			        
+	        buildingBuffers = false;
+	                
+	        if(rebuildEvent) rebuildEvent=false;
+	        
+	        return mesh;
+		}
+
 	}
 	
 	private Map<String, Integer> cullTest(Map<String, Integer> cullables, Vector3f vector) {

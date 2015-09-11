@@ -29,7 +29,6 @@ import voxngine.io.Window;
 public class RenderEngine {
 	
 	int count;
-	int c = 0;
 	
 	private int numTextVertices;
 	private int num3DVertices;
@@ -38,23 +37,17 @@ public class RenderEngine {
 		
     private Vao textVao;
     private Rbo textVbo;
-    
-    private FloatBuffer textVertices;	
-    
+
     private Map<Integer, Map<String, RenderObject>> renderObjects = new HashMap<Integer, Map<String, RenderObject>>();
-    
-	//private List<Map<String, RenderObject>> rbos = new ArrayList<Map<String, RenderObject>>();
-	
+    	
 	private ShaderProgram textShaderProgram;
 	private ShaderProgram shaderProgram;
 	private int matLocation;
 	
 	private Camera cam = new TPCamera();
 	static boolean wireframe;
-
 	
-	//private Font debugFont;
-	
+    private FloatBuffer textVertices;	
 	private final STBTTAlignedQuad q  = new STBTTAlignedQuad();
 	private final FloatBuffer      xb = BufferUtils.createFloatBuffer(1);
 	private final FloatBuffer      yb = BufferUtils.createFloatBuffer(1);
@@ -260,11 +253,8 @@ public class RenderEngine {
 		numEntities=0;
 		
 		renderObjects.values().stream().forEach(rboMap -> {
-			
-			
-			
 			Vao vao = (Vao) rboMap.get("VAO");
-			 int entities = vao.getCount();
+			int entities = vao.getCount();
 			
 			vao.bind();
 			

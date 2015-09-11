@@ -33,6 +33,8 @@ public class RenderEngine {
 	
 	private int numTextVertices;
 	private int num3DVertices;
+	private int numEntities;
+	private int totalOriginalEntities;
 		
     private Vao textVao;
     private Rbo textVbo;
@@ -65,6 +67,8 @@ public class RenderEngine {
 		int id = renderObjects.size();
 		
 		renderObjects.put(id, roMap);
+		
+		totalOriginalEntities += entityCount;
 				
 		return id;
 	}
@@ -154,7 +158,7 @@ public class RenderEngine {
 		
 		 /* Create FloatBuffer */
 		//We need to flush the render when we exceed this buffers capacity
-        textVertices = BufferUtils.createFloatBuffer(4096*2);
+        textVertices = BufferUtils.createFloatBuffer(4096*10);
 
         textVao.bind();
         
@@ -253,26 +257,36 @@ public class RenderEngine {
 		FloatBuffer fb = cam.getMVMatrix();
 		
 		num3DVertices=0;
+		numEntities=0;
 		
 		renderObjects.values().stream().forEach(rboMap -> {
 			
+			
+			
 			Vao vao = (Vao) rboMap.get("VAO");
+			 int entities = vao.getCount();
 			
 			vao.bind();
 			
             shaderProgram.bind();
             
             glUniformMatrix4fv(matLocation, false, fb);
-            glDrawElements(GL_TRIANGLES, 36*vao.getCount(), GL_UNSIGNED_INT, num3DVertices);
+            glDrawElements(GL_TRIANGLES, 36*entities, GL_UNSIGNED_INT, 0);
             
             shaderProgram.unbind();
             vao.unbind();
             
-            num3DVertices+=(36*vao.getCount());
+           
+            num3DVertices+=(36*entities);
+            numEntities += entities;
+            
 			
 		});
 		
+		Window.queScreenMessage("DebugOverlay", new ScreenMessage("Total Rendered Cubes: "+numEntities));
 		Window.queScreenMessage("DebugOverlay", new ScreenMessage("Verts: "+num3DVertices));
+		Window.queScreenMessage("DebugOverlay", new ScreenMessage("Total Depicted Cubes: "+totalOriginalEntities));
+
 	}
 	
 	private void renderText() {

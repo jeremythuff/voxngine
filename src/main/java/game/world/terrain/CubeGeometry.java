@@ -28,8 +28,8 @@ public class CubeGeometry {
 	
 	public float[] getVertices(Vector3f coords) {
 		
-	    //Vector4f topColor = new Vector4f(0.0f, 0.6f, 0.0f, 1.0f);
-	    //Vector4f bottomColor = new Vector4f(0.5f, 0.35f, 0.1f, 1.0f);
+	    Vector4f topColor = new Vector4f(0.0f, 0.6f, 0.0f, 1.0f);
+	    Vector4f bottomColor = new Vector4f(0.5f, 0.35f, 0.1f, 1.0f);
 	    
 	    float negX = -cubeSize+coords.x;
 	    float posX = cubeSize+coords.x;
@@ -39,29 +39,29 @@ public class CubeGeometry {
 	    
 	    float negZ = -cubeSize+coords.z;
 	    float posZ = cubeSize+coords.z;
-		
-		Random rand = new Random();
-
-		int  n = rand.nextInt(6) + 1;
-	    
-	    Vector4f topColor = new Vector4f(0.0f, 0.6f, 0.0f, 1.0f);
-	    
-	    switch(n) {
-	    	case 1: topColor = new Vector4f(0.15f, 0.7f, 0.1f, 1.0f);
-	    		break;
-	    	case 2: topColor = new Vector4f(0.25f, 0.8f, 0.1f, 1.0f);
-	    		break;
-	    	case 3: topColor = new Vector4f(0.3f, 0.9f, 0.1f, 1.0f);
-	    		break;
-	    	case 4: topColor = new Vector4f(0.35f, 0.9f, 0.1f, 1.0f);
-	    		break;
-	    	case 5: topColor = new Vector4f(0.4f, 0.8f, 0.1f, 1.0f);
-	    		break;
-	    	case 6: topColor = new Vector4f(0.45f, 0.7f, 0.1f, 1.0f);
-    			break;
-	    }
-	    
-	    Vector4f bottomColor = topColor;
+//		
+//		Random rand = new Random();
+//
+//		int  n = rand.nextInt(6) + 1;
+//	    
+//	    Vector4f topColor = new Vector4f(0.0f, 0.6f, 0.0f, 1.0f);
+//	    
+//	    switch(n) {
+//	    	case 1: topColor = new Vector4f(0.15f, 0.7f, 0.1f, 1.0f);
+//	    		break;
+//	    	case 2: topColor = new Vector4f(0.25f, 0.8f, 0.1f, 1.0f);
+//	    		break;
+//	    	case 3: topColor = new Vector4f(0.3f, 0.9f, 0.1f, 1.0f);
+//	    		break;
+//	    	case 4: topColor = new Vector4f(0.35f, 0.9f, 0.1f, 1.0f);
+//	    		break;
+//	    	case 5: topColor = new Vector4f(0.4f, 0.8f, 0.1f, 1.0f);
+//	    		break;
+//	    	case 6: topColor = new Vector4f(0.45f, 0.7f, 0.1f, 1.0f);
+//    			break;
+//	    }
+//	    
+//	    Vector4f bottomColor = topColor;
 	    
 	    float topRed = topColor.x;
 	    float topGreen = topColor.y;

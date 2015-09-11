@@ -2,13 +2,11 @@ package game.world.terrain;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
@@ -16,12 +14,10 @@ import org.lwjgl.BufferUtils;
 import game.world.WorldObject;
 import voxngine.graphics.RenderEngine;
 import voxngine.io.Controlls;
-import voxngine.io.ScreenMessage;
-import voxngine.io.Window;
 
 public class Cube implements WorldObject {
 	
-	ExecutorService executor = Executors.newSingleThreadExecutor();
+	ExecutorService executor = Executors.newFixedThreadPool(1);
 	
 	private RenderEngine renderer;
 	private int renderObjectId;
@@ -29,7 +25,7 @@ public class Cube implements WorldObject {
 	private FloatBuffer vertBuffer;
 	private IntBuffer indecesBuffer;
 	
-	private List<Vector3f> culledCoords = new ArrayList<Vector3f>();
+	private HashSet<String> culledCoords = new HashSet<String>();
 	
 	private CubeGeometry cubeGeo;
 	
@@ -48,6 +44,8 @@ public class Cube implements WorldObject {
 	boolean shrinkingZ = true;
 	
 	boolean buildingBuffers = false;
+	boolean isDone = false;
+
 	
 	float tick = 0;
 	
@@ -78,6 +76,8 @@ public class Cube implements WorldObject {
         
         renderObjectId = renderer.registerRenderObject(totalCubes, vertBuffer, indecesBuffer);
         this.renderer = renderer;
+        System.out.println(renderObjectId);
+        
 	}
 		
 	@Override
@@ -90,116 +90,105 @@ public class Cube implements WorldObject {
 		if(!buildingBuffers)  {
 			
 			buildingBuffers = true;
-			
-			Future<?> f = executor.submit(new Runnable() {
+			executor.submit(new Runnable() {
 				@Override
 				public void run() {
 					buildBuffers();
+					isDone = true;
 				}
 			});
-			
 	        
-	        
-	        //if(f.isDone()) {
-	        	System.out.println("Updating");
+	        if(isDone) {
 	        	renderer.updateRenderObject(renderObjectId, totalCubes, vertBuffer, indecesBuffer);
-	        //}
+	        }
 		}
 	         
 	}
  
 	@Override
-	public void render(RenderEngine renderer) {
-		Window.queScreenMessage("DebugOverlay", new ScreenMessage("capacity: "+vertBuffer.capacity()));
-		Window.queScreenMessage("DebugOverlay", new ScreenMessage("Building: "+buildingBuffers));
-		Window.queScreenMessage("DebugOverlay", new ScreenMessage("Total Depicted Cubes: "+totalCubes));
-		Window.queScreenMessage("DebugOverlay", new ScreenMessage("Total Rendered Cubes: "+(totalCubes-culledCoords.size())));
-
-	}
+	public void render(RenderEngine renderer) {}
 
 	@Override
 	public void dispose() {
 		
 	}
 	
-	private boolean buildBuffers() {
-		
-		System.out.println("building");
-		
-		
+	private void buildBuffers() {
 		
 		int geoLength = cubeGeo.getVertices(new Vector3f(0,0,0)).length;
 		
-    	int updated = (xCubes*yCubes*zCubes)-(culledCoords.size()/2);
-    	
+    	int updated = (xCubes*yCubes*zCubes) - (culledCoords.size()/2);
+    	    	
 		vertBuffer = BufferUtils.createFloatBuffer(updated*geoLength);
         indecesBuffer = BufferUtils.createIntBuffer(updated*36);
+
+        
+		Map<String, Integer> cullables = new HashMap<String, Integer>();
+		Vector3f vector = new Vector3f();
 		
-		int index = 0;
+		HashSet<String> workingCulledCoords = culledCoords;
+		culledCoords = new HashSet<String>();
+				
+        int index = 0;
         for(float x=0 ; x < (float)xCubes ; x++) {
+
         	for (float y=0 ; y < (float)yCubes ; y++) {
+
         		for (float z=0; z < (float)zCubes ; z++) {
-        			
+
         			Vector3f coords = new Vector3f((x-xOrigin),(y-yOrigin),(z-zOrigin));
         			
-        			if(!culledCoords.contains(coords)) {
+        			if(!workingCulledCoords.contains(coords.x+"-"+coords.y+"-"+coords.z)) {
         				float[] vertices = cubeGeo.getVertices(coords);
         				vertBuffer.put(vertices);
                 		
             	        int[] indeces = cubeGeo.getIndices(index);
             	        indecesBuffer.put(indeces);
             	        index++;
-                	} 
-        		}
-        	}
-        }
-		
-        culledCoords = new ArrayList<Vector3f>();
-		
-		Map<Vector3f, Integer> cullables = new HashMap<Vector3f, Integer>();
-		for(float x=0 ; x < (float)xCubes ; x++) {
-        	for (float y=0 ; y < (float)yCubes ; y++) {
-        		for (float z=0; z < (float)zCubes ; z++) {
+                	}
         			
-        			Vector3f candidates[] = {
-        					new Vector3f((x-xOrigin),(y-yOrigin)-1,(z-zOrigin)),
-        					new Vector3f((x-xOrigin)+1,(y-yOrigin)-1,(z-zOrigin)+1),
-        					new Vector3f((x-xOrigin)+1,(y-yOrigin)-1,(z-zOrigin)-1),
-        					new Vector3f((x-xOrigin)-1,(y-yOrigin)-1,(z-zOrigin)+1),
-        					new Vector3f((x-xOrigin)-1,(y-yOrigin)-1,(z-zOrigin)-1),
-        					new Vector3f((x-xOrigin)-1,(y-yOrigin)-1,(z-zOrigin)),
-        					new Vector3f((x-xOrigin)+1,(y-yOrigin)-1,(z-zOrigin)),
-        					new Vector3f((x-xOrigin),(y-yOrigin)-1,(z-zOrigin)-1),
-        					new Vector3f((x-xOrigin),(y-yOrigin)-1,(z-zOrigin)+1)
-        			};
+        			cullables = cullTest(cullables, vector.set((x-xOrigin),(y-yOrigin)-1,(z-zOrigin)));        			
+        			cullables = cullTest(cullables, vector.set((x-xOrigin)+1,(y-yOrigin)-1,(z-zOrigin)+1));
+        			cullables = cullTest(cullables, vector.set((x-xOrigin)+1,(y-yOrigin)-1,(z-zOrigin)-1));
         			
-        			for(Vector3f cullable : candidates) {
-        				
-        				if(cullables.get(cullable) == null) {
-        					cullables.put(cullable, 1);
-        				} else {
-        					int curentValue = cullables.get(cullable);
-        					if(curentValue > 7) {
-        						culledCoords.add(cullable);
-        					} else {
-        						cullables.replace(cullable, curentValue+=1);
-        					}
-        				}
-        			}
+        			cullables = cullTest(cullables, vector.set((x-xOrigin)-1,(y-yOrigin)-1,(z-zOrigin)+1));
+        			cullables = cullTest(cullables, vector.set((x-xOrigin)-1,(y-yOrigin)-1,(z-zOrigin)-1));
+        			cullables = cullTest(cullables, vector.set((x-xOrigin)-1,(y-yOrigin)-1,(z-zOrigin)));
+        			
+        			cullables = cullTest(cullables, vector.set((x-xOrigin)+1,(y-yOrigin)-1,(z-zOrigin)));
+        			cullables = cullTest(cullables, vector.set((x-xOrigin),(y-yOrigin)-1,(z-zOrigin)-1));
+        			cullables = cullTest(cullables, vector.set((x-xOrigin),(y-yOrigin)-1,(z-zOrigin)+1));
+        			
         			
         		}
         	}
         }
 				
-		
-        
         vertBuffer.flip();        
         indecesBuffer.flip();
-        
 		buildingBuffers = false;
-
-        return true;
-        
+		
+	}
+	
+	private Map<String, Integer> cullTest(Map<String, Integer> cullables, Vector3f vector) {
+		
+		String coords = vector.x+"-"+vector.y+"-"+vector.z;
+		
+		if(cullables.get(coords) == null) {
+			cullables.put(coords, 1);
+		} else {
+			int curentValue = cullables.get(coords);			
+			if(curentValue > 7) {
+				culledCoords.add(coords);
+			} else {
+				cullables.replace(coords, curentValue+=1);
+			}
+		}
+		
+		return cullables;
+		
 	}
 
 }
+
+

@@ -39,8 +39,7 @@ public class RenderEngine {
     private Vao textVao;
     private Rbo textVbo;
     
-    private FloatBuffer textVertices;
-	
+    private FloatBuffer textVertices;	
     
     private Map<Integer, Map<String, RenderObject>> renderObjects = new HashMap<Integer, Map<String, RenderObject>>();
     
@@ -221,13 +220,14 @@ public class RenderEngine {
 	
 	public void input(Controlls controlls) {
 		cam.input(controlls);
-		
-		if(controlls.getKeyboad().isKeyDown(GLFW_KEY_F)) {
-			if(wireframe) {
-				wireframe = false;
-			} else {
-				wireframe = true;
-			}			
+		if(controlls.getKeyboad().activeKeyEvent()) {
+			if(controlls.getKeyboad().isKeyDown(GLFW_KEY_F)) {
+				if(wireframe) {
+					wireframe = false;
+				} else {
+					wireframe = true;
+				}			
+			}
 		}
 	}
 

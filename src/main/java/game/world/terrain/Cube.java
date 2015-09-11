@@ -1,5 +1,9 @@
 package game.world.terrain;
 
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_UP;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_DOWN;
+
+
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.HashMap;
@@ -38,13 +42,11 @@ public class Cube implements WorldObject {
 	private int zOrigin;
 	
 	private int totalCubes;
-	
-	boolean shrinkingX = true;
-	boolean shrinkingY = true;
-	boolean shrinkingZ = true;
-	
+
 	boolean buildingBuffers = false;
 	boolean isDone = false;
+    private boolean rebuildEvent = false;
+
 
 	
 	float tick = 0;
@@ -81,6 +83,19 @@ public class Cube implements WorldObject {
 		
 	@Override
 	public void input(Controlls controlls) {
+		if(controlls.getKeyboad().activeKeyEvent()) {
+			if(controlls.getKeyboad().isKeyDown(GLFW_KEY_UP)) {
+				yCubes++;
+				rebuildEvent = true;
+			}
+			
+			if(controlls.getKeyboad().isKeyDown(GLFW_KEY_DOWN)) {
+				yCubes--;
+				rebuildEvent = true;
+			}
+		}
+		
+		
 	}
 
 	@Override
@@ -126,7 +141,10 @@ public class Cube implements WorldObject {
 		Vector3f vector = new Vector3f();
 		
 		HashSet<String> workingCulledCoords = culledCoords;
-		//culledCoords = new HashSet<String>();
+		
+		if(rebuildEvent) {
+			culledCoords = new HashSet<String>();
+		}
 				
         int index = 0;
         for(float x=0 ; x < (float)xCubes ; x++) {
@@ -144,7 +162,7 @@ public class Cube implements WorldObject {
             	        int[] indeces = cubeGeo.getIndices(index);
             	        indecesBuffer.put(indeces);
             	        index++;
-                	} else {
+                	} else if(!rebuildEvent) {
                 		continue;
                 	}
         			
@@ -171,6 +189,8 @@ public class Cube implements WorldObject {
         totalCubes = updated;
         
         buildingBuffers = false;
+        
+        if(rebuildEvent) rebuildEvent=false;
 		
 		
 		

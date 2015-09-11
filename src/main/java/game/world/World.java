@@ -33,9 +33,10 @@ public class World implements GameObject {
 //		worldObjects.add(new Cube(16, 16, 16, 16, -16, 0));
 //		worldObjects.add(new Cube(16, 16, 16, 0, -16, 16));
 //		worldObjects.add(new Cube(16, 16, 16, 16, -16, 16));
-		worldObjects.add(new Cube(100, 100, 100, 100, 0, 0));
-		worldObjects.add(new Cube(100, 100, 100, 0, 0, 100));
-		worldObjects.add(new Cube(100, 100, 100, 0, 0, 0));
+		worldObjects.add(new Cube(32, 16, 32, 32, 16, 0));
+		worldObjects.add(new Cube(32, 16, 32, 0, 16, 32));
+		worldObjects.add(new Cube(32, 16, 32, 0, 16, 0));
+		worldObjects.add(new Cube(32, 16, 32, 32, 16, 32));
 	
 		renderer.initShaders();
 		

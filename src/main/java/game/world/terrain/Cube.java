@@ -76,7 +76,6 @@ public class Cube implements WorldObject {
         
         renderObjectId = renderer.registerRenderObject(totalCubes, vertBuffer, indecesBuffer);
         this.renderer = renderer;
-        System.out.println(renderObjectId);
         
 	}
 		
@@ -127,7 +126,7 @@ public class Cube implements WorldObject {
 		Vector3f vector = new Vector3f();
 		
 		HashSet<String> workingCulledCoords = culledCoords;
-		culledCoords = new HashSet<String>();
+		//culledCoords = new HashSet<String>();
 				
         int index = 0;
         for(float x=0 ; x < (float)xCubes ; x++) {
@@ -145,6 +144,8 @@ public class Cube implements WorldObject {
             	        int[] indeces = cubeGeo.getIndices(index);
             	        indecesBuffer.put(indeces);
             	        index++;
+                	} else {
+                		continue;
                 	}
         			
         			cullables = cullTest(cullables, vector.set((x-xOrigin),(y-yOrigin)-1,(z-zOrigin)));        			
@@ -166,7 +167,12 @@ public class Cube implements WorldObject {
 				
         vertBuffer.flip();        
         indecesBuffer.flip();
-		buildingBuffers = false;
+		
+        totalCubes = updated;
+        
+        buildingBuffers = false;
+		
+		
 		
 	}
 	

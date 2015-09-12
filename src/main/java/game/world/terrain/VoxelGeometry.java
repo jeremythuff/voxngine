@@ -5,7 +5,7 @@ import java.util.Random;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
-public class CubeGeometry {
+public class VoxelGeometry {
 	
 	float cubeSize = 0.5f;
 	
@@ -40,7 +40,7 @@ public class CubeGeometry {
 	    float negZ = -cubeSize+coords.z;
 	    float posZ = cubeSize+coords.z;
 		
-		Random rand = new Random();
+//		Random rand = new Random();
 
 //		int  n = rand.nextInt(6) + 1;
 	    

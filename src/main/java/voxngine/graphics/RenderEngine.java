@@ -32,7 +32,7 @@ public class RenderEngine {
 	
 	private int numTextVertices;
 	private int num3DVertices;
-	private int totalOriginalEntities;
+	private int totalEntities;
 		
     private Vao textVao;
     private Rbo textVbo;
@@ -51,21 +51,27 @@ public class RenderEngine {
 	private final FloatBuffer      xb = BufferUtils.createFloatBuffer(1);
 	private final FloatBuffer      yb = BufferUtils.createFloatBuffer(1);
 	
-	public int registerRenderObject(int entityCount, FloatBuffer verticesBuffer, IntBuffer entityBuffer) {
-				
-		Map<String, RenderObject> roMap = buildRenderObject(entityCount, verticesBuffer, entityBuffer);
+	public int registerRenderObject(Mesh mesh) {
+		
+		Map<String, RenderObject> roMap = buildRenderObject(mesh.getEntityCount(), mesh.getVertBuffer(), mesh.getIndecesBuffer());
 		
 		int id = renderObjects.size();
 		
 		renderObjects.put(id, roMap);
 		
-		totalOriginalEntities += entityCount;
+		totalEntities += mesh.getEntityCount();
 				
 		return id;
 	}
 	
 	public void updateRenderObject(int id, int entityCount, FloatBuffer verticesBuffer, IntBuffer entityBuffer) {
 		Map<String, RenderObject> newRoMap = buildRenderObject(entityCount, verticesBuffer, entityBuffer);
+		renderObjects.replace(id, renderObjects.get(id), newRoMap);
+	}
+	
+	public void updateRenderObject(int id, Mesh mesh) {
+		Map<String, RenderObject> newRoMap = buildRenderObject(mesh.getEntityCount(), mesh.getVertBuffer(), mesh.getIndecesBuffer());
+		totalEntities += mesh.getEntityCount();
 		renderObjects.replace(id, renderObjects.get(id), newRoMap);
 	}
 
@@ -271,7 +277,7 @@ public class RenderEngine {
 		
 		Window.queScreenMessage("DebugOverlay", new ScreenMessage("Total Rendered Cubes: "+num3DVertices/36));
 		Window.queScreenMessage("DebugOverlay", new ScreenMessage("Verts: "+num3DVertices));
-		Window.queScreenMessage("DebugOverlay", new ScreenMessage("Total Depicted Cubes: "+totalOriginalEntities));
+		Window.queScreenMessage("DebugOverlay", new ScreenMessage("Total Depicted Cubes: "+totalEntities));
 
 	}
 	

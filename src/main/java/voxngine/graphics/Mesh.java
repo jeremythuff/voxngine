@@ -8,7 +8,9 @@ public class Mesh {
 	private FloatBuffer vertBuffer;
     private IntBuffer indecesBuffer;
     
-    public Mesh(){}
+    private int entityCount;
+    
+	public Mesh(){}
     
     public Mesh(FloatBuffer vertBuffer, IntBuffer indecesBuffer) {
     	this.vertBuffer = vertBuffer;
@@ -29,6 +31,14 @@ public class Mesh {
 
 	public void setIndecesBuffer(IntBuffer indecesBuffer) {
 		this.indecesBuffer = indecesBuffer;
+	}
+	
+	public int getEntityCount() {
+		return entityCount;
+	}
+
+	public void setEntityCount(int entityCount) {
+		this.entityCount = entityCount;
 	}
     
 }

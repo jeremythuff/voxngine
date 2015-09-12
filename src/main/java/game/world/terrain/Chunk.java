@@ -1,12 +1,11 @@
 package game.world.terrain;
 
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_UP;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_DOWN;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_UP;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -21,14 +20,10 @@ import voxngine.graphics.RenderEngine;
 import voxngine.io.Controlls;
 
 public class Chunk implements WorldObject {
-	
-	ExecutorService executor = Executors.newFixedThreadPool(1);
-	
+		
 	private RenderEngine renderer;
 	private int renderObjectId;
-	
-	private HashSet<String> culledCoords = new HashSet<String>();
-	
+		
 	private VoxelGeometry cubeGeo;
 	
 	private int xCubes;
@@ -46,6 +41,8 @@ public class Chunk implements WorldObject {
     private boolean rebuildEvent;
     
     private Mesh mesh;
+
+	private ChunkMaker chunkMaker;
 		
 	public Chunk(int xCubes, int yCubes, int zCubes, 
 				int xOrigin, int yOrigin, int zOrigin) {
@@ -61,28 +58,38 @@ public class Chunk implements WorldObject {
 		cubeGeo = new VoxelGeometry();
         geoLength = cubeGeo.getVertices(new Vector3f(0,0,0)).length;
         
+		chunkMaker = new ChunkMaker();
         mesh = new Mesh();
 
 	}
 			
 	@Override
 	public void init(RenderEngine renderer) {
+		
+		ExecutorService executor = Executors.newCachedThreadPool();
      
         mesh.setVertBuffer(BufferUtils.createFloatBuffer(xCubes*yCubes*zCubes*geoLength));
 		mesh.setIndecesBuffer(BufferUtils.createIntBuffer(xCubes*yCubes*zCubes*36));
         mesh.setEntityCount(xCubes*yCubes*zCubes);
         
 		buildingBuffers = true;
-		Future<Mesh> fMesh = executor.submit(new CubeMaker(mesh));
+
+		chunkMaker.setMesh(mesh);
+		
+		Future<Mesh> fMesh = executor.submit(chunkMaker);
+		executor.shutdown();
 		
 		try {
 			mesh = fMesh.get();
+			
 			if(mesh != null) {
 		        renderObjectId = renderer.registerRenderObject(mesh);
 			} 
 		} catch (Exception e) {
 			System.out.println("Exception returning from callable!");
 			e.printStackTrace();
+		} finally  {
+			fMesh.cancel(true);
 		}
         
         this.renderer = renderer;
@@ -113,17 +120,24 @@ public class Chunk implements WorldObject {
 		
 		if(!buildingBuffers && rebuildEvent)  {
 			
-			int updatedCount = (xCubes*yCubes*zCubes) - ((culledCoords.size()/2));
+			buildingBuffers = true;
+			
+			ExecutorService executor = Executors.newCachedThreadPool();//.newFixedThreadPool(10);
+			
+			int updatedCount = (xCubes*yCubes*zCubes);
 			
 			if(mesh.getVertBuffer() != null) BufferUtils.zeroBuffer(mesh.getVertBuffer());
 			if(mesh.getVertBuffer() != null) BufferUtils.zeroBuffer(mesh.getIndecesBuffer());
 						
 			mesh.setVertBuffer(BufferUtils.createFloatBuffer(updatedCount*geoLength));
 			mesh.setIndecesBuffer(BufferUtils.createIntBuffer(updatedCount*36));
-			mesh.setEntityCount(updatedCount);
+			mesh.setEntityCount(xCubes*yCubes*zCubes);
 	        
 			buildingBuffers = true;
-			Future<Mesh> fMesh = executor.submit(new CubeMaker(mesh));
+			chunkMaker.setMesh(mesh);
+			
+			Future<Mesh> fMesh = executor.submit(chunkMaker);
+			executor.shutdown();
 			
 			try {
 				mesh = fMesh.get();
@@ -133,6 +147,8 @@ public class Chunk implements WorldObject {
 			} catch (Exception e) {
 				System.out.println("Exception returning from callable!");
 				e.printStackTrace();
+			} finally  {
+				fMesh.cancel(true);
 			}
 	     
 		}
@@ -143,26 +159,20 @@ public class Chunk implements WorldObject {
 	public void render(RenderEngine renderer) {}
 
 	@Override
-	public void dispose() {
-		
-	}
+	public void dispose() {}
 	
-	class CubeMaker implements Callable<Mesh> {
+	class ChunkMaker implements Callable<Mesh> {
 		
 		private Mesh mesh;
 		
-		public CubeMaker(Mesh buffers) {
-			this.mesh = buffers;
-		}
-
 		@Override
 		public Mesh call() throws Exception {
-			TreeMap<String, Integer> cullables = new TreeMap<String, Integer>();
+			Map<String, Integer> cullables = new HashMap<String, Integer>();
 			Vector3f vector = new Vector3f();
 			
-			HashSet<String> workingCulledCoords = culledCoords;
+			HashSet<String> workingCulledCoords = mesh.getCulledCoords();
 			if(rebuildEvent) {
-				culledCoords = new HashSet<String>();
+				mesh.setCulledCoords(new HashSet<String>());
 			}
 					
 	        int index = 0;
@@ -171,7 +181,6 @@ public class Chunk implements WorldObject {
 	        	for (float y=0 ; y < yCubes ; y++) {
 
 	        		for (float z=0; z < zCubes ; z++) {
-	        			
 	        			
 	        			vector.set((x-xOrigin),(y-yOrigin),(z-zOrigin));
 	        			
@@ -186,35 +195,41 @@ public class Chunk implements WorldObject {
 	                		continue;
 	                	}
 	        			
+	        			cullTest(cullables, vector.set((x-xOrigin),(y-yOrigin)-2,(z-zOrigin)));        			
+	        			cullTest(cullables, vector.set((x-xOrigin)+1,(y-yOrigin)-2,(z-zOrigin)+1));
+	        			cullTest(cullables, vector.set((x-xOrigin)+1,(y-yOrigin)-2,(z-zOrigin)-1));
 	        			
-	        			cullables = cullTest(cullables, vector.set((x-xOrigin),(y-yOrigin)-2,(z-zOrigin)));        			
-	        			cullables = cullTest(cullables, vector.set((x-xOrigin)+1,(y-yOrigin)-2,(z-zOrigin)+1));
-	        			cullables = cullTest(cullables, vector.set((x-xOrigin)+1,(y-yOrigin)-2,(z-zOrigin)-1));
+	        			cullTest(cullables, vector.set((x-xOrigin)-1,(y-yOrigin)-2,(z-zOrigin)+1));
+	        			cullTest(cullables, vector.set((x-xOrigin)-1,(y-yOrigin)-2,(z-zOrigin)-1));
+	        			cullTest(cullables, vector.set((x-xOrigin)-1,(y-yOrigin)-2,(z-zOrigin)));
 	        			
-	        			cullables = cullTest(cullables, vector.set((x-xOrigin)-1,(y-yOrigin)-2,(z-zOrigin)+1));
-	        			cullables = cullTest(cullables, vector.set((x-xOrigin)-1,(y-yOrigin)-2,(z-zOrigin)-1));
-	        			cullables = cullTest(cullables, vector.set((x-xOrigin)-1,(y-yOrigin)-2,(z-zOrigin)));
-	        			
-	        			cullables = cullTest(cullables, vector.set((x-xOrigin)+1,(y-yOrigin)-2,(z-zOrigin)));
-	        			cullables = cullTest(cullables, vector.set((x-xOrigin),(y-yOrigin)-2,(z-zOrigin)-1));
-	        			cullables = cullTest(cullables, vector.set((x-xOrigin),(y-yOrigin)-2,(z-zOrigin)+1));
+	        			cullTest(cullables, vector.set((x-xOrigin)+1,(y-yOrigin)-2,(z-zOrigin)));
+	        			cullTest(cullables, vector.set((x-xOrigin),(y-yOrigin)-2,(z-zOrigin)-1));
+	        			cullTest(cullables, vector.set((x-xOrigin),(y-yOrigin)-2,(z-zOrigin)+1));
 	        			
 	        		}
 	        	}
 	        }
-					
+	        
+	        vector = null;
+	        cullables = null;
+	        
 	        mesh.getVertBuffer().flip();        
 	        mesh.getIndecesBuffer().flip();
-	        			        
+//	        			        
 	        buildingBuffers = false;        
 	        if(rebuildEvent) rebuildEvent=false;
 	        
 	        return mesh;
 		}
+		
+		private void setMesh(Mesh mesh) {
+			this.mesh = mesh;
+		}
 
 	}
 	
-	private TreeMap<String, Integer> cullTest(TreeMap<String, Integer> cullables, Vector3f vector) {
+	private Map<String, Integer> cullTest(Map<String, Integer> cullables, Vector3f vector) {
 		
 		String coords = vector.x+"-"+vector.y+"-"+vector.z;
 		
@@ -223,7 +238,7 @@ public class Chunk implements WorldObject {
 		} else {
 			int curentValue = cullables.get(coords);			
 			if(curentValue > 7) {
-				culledCoords.add(coords);
+				mesh.getCulledCoords().add(coords);
 			} else {
 				cullables.replace(coords, curentValue+=1);
 			}

@@ -64,14 +64,8 @@ public class RenderEngine {
 		return id;
 	}
 	
-	public void updateRenderObject(int id, int entityCount, FloatBuffer verticesBuffer, IntBuffer entityBuffer) {
-		Map<String, RenderObject> newRoMap = buildRenderObject(entityCount, verticesBuffer, entityBuffer);
-		renderObjects.replace(id, renderObjects.get(id), newRoMap);
-	}
-	
 	public void updateRenderObject(int id, Mesh mesh) {
 		Map<String, RenderObject> newRoMap = buildRenderObject(mesh.getEntityCount(), mesh.getVertBuffer(), mesh.getIndecesBuffer());
-		totalEntities += mesh.getEntityCount();
 		renderObjects.replace(id, renderObjects.get(id), newRoMap);
 	}
 
@@ -144,8 +138,6 @@ public class RenderEngine {
 		matLocation = shaderProgram.getUniformLocation("viewProjMatrix");
 		
 		cam.init();
-		
-		//buildVbos();
 	}
 	
 	public void initText() {

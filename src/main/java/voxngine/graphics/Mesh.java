@@ -2,6 +2,7 @@ package voxngine.graphics;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.HashSet;
 
 public class Mesh {
 	
@@ -9,6 +10,7 @@ public class Mesh {
     private IntBuffer indecesBuffer;
     
     private int entityCount;
+    private HashSet<String> culledCoords = new HashSet<String>();
     
 	public Mesh(){}
     
@@ -39,6 +41,14 @@ public class Mesh {
 
 	public void setEntityCount(int entityCount) {
 		this.entityCount = entityCount;
+	}
+
+	public HashSet<String> getCulledCoords() {
+		return culledCoords;
+	}
+
+	public void setCulledCoords(HashSet<String> culledCoords) {
+		this.culledCoords = culledCoords;
 	}
     
 }

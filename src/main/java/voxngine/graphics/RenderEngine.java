@@ -32,7 +32,6 @@ public class RenderEngine {
 	
 	private int numTextVertices;
 	private int num3DVertices;
-	private int numEntities;
 	private int totalOriginalEntities;
 		
     private Vao textVao;
@@ -250,7 +249,6 @@ public class RenderEngine {
 		FloatBuffer fb = cam.getMVMatrix();
 		
 		num3DVertices=0;
-		numEntities=0;
 		
 		renderObjects.values().stream().forEach(rboMap -> {
 			Vao vao = (Vao) rboMap.get("VAO");
@@ -267,13 +265,11 @@ public class RenderEngine {
             vao.unbind();
             
            
-            num3DVertices+=(36*entities);
-            numEntities += entities;
-            
+            num3DVertices+=(36*entities);            
 			
 		});
 		
-		Window.queScreenMessage("DebugOverlay", new ScreenMessage("Total Rendered Cubes: "+numEntities));
+		Window.queScreenMessage("DebugOverlay", new ScreenMessage("Total Rendered Cubes: "+num3DVertices/36));
 		Window.queScreenMessage("DebugOverlay", new ScreenMessage("Verts: "+num3DVertices));
 		Window.queScreenMessage("DebugOverlay", new ScreenMessage("Total Depicted Cubes: "+totalOriginalEntities));
 

@@ -33,10 +33,75 @@ public class World implements GameObject {
 //		worldObjects.add(new Cube(16, 16, 16, 16, -16, 0));
 //		worldObjects.add(new Cube(16, 16, 16, 0, -16, 16));
 //		worldObjects.add(new Cube(16, 16, 16, 16, -16, 16));
-		worldObjects.add(new Cube(32, 16, 32, 32, 16, 0));
-		worldObjects.add(new Cube(32, 16, 32, 0, 16, 32));
-		worldObjects.add(new Cube(32, 16, 32, 0, 16, 0));
-		worldObjects.add(new Cube(32, 16, 32, 32, 16, 32));
+		
+		worldObjects.add(new Cube(20, 10, 20, 50, 10, -30));
+		worldObjects.add(new Cube(20, 10, 20, 50, 10, -10));
+		worldObjects.add(new Cube(20, 10, 20, 50, 10, 10));
+		worldObjects.add(new Cube(20, 10, 20, 50, 10, 30));
+		worldObjects.add(new Cube(20, 10, 20, 50, 10, 50));
+		
+		worldObjects.add(new Cube(20, 10, 20, 30, 10, -30));
+		worldObjects.add(new Cube(20, 10, 20, 30, 10, -10));
+		worldObjects.add(new Cube(20, 10, 20, 30, 10, 10));
+		worldObjects.add(new Cube(20, 10, 20, 30, 10, 30));
+		worldObjects.add(new Cube(20, 10, 20, 30, 10, 50));
+
+		
+		worldObjects.add(new Cube(20, 10, 20, 10, 10, -30));
+		worldObjects.add(new Cube(20, 10, 20, 10, 10, -10));
+		worldObjects.add(new Cube(20, 10, 20, 10, 10, 10)); // center
+		worldObjects.add(new Cube(20, 10, 20, 10, 10, 30));
+		worldObjects.add(new Cube(20, 10, 20, 10, 10, 50));
+		
+		worldObjects.add(new Cube(20, 10, 20, -10, 10, 50));
+		worldObjects.add(new Cube(20, 10, 20, -10, 10, 30));
+		worldObjects.add(new Cube(20, 10, 20, -10, 10, 10));
+		worldObjects.add(new Cube(20, 10, 20, -10, 10, -10));
+		worldObjects.add(new Cube(20, 10, 20, -10, 10, -30));
+		
+		worldObjects.add(new Cube(20, 10, 20, -30, 10, 50));
+		worldObjects.add(new Cube(20, 10, 20, -30, 10, 30));
+		worldObjects.add(new Cube(20, 10, 20, -30, 10, 10));
+		worldObjects.add(new Cube(20, 10, 20, -30, 10, -10));
+		worldObjects.add(new Cube(20, 10, 20, -30, 10, -30));
+		
+		//
+		
+		worldObjects.add(new Cube(20, 10, 20, 50, 20, -30));
+		worldObjects.add(new Cube(20, 10, 20, 50, 20, -10));
+		worldObjects.add(new Cube(20, 10, 20, 50, 20, 10));
+		worldObjects.add(new Cube(20, 10, 20, 50, 20, 30));
+		worldObjects.add(new Cube(20, 10, 20, 50, 20, 50));
+		
+		worldObjects.add(new Cube(20, 10, 20, 30, 20, -30));
+		worldObjects.add(new Cube(20, 10, 20, 30, 20, -10));
+		worldObjects.add(new Cube(20, 10, 20, 30, 20, 10));
+		worldObjects.add(new Cube(20, 10, 20, 30, 20, 30));
+		worldObjects.add(new Cube(20, 10, 20, 30, 20, 50));
+
+		
+		worldObjects.add(new Cube(20, 10, 20, 10, 20, -30));
+		worldObjects.add(new Cube(20, 10, 20, 10, 20, -10));
+		worldObjects.add(new Cube(20, 10, 20, 10, 20, 10)); // center
+		worldObjects.add(new Cube(20, 10, 20, 10, 20, 30));
+		worldObjects.add(new Cube(20, 10, 20, 10, 20, 50));
+		
+		worldObjects.add(new Cube(20, 10, 20, -10, 20, 50));
+		worldObjects.add(new Cube(20, 10, 20, -10, 20, 30));
+		worldObjects.add(new Cube(20, 10, 20, -10, 20, 10));
+		worldObjects.add(new Cube(20, 10, 20, -10, 20, -10));
+		worldObjects.add(new Cube(20, 10, 20, -10, 20, -30));
+		
+		worldObjects.add(new Cube(20, 10, 20, -30, 20, 50));
+		worldObjects.add(new Cube(20, 10, 20, -30, 20, 30));
+		worldObjects.add(new Cube(20, 10, 20, -30, 20, 10));
+		worldObjects.add(new Cube(20, 10, 20, -30, 20, -10));
+		worldObjects.add(new Cube(20, 10, 20, -30, 20, -30));
+		
+		
+//		worldObjects.add(new Cube(32, 16, 32, 32, 16, 0));
+//		worldObjects.add(new Cube(32, 16, 32, 0, 16, 32));
+//		worldObjects.add(new Cube(32, 16, 32, 32, 16, 32));
 	
 		renderer.initShaders();
 		

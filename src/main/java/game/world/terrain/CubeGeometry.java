@@ -42,7 +42,7 @@ public class CubeGeometry {
 		
 		Random rand = new Random();
 
-		int  n = rand.nextInt(6) + 1;
+//		int  n = rand.nextInt(6) + 1;
 	    
 //	    Vector4f topColor = new Vector4f(0.0f, 0.6f, 0.0f, 1.0f);
 //	    

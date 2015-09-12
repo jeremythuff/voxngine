@@ -68,8 +68,8 @@ public class Chunk implements WorldObject {
 		
 		ExecutorService executor = Executors.newCachedThreadPool();
      
-        mesh.setVertBuffer(BufferUtils.createFloatBuffer(xCubes*yCubes*zCubes*geoLength));
-		mesh.setIndecesBuffer(BufferUtils.createIntBuffer(xCubes*yCubes*zCubes*36));
+        mesh.setVertBuffer(xCubes*yCubes*zCubes*geoLength);
+		mesh.setIndecesBuffer(xCubes*yCubes*zCubes*36);
         mesh.setEntityCount(xCubes*yCubes*zCubes);
         
 		buildingBuffers = true;
@@ -129,8 +129,8 @@ public class Chunk implements WorldObject {
 			if(mesh.getVertBuffer() != null) BufferUtils.zeroBuffer(mesh.getVertBuffer());
 			if(mesh.getVertBuffer() != null) BufferUtils.zeroBuffer(mesh.getIndecesBuffer());
 						
-			mesh.setVertBuffer(BufferUtils.createFloatBuffer(updatedCount*geoLength));
-			mesh.setIndecesBuffer(BufferUtils.createIntBuffer(updatedCount*36));
+			mesh.setVertBuffer(updatedCount*geoLength);
+			mesh.setIndecesBuffer(updatedCount*36);
 			mesh.setEntityCount(xCubes*yCubes*zCubes);
 	        
 			buildingBuffers = true;

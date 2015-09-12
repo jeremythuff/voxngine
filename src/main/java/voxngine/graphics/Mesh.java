@@ -4,6 +4,8 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.HashSet;
 
+import org.lwjgl.BufferUtils;
+
 public class Mesh {
 	
 	private FloatBuffer vertBuffer;
@@ -23,16 +25,33 @@ public class Mesh {
 		return vertBuffer;
 	}
 
-	public void setVertBuffer(FloatBuffer vertBuffer) {
-		this.vertBuffer = vertBuffer;
+	public void setVertBuffer(int i) {
+		if(this.getVertBuffer() == null) { 
+			this.vertBuffer = BufferUtils.createFloatBuffer(i);
+		} else {
+			BufferUtils.zeroBuffer(this.vertBuffer);
+			this.vertBuffer.clear();
+			this.vertBuffer.rewind();
+			this.vertBuffer = (FloatBuffer) this.vertBuffer.limit(i);
+			
+			
+		}
 	}
 
 	public IntBuffer getIndecesBuffer() {
 		return indecesBuffer;
 	}
 
-	public void setIndecesBuffer(IntBuffer indecesBuffer) {
-		this.indecesBuffer = indecesBuffer;
+	public void setIndecesBuffer(int i) {
+		if(this.indecesBuffer == null) {
+			this.indecesBuffer = BufferUtils.createIntBuffer(i);
+		} else {
+			BufferUtils.zeroBuffer(this.indecesBuffer);
+			this.indecesBuffer.clear();
+			this.indecesBuffer.rewind();
+			this.indecesBuffer = (IntBuffer) this.indecesBuffer.limit(i);
+		}
+		
 	}
 	
 	public int getEntityCount() {

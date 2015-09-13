@@ -51,7 +51,7 @@ public class RenderEngine {
 	private final FloatBuffer      xb = BufferUtils.createFloatBuffer(1);
 	private final FloatBuffer      yb = BufferUtils.createFloatBuffer(1);
 	
-	public int registerRenderObject(Mesh mesh) {
+	public int registerMesh(Mesh mesh) {
 		
 		Map<String, RenderObject> roMap = buildRenderObject(mesh.getEntityCount(), mesh.getVertBuffer(), mesh.getIndecesBuffer());
 		
@@ -64,7 +64,7 @@ public class RenderEngine {
 		return id;
 	}
 	
-	public void updateRenderObject(int id, Mesh mesh) {
+	public void updateMesh(int id, Mesh mesh) {
 		Map<String, RenderObject> newRoMap = buildRenderObject(mesh.getEntityCount(), mesh.getVertBuffer(), mesh.getIndecesBuffer());
 		renderObjects.replace(id, renderObjects.get(id), newRoMap);
 	}

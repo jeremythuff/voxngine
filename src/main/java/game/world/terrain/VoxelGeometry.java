@@ -1,7 +1,5 @@
 package game.world.terrain;
 
-import java.util.Random;
-
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 

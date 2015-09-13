@@ -1,5 +1,8 @@
 package voxngine.graphics;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.nio.Buffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.HashSet;
@@ -31,10 +34,9 @@ public class Mesh {
 		} else {
 			BufferUtils.zeroBuffer(this.vertBuffer);
 			this.vertBuffer.clear();
-			this.vertBuffer.rewind();
-			this.vertBuffer = (FloatBuffer) this.vertBuffer.limit(i);
-			
-			
+			destroyBuffer(this.vertBuffer);
+			this.vertBuffer = null;
+			this.vertBuffer = BufferUtils.createFloatBuffer(i);
 		}
 	}
 
@@ -48,10 +50,10 @@ public class Mesh {
 		} else {
 			BufferUtils.zeroBuffer(this.indecesBuffer);
 			this.indecesBuffer.clear();
-			this.indecesBuffer.rewind();
-			this.indecesBuffer = (IntBuffer) this.indecesBuffer.limit(i);
+			destroyBuffer(this.indecesBuffer);
+			this.indecesBuffer = null;
+			this.indecesBuffer = BufferUtils.createIntBuffer(i);
 		}
-		
 	}
 	
 	public int getEntityCount() {
@@ -68,6 +70,29 @@ public class Mesh {
 
 	public void setCulledCoords(HashSet<String> culledCoords) {
 		this.culledCoords = culledCoords;
+	}
+	
+	
+	public void destroyBuffer(Buffer buffer) {
+	    if(buffer.isDirect()) {
+	        try {
+	            if(!buffer.getClass().getName().equals("java.nio.DirectByteBuffer")) {
+	                Field attField = buffer.getClass().getDeclaredField("att");
+	                attField.setAccessible(true);
+	                buffer = (Buffer) attField.get(buffer);
+	            }
+
+	            Method cleanerMethod = buffer.getClass().getMethod("cleaner");
+	            cleanerMethod.setAccessible(true);
+	            Object cleaner = cleanerMethod.invoke(buffer);
+	            Method cleanMethod = cleaner.getClass().getMethod("clean");
+	            cleanMethod.setAccessible(true);
+	            cleanMethod.invoke(cleaner);
+	        } catch(Exception e) {
+	        	System.err.println(e);
+	        }
+	        
+	    } 
 	}
     
 }

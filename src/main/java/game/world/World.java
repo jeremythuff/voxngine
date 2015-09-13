@@ -40,7 +40,12 @@ public class World implements GameObject {
 	@Override
 	public void update(float delta) {
 		worldObjects.stream().forEach(worldObject -> {
-			worldObject.update(delta);
+			try {
+				worldObject.update(delta);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		});
 	}
 

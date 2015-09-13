@@ -16,70 +16,37 @@ public class Zone implements WorldObject {
 
 	@Override
 	public void init(RenderEngine renderer) {
+	
+		worldObjects.add(new Chunk(50, 20, 50, 125, 10, -75));
+		worldObjects.add(new Chunk(50, 20, 50, 125, 10, -25));
+		worldObjects.add(new Chunk(50, 20, 50, 125, 10, 25));
+		worldObjects.add(new Chunk(50, 20, 50, 125, 10, 75));
+		worldObjects.add(new Chunk(50, 20, 50, 125, 10, 125));
 		
-		worldObjects.add(new Chunk(20, 10, 20, 50, 10, -30));
-		worldObjects.add(new Chunk(20, 10, 20, 50, 10, -10));
-		worldObjects.add(new Chunk(20, 10, 20, 50, 10, 10));
-		worldObjects.add(new Chunk(20, 10, 20, 50, 10, 30));
-		worldObjects.add(new Chunk(20, 10, 20, 50, 10, 50));
-		
-		worldObjects.add(new Chunk(20, 10, 20, 30, 10, -30));
-		worldObjects.add(new Chunk(20, 10, 20, 30, 10, -10));
-		worldObjects.add(new Chunk(20, 10, 20, 30, 10, 10));
-		worldObjects.add(new Chunk(20, 10, 20, 30, 10, 30));
-		worldObjects.add(new Chunk(20, 10, 20, 30, 10, 50));
+		worldObjects.add(new Chunk(50, 20, 50, 75, 10, -75));
+		worldObjects.add(new Chunk(50, 20, 50, 75, 10, -25));
+		worldObjects.add(new Chunk(50, 20, 50, 75, 10, 25));
+		worldObjects.add(new Chunk(50, 20, 50, 75, 10, 75));
+		worldObjects.add(new Chunk(50, 20, 50, 75, 10, 125));
 
 		
-		worldObjects.add(new Chunk(20, 10, 20, 10, 10, -30));
-		worldObjects.add(new Chunk(20, 10, 20, 10, 10, -10));
-		worldObjects.add(new Chunk(20, 10, 20, 10, 10, 10)); // center
-		worldObjects.add(new Chunk(20, 10, 20, 10, 10, 30));
-		worldObjects.add(new Chunk(20, 10, 20, 10, 10, 50));
+		worldObjects.add(new Chunk(50, 20, 50, 25, 10, -75));
+		worldObjects.add(new Chunk(50, 20, 50, 25, 10, -25));
+		worldObjects.add(new Chunk(50, 20, 50, 25, 10, 25)); // center
+		worldObjects.add(new Chunk(50, 20, 50, 25, 10, 75));
+		worldObjects.add(new Chunk(50, 20, 50, 25, 10, 125));
 		
-		worldObjects.add(new Chunk(20, 10, 20, -10, 10, 50));
-		worldObjects.add(new Chunk(20, 10, 20, -10, 10, 30));
-		worldObjects.add(new Chunk(20, 10, 20, -10, 10, 10));
-		worldObjects.add(new Chunk(20, 10, 20, -10, 10, -10));
-		worldObjects.add(new Chunk(20, 10, 20, -10, 10, -30));
+		worldObjects.add(new Chunk(50, 20, 50, -25, 10, 125));
+		worldObjects.add(new Chunk(50, 20, 50, -25, 10, 75));
+		worldObjects.add(new Chunk(50, 20, 50, -25, 10, 25));
+		worldObjects.add(new Chunk(50, 20, 50, -25, 10, -25));
+		worldObjects.add(new Chunk(50, 20, 50, -25, 10, -75));
 		
-		worldObjects.add(new Chunk(20, 10, 20, -30, 10, 50));
-		worldObjects.add(new Chunk(20, 10, 20, -30, 10, 30));
-		worldObjects.add(new Chunk(20, 10, 20, -30, 10, 10));
-		worldObjects.add(new Chunk(20, 10, 20, -30, 10, -10));
-		worldObjects.add(new Chunk(20, 10, 20, -30, 10, -30));
-		
-		//
-		
-		worldObjects.add(new Chunk(20, 10, 20, 50, 20, -30));
-		worldObjects.add(new Chunk(20, 10, 20, 50, 20, -10));
-		worldObjects.add(new Chunk(20, 10, 20, 50, 20, 10));
-		worldObjects.add(new Chunk(20, 10, 20, 50, 20, 30));
-		worldObjects.add(new Chunk(20, 10, 20, 50, 20, 50));
-		
-		worldObjects.add(new Chunk(20, 10, 20, 30, 20, -30));
-		worldObjects.add(new Chunk(20, 10, 20, 30, 20, -10));
-		worldObjects.add(new Chunk(20, 10, 20, 30, 20, 10));
-		worldObjects.add(new Chunk(20, 10, 20, 30, 20, 30));
-		worldObjects.add(new Chunk(20, 10, 20, 30, 20, 50));
-
-		
-		worldObjects.add(new Chunk(20, 10, 20, 10, 20, -30));
-		worldObjects.add(new Chunk(20, 10, 20, 10, 20, -10));
-		worldObjects.add(new Chunk(20, 10, 20, 10, 20, 10)); // center
-		worldObjects.add(new Chunk(20, 10, 20, 10, 20, 30));
-		worldObjects.add(new Chunk(20, 10, 20, 10, 20, 50));
-		
-		worldObjects.add(new Chunk(20, 10, 20, -10, 20, 50));
-		worldObjects.add(new Chunk(20, 10, 20, -10, 20, 30));
-		worldObjects.add(new Chunk(20, 10, 20, -10, 20, 10));
-		worldObjects.add(new Chunk(20, 10, 20, -10, 20, -10));
-		worldObjects.add(new Chunk(20, 10, 20, -10, 20, -30));
-		
-		worldObjects.add(new Chunk(20, 10, 20, -30, 20, 50));
-		worldObjects.add(new Chunk(20, 10, 20, -30, 20, 30));
-		worldObjects.add(new Chunk(20, 10, 20, -30, 20, 10));
-		worldObjects.add(new Chunk(20, 10, 20, -30, 20, -10));
-		worldObjects.add(new Chunk(20, 10, 20, -30, 20, -30));
+		worldObjects.add(new Chunk(50, 20, 50, -75, 10, 125));
+		worldObjects.add(new Chunk(50, 20, 50, -75, 10, 75));
+		worldObjects.add(new Chunk(50, 20, 50, -75, 10, 25));
+		worldObjects.add(new Chunk(50, 20, 50, -75, 10, -25));
+		worldObjects.add(new Chunk(50, 20, 50, -75, 10, -75));
 		
 		worldObjects.stream().forEach(worldObject -> {		
 			System.out.println("Initialiazing the "+ worldObject.getClass().getSimpleName() +" Object...");

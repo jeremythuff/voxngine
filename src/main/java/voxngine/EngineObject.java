@@ -1,5 +1,7 @@
 package voxngine;
 
+import java.lang.reflect.InvocationTargetException;
+
 import voxngine.graphics.RenderEngine;
 import voxngine.io.Controlls;
 

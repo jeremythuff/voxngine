@@ -32,11 +32,8 @@ public class Mesh {
 		if(this.getVertBuffer() == null) { 
 			this.vertBuffer = BufferUtils.createFloatBuffer(i);
 		} else {
-			BufferUtils.zeroBuffer(this.vertBuffer);
 			this.vertBuffer.clear();
-			destroyBuffer(this.vertBuffer);
-			this.vertBuffer = null;
-			this.vertBuffer = BufferUtils.createFloatBuffer(i);
+			this.vertBuffer.position(0);
 		}
 	}
 
@@ -48,11 +45,8 @@ public class Mesh {
 		if(this.indecesBuffer == null) {
 			this.indecesBuffer = BufferUtils.createIntBuffer(i);
 		} else {
-			BufferUtils.zeroBuffer(this.indecesBuffer);
 			this.indecesBuffer.clear();
-			destroyBuffer(this.indecesBuffer);
-			this.indecesBuffer = null;
-			this.indecesBuffer = BufferUtils.createIntBuffer(i);
+			this.indecesBuffer.position(0);
 		}
 	}
 	

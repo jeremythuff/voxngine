@@ -103,16 +103,17 @@ public abstract class Engine
             controlls.endEvents();
             
             update(delta);
+            sync(TARGET_FPS); 
             renderer.update(delta);
             timer.updateUPS();
             
-            glViewport(0, 0, Window.WIDTH, Window.HEIGHT);
+            
             // Clear the screen
            
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             
+            glViewport(0, 0, Window.WIDTH, Window.HEIGHT);
             
-            sync(TARGET_FPS); 
 
             render(renderer);
             renderer.render();

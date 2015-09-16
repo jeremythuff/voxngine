@@ -16,6 +16,8 @@ import voxngine.graphics.RenderEngine;
 import voxngine.io.Controlls;
 
 public class Chunk implements WorldObject {
+	
+	private ExecutorService executor;
 
 	private RenderEngine renderer;
 	private int registeredMeshId;
@@ -31,6 +33,8 @@ public class Chunk implements WorldObject {
 	boolean buildingBuffers = false;
 	boolean isDone = false;
     private boolean rebuildEvent;
+    
+    private ChunkMaker chunkMaker;
 		
 	public Chunk(int xVox, int yVox, int zVox, 
 				int xOrigin, int yOrigin, int zOrigin) {
@@ -41,22 +45,24 @@ public class Chunk implements WorldObject {
 		voxGeo = new VoxelGeometry();
         geoLength = voxGeo.getVertices(new Vector3f(0,0,0)).length;
         
+		executor = Executors.newCachedThreadPool();
+		
         mesh = new Mesh();
 
 	}
 			
 	@Override
 	public void init(RenderEngine renderer) {
-		
-		ExecutorService executor = Executors.newCachedThreadPool();
-     
+		     
         mesh.setVertBuffer((int) (voxCount.x*voxCount.y*voxCount.z*geoLength));
 		mesh.setIndecesBuffer((int) (voxCount.x*voxCount.y*voxCount.z*36));
         mesh.setEntityCount((int) (voxCount.x*voxCount.y*voxCount.z));
         
+        chunkMaker = new ChunkMaker(mesh, voxCount, positionOffset, rebuildEvent);
+        
 		buildingBuffers = true;
 		
-		Future<Mesh> fMesh = executor.submit(new ChunkMaker(mesh, voxCount, positionOffset, rebuildEvent));
+		Future<Mesh> fMesh = executor.submit(chunkMaker);
 		
 		try {
 			mesh = fMesh.get();
@@ -68,7 +74,6 @@ public class Chunk implements WorldObject {
 			System.out.println("Exception returning from callable!");
 			e.printStackTrace();
 		} finally  {
-			executor.shutdownNow();
 			fMesh.cancel(true);
 			fMesh = null;
 			buildingBuffers = false;        
@@ -102,9 +107,7 @@ public class Chunk implements WorldObject {
 	public void update(float delta) {
 		
 		if(!buildingBuffers && rebuildEvent)  {
-			
-			ExecutorService executor = Executors.newCachedThreadPool();
-			
+						
 			buildingBuffers = true;
 						
 			int updatedCount = (int) (voxCount.x*voxCount.y*voxCount.z);
@@ -118,7 +121,10 @@ public class Chunk implements WorldObject {
 	        
 			buildingBuffers = true;
 			
-			Future<Mesh> fMesh = executor.submit(new ChunkMaker(mesh, voxCount, positionOffset, rebuildEvent));
+			chunkMaker.setMesh(mesh);
+			chunkMaker.setRebuildEvent(rebuildEvent);
+			
+			Future<Mesh> fMesh = executor.submit(chunkMaker);
 			
 			try {
 				mesh = fMesh.get();
@@ -129,7 +135,6 @@ public class Chunk implements WorldObject {
 				System.out.println("Exception returning from callable!");
 				e.printStackTrace();
 			} finally  {
-				executor.shutdownNow();
 				fMesh.cancel(true);
 				fMesh = null;
 				buildingBuffers = false;        

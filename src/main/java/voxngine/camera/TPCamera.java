@@ -39,8 +39,8 @@ public class TPCamera implements Camera {
 	
 	@Override
 	public void init() {
-		cam.setAlpha((float) Math.toRadians(-35));
-		cam.setBeta((float) Math.toRadians(5));
+		cam.setAlpha((float) Math.toRadians(-45));
+		cam.setBeta((float) Math.toRadians(45));
 		cam.zoom(zoom); 
 		cam.update(100);
 	}
@@ -103,8 +103,6 @@ public class TPCamera implements Camera {
 	@Override
 	public void update(float delta) {
 		
-		
-		
 		 /* Set input values for the camera */
 	      if (down) {
 	          cam.setAlpha(cam.getAlpha() + Math.toRadians((x - mouseX) * 0.5f));
@@ -124,7 +122,7 @@ public class TPCamera implements Camera {
 	      cam.center(currentPos.x+xMove, currentPos.y=yMove, currentPos.z+zMove);
 			
 		  cam.viewMatrix(viewProjMatrix).setPerspective((float) Math.atan((32.5 * Window.HEIGHT / 1200) / 60.0),
-	              (float) Window.WIDTH / Window.HEIGHT, 0.01f, 1000.0f);
+	              (float) Window.WIDTH / Window.HEIGHT, 0.25f, 1000.0f);
 		  
 		  fc = viewProjMatrix.getFrustum(fc);
 	}

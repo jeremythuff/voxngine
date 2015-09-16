@@ -2,8 +2,15 @@ package voxngine.graphics;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F;
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL13.*;
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.opengl.GL40.*;
+import static org.lwjgl.opengl.GL41.*;
+import static org.lwjgl.opengl.GL42.*;
+import static org.lwjgl.opengl.GL43.*;
+import static org.lwjgl.opengl.GL44.*;
+import static org.lwjgl.opengl.GL45.*;
 import static org.lwjgl.stb.STBTruetype.stbtt_GetPackedQuad;
 
 import java.nio.FloatBuffer;
@@ -105,10 +112,12 @@ public class RenderEngine {
         // Setup pointers using 'stride' and 'offset' we calculated above
         glVertexAttribPointer(0, 3, GL_FLOAT, false, stride, offsetPosition);
         glVertexAttribPointer(1, 4, GL_FLOAT, false, stride, offsetColor);
+        //glVertexAttribPointer(2, 3, GL_FLOAT, false, stride, offsetPosition);
 
 		 // Enable the vertex attribute locations
         glEnableVertexAttribArray(0);
         glEnableVertexAttribArray(1);
+        //glEnableVertexAttribArray(2);
         
         vao.unbind();
 		
@@ -132,7 +141,7 @@ public class RenderEngine {
 		Shader fShad = shaderProgram.loadShader(GL_FRAGMENT_SHADER, "src/main/resources/shaders/default.fs");
 		shaderProgram.attachShader(fShad);
 		fShad.delete();
-		
+
 		shaderProgram.link();
 		
 		matLocation = shaderProgram.getUniformLocation("viewProjMatrix");
@@ -234,7 +243,6 @@ public class RenderEngine {
 	
 	private void render3d() {
 
-		
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);
 		
@@ -255,7 +263,7 @@ public class RenderEngine {
 			vao.bind();
 			
             shaderProgram.bind();
-            
+
             glUniformMatrix4fv(matLocation, false, fb);
             glDrawElements(GL_TRIANGLES, 36*entities, GL_UNSIGNED_INT, 0);
             

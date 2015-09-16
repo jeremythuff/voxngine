@@ -8,6 +8,6 @@ out vec4 vColor;
   
 void main(void) {
 	vColor = inColor;
-	gl_Position = viewProjMatrix * inVert;
+	gl_Position = viewProjMatrix * normalize(inVert);
 }
 

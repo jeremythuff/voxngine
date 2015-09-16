@@ -32,6 +32,14 @@ class ChunkMaker implements Callable<Mesh> {
 		this.rebuildEvent = rebuildEvent;
 	}
 	
+	public void setMesh(Mesh mesh) {
+		this.mesh = mesh;
+	}
+	
+	public void setRebuildEvent(boolean rebuildEvent) {
+		this.rebuildEvent = rebuildEvent;
+	}
+	
 	@Override
 	public Mesh call() throws Exception {
 		Map<String, Integer> cullables = new HashMap<String, Integer>();
@@ -52,7 +60,16 @@ class ChunkMaker implements Callable<Mesh> {
         			vector.set((x-positionOffset.x),(y-positionOffset.y),(z-positionOffset.z));
         			
         			if(!workingCulledCoords.contains(vector.x+"-"+vector.y+"-"+vector.z)) {
-        				float[] vertices = voxGeo.getVertices(vector);
+        				
+        				
+        				float[] vertices = null;
+        				if(y == voxCount.y-1) {
+        					vertices = voxGeo.getVertices(vector);
+        				} else {
+        					vertices = voxGeo.getVertices(vector, VoxelType.DIRT);
+        				}
+        					
+        				
         				mesh.getVertBuffer().put(vertices);
                 		
             	        int[] indeces = voxGeo.getIndices(index);

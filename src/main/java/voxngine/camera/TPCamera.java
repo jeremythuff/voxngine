@@ -17,6 +17,7 @@ import org.joml.camera.ArcBallCamera;
 import org.lwjgl.BufferUtils;
 
 import voxngine.io.Controlls;
+import voxngine.io.ScreenMessage;
 import voxngine.io.Window;
 
 public class TPCamera implements Camera {
@@ -24,8 +25,13 @@ public class TPCamera implements Camera {
 	ArcBallCamera cam = new ArcBallCamera();
 	private Matrix4f viewProjMatrix = new Matrix4f();
 	private FloatBuffer fb = BufferUtils.createFloatBuffer(16);
-	private FrustumCuller fc = new FrustumCuller(); 
-		
+	private FrustumCuller fc = new FrustumCuller();
+	
+	private double displayAlpha;
+	private double displayBeta;
+	private double lastDisplayAlpha;
+	private double lastDisplayBeta;
+	
 	long window;
 	int x, y;
 	
@@ -95,7 +101,14 @@ public class TPCamera implements Camera {
 			if (controlls.getMouse().getScrollDelta().y > 0) {
 				zoom /= 1.05f;
 			} else {
-			    zoom *= 1.05f;
+				
+				if(zoom < 250) {
+					zoom *= 1.05f;
+				} else {
+					zoom /= 1.05f;
+				}
+			    
+			
 			}
 		}
 	}
@@ -109,7 +122,16 @@ public class TPCamera implements Camera {
 	          cam.setBeta(cam.getBeta() + Math.toRadians((mouseY - y) * 0.5f));
 	          mouseX = x;
 	          mouseY = y;
+	          
+	          if(cam.getBeta() < 0.20943951023932117) {
+		          cam.setBeta(0.20943951023932117 + 0.0001);
+		      }
 	      }
+	      
+	      
+	      System.out.println(cam.getBeta());
+	      
+	     
 	      
 	      cam.zoom(zoom);
 	      cam.update((float) (delta*2));
@@ -122,9 +144,24 @@ public class TPCamera implements Camera {
 	      cam.center(currentPos.x+xMove, currentPos.y=yMove, currentPos.z+zMove);
 			
 		  cam.viewMatrix(viewProjMatrix).setPerspective((float) Math.atan((32.5 * Window.HEIGHT / 1200) / 60.0),
-	              (float) Window.WIDTH / Window.HEIGHT, 0.25f, 1000.0f);
+		          (float) Window.WIDTH / Window.HEIGHT, 0.25f, 1000.0f);
 		  
 		  fc = viewProjMatrix.getFrustum(fc);
+		  		  	
+		  displayAlpha = Math.round(cam.getAlpha()*100.0);
+			
+		  if(displayAlpha > 360d) displayAlpha = displayAlpha + Math.round(cam.getAlpha()*100.0) - 360;
+		  if(displayAlpha < 0d) displayAlpha = displayAlpha + Math.round(cam.getAlpha()*100.0) + 360;
+			
+		  displayBeta = Math.round(cam.getBeta()*100.0);
+			
+		  if(displayBeta > 360d) displayBeta = displayBeta + Math.round(cam.getBeta()*100.0) - 360;
+		  if(displayBeta < 0d) displayBeta = displayBeta + Math.round(cam.getBeta()*100.0) + 360;
+		  	
+		  	
+		  Window.queScreenMessage("DebugOverlay", new ScreenMessage("CAMERA_DATA", "Zoom: " + zoom));
+		  Window.queScreenMessage("DebugOverlay", new ScreenMessage("CAMERA_DATA", "Alpha: " + displayAlpha));
+		  Window.queScreenMessage("DebugOverlay", new ScreenMessage("CAMERA_DATA", "Beta: " + displayBeta));
 	}
 	
 	@Override

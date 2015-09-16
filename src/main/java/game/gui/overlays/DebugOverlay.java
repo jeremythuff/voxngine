@@ -17,6 +17,7 @@ public class DebugOverlay implements GuiObject {
 				
 	private float GENERAL_lineStart = 50f;
 	private float RENDERED_OBJECT_lineStart = 50f;
+	private float CAMERA_DATA_spacingStart = 100f;
 	
 	private boolean show_tex = true;
 	
@@ -52,6 +53,7 @@ public class DebugOverlay implements GuiObject {
 		
 		float GENERAL_lineIncr = GENERAL_lineStart;
 		float RENDERED_OBJECT_lineIncr = RENDERED_OBJECT_lineStart;
+		float CAMERA_DATA_spacing = CAMERA_DATA_spacingStart;
 		
 		if(Window.getScreenMessages("DebugOverlay") != null) {
 			for(int i = 0 ; i < Window.getScreenMessages("DebugOverlay").size() ; i++) {
@@ -64,7 +66,12 @@ public class DebugOverlay implements GuiObject {
 					} else if(screenMessage.getType().equals("TITLE")) {
 						float center = (Window.WIDTH/2)-((screenMessage.getMessage().length()*12)/2);
 						renderer.print(center, 50f, debugFont, screenMessage.getMessage(),new Vector3f(0.2f, 0.2f, 0.8f));
-					} if(screenMessage.getType().equals("RENDERED_OBJECT")) {
+					} else if(screenMessage.getType().equals("CAMERA_DATA")) {
+						renderer.print(CAMERA_DATA_spacing, Window.HEIGHT - 100, debugFont, screenMessage.getMessage(), new Vector3f(0.8f, 0.8f, 0.8f));
+						
+						CAMERA_DATA_spacing += 250;
+						
+					}if(screenMessage.getType().equals("RENDERED_OBJECT")) {
 												
 						float position = Window.WIDTH-screenMessage.getMessage().length()*12-50;
 						renderer.print(position, RENDERED_OBJECT_lineIncr, debugFont, screenMessage.getMessage(), new Vector3f(0.8f, 0.8f, 0.8f));

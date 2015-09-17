@@ -29,7 +29,11 @@ public class Mesh {
 	}
 
 	public void setVertBuffer(int i) {
-		this.vertBuffer = BufferUtils.createFloatBuffer(i);
+		if(this.vertBuffer == null) {
+			this.vertBuffer = BufferUtils.createFloatBuffer(i);
+		} else {
+			updateVertBuffer();
+		}
 	}
 	
 	public void updateVertBuffer() {
@@ -42,7 +46,11 @@ public class Mesh {
 	}
 
 	public void setIndecesBuffer(int i) {
-		this.indecesBuffer = BufferUtils.createIntBuffer(i);
+		if(this.indecesBuffer == null) {
+			this.indecesBuffer = BufferUtils.createIntBuffer(i);
+		} else {
+			updateIndecesBuffer();
+		}
 	}
 	
 	public void updateIndecesBuffer() {

@@ -33,6 +33,7 @@ public class Chunk implements WorldObject {
     private boolean rebuildEvent;
     
     private ChunkMaker chunkMaker;
+    private boolean active;
 		
 	public Chunk(int xVox, int yVox, int zVox, 
 				int xOrigin, int yOrigin, int zOrigin) {
@@ -86,15 +87,17 @@ public class Chunk implements WorldObject {
 		
 	@Override
 	public void input(Controlls controlls) {
-		if(controlls.getKeyboad().activeKeyEvent()) {
-			if(controlls.getKeyboad().isKeyDown(GLFW_KEY_UP)) {
-				voxCount.y++;
-				rebuildEvent = true;
-			}
-			
-			if(controlls.getKeyboad().isKeyDown(GLFW_KEY_DOWN)) {
-				voxCount.y--;
-				rebuildEvent = true;
+		if(active) {
+			if(controlls.getKeyboad().activeKeyEvent()) {
+				if(controlls.getKeyboad().isKeyDown(GLFW_KEY_UP)) {
+					voxCount.y++;
+					rebuildEvent = true;
+				}
+				
+				if(controlls.getKeyboad().isKeyDown(GLFW_KEY_DOWN)) {
+					voxCount.y--;
+					rebuildEvent = true;
+				}
 			}
 		}
 	}
@@ -134,6 +137,14 @@ public class Chunk implements WorldObject {
 		        if(rebuildEvent) rebuildEvent=false;
 			}
 		}  
+	}
+	
+	public boolean getActive() {
+		return this.active;
+	}
+	
+	public void setActive(boolean active) {
+		this.active = active;
 	}
  
 	@Override

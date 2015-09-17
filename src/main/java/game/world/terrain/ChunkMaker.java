@@ -19,7 +19,7 @@ class ChunkMaker implements Callable<Mesh> {
 	private VoxelGeometry voxGeo;
 	
 	private boolean rebuildEvent;
-	
+	private boolean activeChunk;
 	
 	ChunkMaker(Mesh mesh, Vector3f voxCount, Vector3f positionOffset, boolean rebuildEvent) {
 		this.mesh = mesh;
@@ -38,6 +38,10 @@ class ChunkMaker implements Callable<Mesh> {
 	
 	public void setRebuildEvent(boolean rebuildEvent) {
 		this.rebuildEvent = rebuildEvent;
+	}
+	
+	public void setActiveChunk(boolean activeChunk) {
+		this.activeChunk = activeChunk;
 	}
 	
 	@Override
@@ -62,10 +66,13 @@ class ChunkMaker implements Callable<Mesh> {
         			
         			if(!workingCulledCoords.contains(vector.x+"-"+vector.y+"-"+vector.z)) {
         				
-        				
         				float[] vertices = null;
         				if(y == voxCount.y-1) {
-        					vertices = voxGeo.getVertices(vector);
+        					if(activeChunk) {
+            					vertices = voxGeo.getVertices(vector, VoxelType.ACTIVE);
+            				} else {
+            					vertices = voxGeo.getVertices(vector);
+            				}
         				} else {
         					vertices = voxGeo.getVertices(vector, VoxelType.DIRT);
         				}

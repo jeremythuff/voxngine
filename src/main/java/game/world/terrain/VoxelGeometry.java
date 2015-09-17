@@ -38,6 +38,11 @@ public class VoxelGeometry {
 		    bottomColor.set(0.5f, 0.35f, 0.1f, 1.0f);
 	    }
 	    
+	    if(type == VoxelType.ACTIVE) {
+	    	topColor.set(0.5f, 0.0f, 0.0f, 1.0f);
+		    bottomColor.set(0.5f, 0.35f, 0.1f, 1.0f);
+	    }
+	    
 	    if(type == VoxelType.DIRT) {
 	    	topColor.set(0.5f, 0.35f, 0.1f, 1.0f);
 	    	bottomColor.set(0.4f, 0.35f, 0.3f, 1.0f);

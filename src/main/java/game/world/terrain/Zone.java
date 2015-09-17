@@ -1,5 +1,8 @@
 package game.world.terrain;
 
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,11 +15,15 @@ import voxngine.io.Window;
 public class Zone implements WorldObject {
 	
 	List<WorldObject> worldObjects = new ArrayList<WorldObject>();
+	
+	int activeChunk;
+	
 	int i;
+	int u;
 
 	@Override
 	public void init(RenderEngine renderer) {
-	
+		
 //		worldObjects.add(new Chunk(50, 20, 50, 125, 10, -75));
 //		worldObjects.add(new Chunk(50, 20, 50, 125, 10, -25));
 //		worldObjects.add(new Chunk(50, 20, 50, 125, 10, 25));
@@ -24,22 +31,22 @@ public class Zone implements WorldObject {
 //		worldObjects.add(new Chunk(50, 20, 50, 125, 10, 125));
 //		
 //		worldObjects.add(new Chunk(50, 20, 50, 75, 10, -75));
-		//worldObjects.add(new Chunk(50, 20, 50, 75, 10, -25));
-		//worldObjects.add(new Chunk(50, 20, 50, 75, 10, 25));
-		//worldObjects.add(new Chunk(50, 20, 50, 75, 10, 75));
+		worldObjects.add(new Chunk(50, 20, 50, 75, 10, -25));
+		worldObjects.add(new Chunk(50, 20, 50, 75, 10, 25));
+		worldObjects.add(new Chunk(50, 20, 50, 75, 10, 75));
 //		worldObjects.add(new Chunk(50, 20, 50, 75, 10, 125));
 //
 //		
 //		worldObjects.add(new Chunk(50, 20, 50, 25, 10, -75));
-		//worldObjects.add(new Chunk(50, 20, 50, 25, 10, -25));
+		worldObjects.add(new Chunk(50, 20, 50, 25, 10, -25));
 		worldObjects.add(new Chunk(50, 20, 50, 25, 10, 25)); // center
-		//worldObjects.add(new Chunk(50, 20, 50, 25, 10, 75));
+		worldObjects.add(new Chunk(50, 20, 50, 25, 10, 75));
 //		worldObjects.add(new Chunk(50, 20, 50, 25, 10, 125));
 //		
 //		worldObjects.add(new Chunk(50, 20, 50, -25, 10, 125));
-		//worldObjects.add(new Chunk(50, 20, 50, -25, 10, 75));
-		//worldObjects.add(new Chunk(50, 20, 50, -25, 10, 25));
-		//worldObjects.add(new Chunk(50, 20, 50, -25, 10, -25));
+		worldObjects.add(new Chunk(50, 20, 50, -25, 10, 75));
+		worldObjects.add(new Chunk(50, 20, 50, -25, 10, 25));
+		worldObjects.add(new Chunk(50, 20, 50, -25, 10, -25));
 //		worldObjects.add(new Chunk(50, 20, 50, -25, 10, -75));
 //		
 //		worldObjects.add(new Chunk(50, 20, 50, -75, 10, 125));
@@ -47,6 +54,8 @@ public class Zone implements WorldObject {
 //		worldObjects.add(new Chunk(50, 20, 50, -75, 10, 25));
 //		worldObjects.add(new Chunk(50, 20, 50, -75, 10, -25));
 //		worldObjects.add(new Chunk(50, 20, 50, -75, 10, -75));
+		
+		activeChunk = worldObjects.size() - 1;
 		
 		worldObjects.stream().forEach(worldObject -> {		
 			System.out.println("Initialiazing the "+ worldObject.getClass().getSimpleName() +" Object...");
@@ -57,6 +66,20 @@ public class Zone implements WorldObject {
 	
 	@Override
 	public void input(Controlls controlls) {
+		
+		if(controlls.getKeyboad().activeKeyEvent()) {
+			if(controlls.getKeyboad().isKeyDown(GLFW_KEY_LEFT)) {
+				activeChunk++;
+				if(activeChunk > worldObjects.size() - 1) activeChunk = 0; 
+			}
+			
+			if(controlls.getKeyboad().isKeyDown(GLFW_KEY_RIGHT)) {
+				activeChunk--;
+				if(activeChunk < 0) activeChunk = worldObjects.size() - 1; 
+			}
+			
+		}
+		
 		worldObjects.stream().forEach(worldObject -> {
 			worldObject.input(controlls);
 		});
@@ -64,8 +87,18 @@ public class Zone implements WorldObject {
 
 	@Override
 	public void update(float delta) {
+		u = 0;
 		worldObjects.stream().forEach(worldObject -> {
+			
+			if(u == activeChunk) {
+				((Chunk)worldObject).setActive(true);
+			} else {
+				((Chunk)worldObject).setActive(false);
+			}
+			
+			
 			worldObject.update(delta);
+			u++;
 		});
 	}
 

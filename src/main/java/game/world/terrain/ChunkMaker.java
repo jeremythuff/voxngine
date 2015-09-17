@@ -51,6 +51,7 @@ class ChunkMaker implements Callable<Mesh> {
 		}
 				
         int index = 0;
+        int culled = 0;
         for(float x=0 ; x < voxCount.x ; x++) {
 
         	for (float y=0 ; y < voxCount.y ; y++) {
@@ -76,6 +77,7 @@ class ChunkMaker implements Callable<Mesh> {
             	        mesh.getIndecesBuffer().put(indeces);
             	        index++;
                 	} else if(!rebuildEvent) {
+                		culled++;
                 		continue;
                 	}
         			
@@ -95,11 +97,13 @@ class ChunkMaker implements Callable<Mesh> {
         	}
         }
         
-        vector = null;
-        cullables = null;
         
         mesh.getVertBuffer().flip();        
         mesh.getIndecesBuffer().flip();
+        mesh.setEntityCount(mesh.getEntityCount()-culled);
+        
+        vector = null;
+        cullables = null;
         
         return mesh;
 	}

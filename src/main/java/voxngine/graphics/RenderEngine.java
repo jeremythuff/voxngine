@@ -17,6 +17,10 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -39,7 +43,9 @@ public class RenderEngine {
 	
 	private int numTextVertices;
 	private int num3DVertices;
-	private int totalEntities;
+	private int totalDepictedEntities;
+	
+	private static ExecutorService executor = Executors.newCachedThreadPool();
 		
     private Vao textVao;
     private Rbo textVbo;
@@ -65,8 +71,6 @@ public class RenderEngine {
 		int id = renderObjects.size();
 		
 		renderObjects.put(id, roMap);
-		
-		totalEntities += mesh.getEntityCount();
 				
 		return id;
 	}
@@ -74,6 +78,10 @@ public class RenderEngine {
 	public void updateMesh(int id, Mesh mesh) {
 		Map<String, RenderObject> newRoMap = buildRenderObject(mesh.getEntityCount(), mesh.getVertBuffer(), mesh.getIndecesBuffer());
 		renderObjects.replace(id, renderObjects.get(id), newRoMap);
+	}
+	
+	public void updateDepictedEntityCount(int count) {
+		totalDepictedEntities += count;
 	}
 
 	
@@ -231,8 +239,7 @@ public class RenderEngine {
 	}
 
 	public void update(float delta) {
-		cam.update(delta);
-		
+		cam.update(delta);		
 	}
 	
 	
@@ -277,8 +284,8 @@ public class RenderEngine {
 		
 		Window.queScreenMessage("DebugOverlay", new ScreenMessage("Total Rendered Cubes: "+num3DVertices/36));
 		Window.queScreenMessage("DebugOverlay", new ScreenMessage("Verts: "+num3DVertices));
-		Window.queScreenMessage("DebugOverlay", new ScreenMessage("Total Depicted Cubes: "+totalEntities));
-
+		Window.queScreenMessage("DebugOverlay", new ScreenMessage("Total Depicted Cubes: "+totalDepictedEntities));
+		totalDepictedEntities=0;
 	}
 	
 	private void renderText() {
@@ -357,6 +364,10 @@ public class RenderEngine {
 				color
 			);
 		}
+	}
+	
+	public <T> Future<T> call(Callable<T> callable) {
+		return executor.submit(callable);
 	}
 	
 }

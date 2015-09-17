@@ -29,12 +29,12 @@ public class Mesh {
 	}
 
 	public void setVertBuffer(int i) {
-		if(this.getVertBuffer() == null) { 
-			this.vertBuffer = BufferUtils.createFloatBuffer(i);
-		} else {
-			this.vertBuffer.clear();
-			this.vertBuffer.position(0);
-		}
+		this.vertBuffer = BufferUtils.createFloatBuffer(i);
+	}
+	
+	public void updateVertBuffer() {
+		this.vertBuffer.clear();
+		this.vertBuffer.position(0);
 	}
 
 	public IntBuffer getIndecesBuffer() {
@@ -42,12 +42,12 @@ public class Mesh {
 	}
 
 	public void setIndecesBuffer(int i) {
-		if(this.indecesBuffer == null) {
-			this.indecesBuffer = BufferUtils.createIntBuffer(i);
-		} else {
-			this.indecesBuffer.clear();
-			this.indecesBuffer.position(0);
-		}
+		this.indecesBuffer = BufferUtils.createIntBuffer(i);
+	}
+	
+	public void updateIndecesBuffer() {
+		this.indecesBuffer.clear();
+		this.indecesBuffer.position(0);
 	}
 	
 	public int getEntityCount() {

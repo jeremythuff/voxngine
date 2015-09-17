@@ -99,7 +99,13 @@ public class TPCamera implements Camera {
 		
 		if(controlls.getMouse().activeScrollEvent()) {
 			if (controlls.getMouse().getScrollDelta().y > 0) {
-				zoom /= 1.05f;
+			
+				if(zoom > 75) {
+					zoom /= 1.05f;
+				} else {
+					zoom *= 1.05f;
+				}	
+			
 			} else {
 				
 				if(zoom < 250) {
@@ -107,8 +113,6 @@ public class TPCamera implements Camera {
 				} else {
 					zoom /= 1.05f;
 				}
-			    
-			
 			}
 		}
 	}
@@ -123,15 +127,11 @@ public class TPCamera implements Camera {
 	          mouseX = x;
 	          mouseY = y;
 	          
-	          if(cam.getBeta() < 0.20943951023932117) {
-		          cam.setBeta(0.20943951023932117 + 0.0001);
+	          if(cam.getBeta() < 0.15) {
+		          cam.setBeta(0.15 + 0.0001);
 		      }
 	      }
 	      
-	      
-	      System.out.println(cam.getBeta());
-	      
-	     
 	      
 	      cam.zoom(zoom);
 	      cam.update((float) (delta*2));
@@ -149,17 +149,9 @@ public class TPCamera implements Camera {
 		  fc = viewProjMatrix.getFrustum(fc);
 		  		  	
 		  displayAlpha = Math.round(cam.getAlpha()*100.0);
-			
-		  if(displayAlpha > 360d) displayAlpha = displayAlpha + Math.round(cam.getAlpha()*100.0) - 360;
-		  if(displayAlpha < 0d) displayAlpha = displayAlpha + Math.round(cam.getAlpha()*100.0) + 360;
-			
-		  displayBeta = Math.round(cam.getBeta()*100.0);
-			
-		  if(displayBeta > 360d) displayBeta = displayBeta + Math.round(cam.getBeta()*100.0) - 360;
-		  if(displayBeta < 0d) displayBeta = displayBeta + Math.round(cam.getBeta()*100.0) + 360;
+		  displayBeta = Math.round(cam.getBeta()*100.0);	
 		  	
-		  	
-		  Window.queScreenMessage("DebugOverlay", new ScreenMessage("CAMERA_DATA", "Zoom: " + zoom));
+		  Window.queScreenMessage("DebugOverlay", new ScreenMessage("CAMERA_DATA", "Zoom: " +  Math.round(zoom)));
 		  Window.queScreenMessage("DebugOverlay", new ScreenMessage("CAMERA_DATA", "Alpha: " + displayAlpha));
 		  Window.queScreenMessage("DebugOverlay", new ScreenMessage("CAMERA_DATA", "Beta: " + displayBeta));
 	}

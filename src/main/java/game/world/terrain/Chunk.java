@@ -17,8 +17,6 @@ import voxngine.io.Controlls;
 
 public class Chunk implements WorldObject {
 	
-	private ExecutorService executor;
-
 	private RenderEngine renderer;
 	private int registeredMeshId;
     private Mesh mesh;
@@ -44,9 +42,7 @@ public class Chunk implements WorldObject {
 		
 		voxGeo = new VoxelGeometry();
         geoLength = voxGeo.getVertices(new Vector3f(0,0,0)).length;
-        
-		executor = Executors.newCachedThreadPool();
-		
+       		
         mesh = new Mesh();
 
 	}
@@ -56,13 +52,13 @@ public class Chunk implements WorldObject {
 		     
         mesh.setVertBuffer((int) (voxCount.x*voxCount.y*voxCount.z*geoLength));
 		mesh.setIndecesBuffer((int) (voxCount.x*voxCount.y*voxCount.z*36));
-        mesh.setEntityCount((int) (voxCount.x*voxCount.y*voxCount.z));
+		mesh.setEntityCount((int) (voxCount.x*voxCount.y*voxCount.z));
         
         chunkMaker = new ChunkMaker(mesh, voxCount, positionOffset, rebuildEvent);
         
 		buildingBuffers = true;
 		
-		Future<Mesh> fMesh = executor.submit(chunkMaker);
+		Future<Mesh> fMesh = renderer.call(chunkMaker);
 		
 		try {
 			mesh = fMesh.get();
@@ -106,25 +102,22 @@ public class Chunk implements WorldObject {
 	@Override
 	public void update(float delta) {
 		
+		int updatedCount = (int) (voxCount.x*voxCount.y*voxCount.z);
+		renderer.updateDepictedEntityCount(updatedCount);
+		
 		if(!buildingBuffers && rebuildEvent)  {
 						
 			buildingBuffers = true;
-						
-			int updatedCount = (int) (voxCount.x*voxCount.y*voxCount.z);
 			
-			if(mesh.getVertBuffer() != null) BufferUtils.zeroBuffer(mesh.getVertBuffer());
-			if(mesh.getVertBuffer() != null) BufferUtils.zeroBuffer(mesh.getIndecesBuffer());
-						
-			mesh.setVertBuffer(updatedCount*geoLength);
-			mesh.setIndecesBuffer(updatedCount*36);
-			mesh.setEntityCount((int) (voxCount.x*voxCount.y*voxCount.z));
-	        
+			mesh.updateVertBuffer();
+			mesh.updateIndecesBuffer();
+				        
 			buildingBuffers = true;
 			
 			chunkMaker.setMesh(mesh);
 			chunkMaker.setRebuildEvent(rebuildEvent);
 			
-			Future<Mesh> fMesh = executor.submit(chunkMaker);
+			Future<Mesh> fMesh = renderer.call(chunkMaker);
 			
 			try {
 				mesh = fMesh.get();
@@ -140,9 +133,7 @@ public class Chunk implements WorldObject {
 				buildingBuffers = false;        
 		        if(rebuildEvent) rebuildEvent=false;
 			}
-	     
-		}
-	         
+		}  
 	}
  
 	@Override

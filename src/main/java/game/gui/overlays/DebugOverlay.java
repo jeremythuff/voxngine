@@ -67,9 +67,9 @@ public class DebugOverlay implements GuiObject {
 						float center = (Window.WIDTH/2)-((screenMessage.getMessage().length()*12)/2);
 						renderer.print(center, 50f, debugFont, screenMessage.getMessage(),new Vector3f(0.2f, 0.2f, 0.8f));
 					} else if(screenMessage.getType().equals("CAMERA_DATA")) {
-						renderer.print(CAMERA_DATA_spacing, Window.HEIGHT - 100, debugFont, screenMessage.getMessage(), new Vector3f(0.8f, 0.8f, 0.8f));
+						renderer.print(CAMERA_DATA_spacing, Window.HEIGHT - 50, debugFont, screenMessage.getMessage(), new Vector3f(0.8f, 0.8f, 0.8f));
 						
-						CAMERA_DATA_spacing += 250;
+						CAMERA_DATA_spacing += 150;
 						
 					}if(screenMessage.getType().equals("RENDERED_OBJECT")) {
 												

@@ -1,8 +1,10 @@
 package game.world.terrain;
 
+import java.lang.ref.SoftReference;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.TreeSet;
 import java.util.concurrent.Callable;
 
 import org.joml.Vector3f;
@@ -46,12 +48,12 @@ class ChunkMaker implements Callable<Mesh> {
 	
 	@Override
 	public Mesh call() throws Exception {
-		Map<String, Integer> cullables = new HashMap<String, Integer>();
+		SoftReference<Map<String, Integer>> weakCullablesMap = new SoftReference<Map<String, Integer>>(new HashMap<String, Integer>());
 		Vector3f vector = new Vector3f();
 		
-		HashSet<String> workingCulledCoords = mesh.getCulledCoords();
+		SoftReference<TreeSet<String>> softWorkingCulledCoords = new SoftReference<TreeSet<String>>(mesh.getCulledCoords());
 		if(rebuildEvent) {
-			mesh.setCulledCoords(new HashSet<String>());
+			mesh.setCulledCoords(new TreeSet<String>());
 		}
 				
         int index = 0;
@@ -64,7 +66,7 @@ class ChunkMaker implements Callable<Mesh> {
         			
         			vector.set((x-positionOffset.x),(y-positionOffset.y),(z-positionOffset.z));
         			
-        			if(!workingCulledCoords.contains(vector.x+"-"+vector.y+"-"+vector.z)) {
+        			if(!softWorkingCulledCoords.get().contains(vector.x+"-"+vector.y+"-"+vector.z)) {
         				
         				float[] vertices = null;
         				if(y == voxCount.y-1) {
@@ -84,21 +86,21 @@ class ChunkMaker implements Callable<Mesh> {
             	        mesh.getIndecesBuffer().put(indeces);
             	        index++;
                 	} else if(!rebuildEvent) {
-                		culled++;
+                		//culled++;
                 		continue;
                 	}
         			
-        			cullTest(cullables, vector.set((x-positionOffset.x),(y-positionOffset.y)-2,(z-positionOffset.z)));        			
-        			cullTest(cullables, vector.set((x-positionOffset.x)+1,(y-positionOffset.y)-2,(z-positionOffset.z)+1));
-        			cullTest(cullables, vector.set((x-positionOffset.x)+1,(y-positionOffset.y)-2,(z-positionOffset.z)-1));
+        			cullTest(weakCullablesMap.get(), vector.set((x-positionOffset.x),(y-positionOffset.y)-2,(z-positionOffset.z)));        			
+        			cullTest(weakCullablesMap.get(), vector.set((x-positionOffset.x)+1,(y-positionOffset.y)-2,(z-positionOffset.z)+1));
+        			cullTest(weakCullablesMap.get(), vector.set((x-positionOffset.x)+1,(y-positionOffset.y)-2,(z-positionOffset.z)-1));
         			
-        			cullTest(cullables, vector.set((x-positionOffset.x)-1,(y-positionOffset.y)-2,(z-positionOffset.z)+1));
-        			cullTest(cullables, vector.set((x-positionOffset.x)-1,(y-positionOffset.y)-2,(z-positionOffset.z)-1));
-        			cullTest(cullables, vector.set((x-positionOffset.x)-1,(y-positionOffset.y)-2,(z-positionOffset.z)));
+        			cullTest(weakCullablesMap.get(), vector.set((x-positionOffset.x)-1,(y-positionOffset.y)-2,(z-positionOffset.z)+1));
+        			cullTest(weakCullablesMap.get(), vector.set((x-positionOffset.x)-1,(y-positionOffset.y)-2,(z-positionOffset.z)-1));
+        			cullTest(weakCullablesMap.get(), vector.set((x-positionOffset.x)-1,(y-positionOffset.y)-2,(z-positionOffset.z)));
         			
-        			cullTest(cullables, vector.set((x-positionOffset.x)+1,(y-positionOffset.y)-2,(z-positionOffset.z)));
-        			cullTest(cullables, vector.set((x-positionOffset.x),(y-positionOffset.y)-2,(z-positionOffset.z)-1));
-        			cullTest(cullables, vector.set((x-positionOffset.x),(y-positionOffset.y)-2,(z-positionOffset.z)+1));
+        			cullTest(weakCullablesMap.get(), vector.set((x-positionOffset.x)+1,(y-positionOffset.y)-2,(z-positionOffset.z)));
+        			cullTest(weakCullablesMap.get(), vector.set((x-positionOffset.x),(y-positionOffset.y)-2,(z-positionOffset.z)-1));
+        			cullTest(weakCullablesMap.get(), vector.set((x-positionOffset.x),(y-positionOffset.y)-2,(z-positionOffset.z)+1));
         			
         		}
         	}
@@ -110,7 +112,7 @@ class ChunkMaker implements Callable<Mesh> {
         mesh.setEntityCount(mesh.getEntityCount()-culled);
         
         vector = null;
-        cullables = null;
+        weakCullablesMap.clear();
         
         return mesh;
 	}
@@ -120,11 +122,11 @@ class ChunkMaker implements Callable<Mesh> {
 		String coords = vector.x+"-"+vector.y+"-"+vector.z;
 		
 		if(cullables.get(coords) == null) {
-			cullables.put(coords, 1);
+			cullables.put(coords, 129);
 		} else {
 			int curentValue = cullables.get(coords);			
-			if(curentValue > 7) {
-				mesh.getCulledCoords().add(coords);
+			if(curentValue > 135) {
+				mesh.addCulledCoord(coords);
 			} else {
 				cullables.replace(coords, curentValue+=1);
 			}

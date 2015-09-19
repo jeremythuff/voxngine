@@ -17,9 +17,12 @@ public class Zone implements WorldObject {
 	List<WorldObject> worldObjects = new ArrayList<WorldObject>();
 	
 	int activeChunk;
+	int lastActive;
 	
 	int i;
 	int u;
+
+	private boolean setLastActive;
 
 	@Override
 	public void init(RenderEngine renderer) {
@@ -69,16 +72,29 @@ public class Zone implements WorldObject {
 		
 		if(controlls.getKeyboad().activeKeyEvent()) {
 			if(controlls.getKeyboad().isKeyDown(GLFW_KEY_LEFT)) {
+				setLastActive = true;
+				lastActive = activeChunk;
 				activeChunk++;
-				if(activeChunk > worldObjects.size() - 1) activeChunk = 0; 
+				if(activeChunk > worldObjects.size() - 1) {
+					lastActive = worldObjects.size() - 1;
+					activeChunk = 0;
+				}
 			}
 			
 			if(controlls.getKeyboad().isKeyDown(GLFW_KEY_RIGHT)) {
+				setLastActive = true;
+				lastActive = activeChunk;
 				activeChunk--;
-				if(activeChunk < 0) activeChunk = worldObjects.size() - 1; 
+				if(activeChunk < 0) {
+					lastActive = 0;
+					activeChunk = worldObjects.size() - 1; 
+				}
 			}
 			
 		}
+		
+		Window.queScreenMessage("DebugOverlay", new ScreenMessage("Last Active: "+lastActive));
+
 		
 		worldObjects.stream().forEach(worldObject -> {
 			worldObject.input(controlls);
@@ -90,12 +106,17 @@ public class Zone implements WorldObject {
 		u = 0;
 		worldObjects.stream().forEach(worldObject -> {
 			
-			if(u == activeChunk) {
+			if(u == lastActive && setLastActive) {
+				setLastActive = false;
+				((Chunk)worldObject).setLastActive(true);
+				((Chunk)worldObject).setActive(false);
+			} else if(u == activeChunk)  {
 				((Chunk)worldObject).setActive(true);
+				((Chunk)worldObject).setLastActive(false);
 			} else {
 				((Chunk)worldObject).setActive(false);
+				((Chunk)worldObject).setLastActive(false);
 			}
-			
 			
 			worldObject.update(delta);
 			u++;

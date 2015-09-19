@@ -3,12 +3,9 @@ package game.world.terrain;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_DOWN;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_UP;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import org.joml.Vector3f;
-import org.lwjgl.BufferUtils;
 
 import game.world.WorldObject;
 import voxngine.graphics.Mesh;
@@ -28,12 +25,12 @@ public class Chunk implements WorldObject {
 	
 	int geoLength;
 	
-	boolean buildingBuffers = false;
-	boolean isDone = false;
-    private boolean rebuildEvent;
+	private boolean buildingBuffers = false;
+    private boolean rebuildEvent = false ;
+    private boolean lastActive = false;
+    private boolean active = false;
     
     private ChunkMaker chunkMaker;
-    private boolean active;
 		
 	public Chunk(int xVox, int yVox, int zVox, 
 				int xOrigin, int yOrigin, int zOrigin) {
@@ -56,10 +53,13 @@ public class Chunk implements WorldObject {
 		mesh.setEntityCount((int) (voxCount.x*voxCount.y*voxCount.z));
         
         chunkMaker = new ChunkMaker(mesh, voxCount, positionOffset, rebuildEvent);
+		chunkMaker.setActiveChunk(active);
+
         
 		buildingBuffers = true;
 		
 		Future<Mesh> fMesh = renderer.call(chunkMaker);
+		
 		
 		try {
 			mesh = fMesh.get();
@@ -108,8 +108,10 @@ public class Chunk implements WorldObject {
 		int updatedCount = (int) (voxCount.x*voxCount.y*voxCount.z);
 		renderer.updateDepictedEntityCount(updatedCount);
 		
-		if(!buildingBuffers && rebuildEvent)  {
-						
+		if(!buildingBuffers && (rebuildEvent || lastActive) && (active || lastActive))  {
+			
+			lastActive = false;		
+			
 			buildingBuffers = true;
 			
 			mesh.updateVertBuffer();
@@ -119,6 +121,7 @@ public class Chunk implements WorldObject {
 			
 			chunkMaker.setMesh(mesh);
 			chunkMaker.setRebuildEvent(rebuildEvent);
+			chunkMaker.setActiveChunk(active);
 			
 			Future<Mesh> fMesh = renderer.call(chunkMaker);
 			
@@ -152,6 +155,10 @@ public class Chunk implements WorldObject {
 
 	@Override
 	public void dispose() {}
+
+	public void setLastActive(boolean lastActive) {
+		this.lastActive = lastActive;
+	}
 	
 
 }

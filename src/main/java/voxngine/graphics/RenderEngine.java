@@ -47,6 +47,8 @@ import voxngine.graphics.textures.Font;
 import voxngine.io.Controlls;
 import voxngine.io.ScreenMessage;
 import voxngine.io.Window;
+import voxngine.utils.NonBlockingExecutor;
+import voxngine.utils.NonBlockingFuture;
 
 public class RenderEngine {
 	
@@ -56,7 +58,8 @@ public class RenderEngine {
 	private int num3DVertices;
 	private int totalDepictedEntities;
 	
-	private static ExecutorService executor = Executors.newCachedThreadPool();
+	private NonBlockingExecutor executor =
+            new NonBlockingExecutor(Executors.newSingleThreadExecutor());
 		
     private Vao textVao;
     private Rbo textVbo;
@@ -377,8 +380,8 @@ public class RenderEngine {
 		}
 	}
 	
-	public <T> Future<T> call(Callable<T> callable) {
-		return executor.submit(callable);
+	public <T> NonBlockingFuture<T> call(Callable<T> callable) {
+		return executor.submitNonBlocking(callable);
 	}
 	
 }

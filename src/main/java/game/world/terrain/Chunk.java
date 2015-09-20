@@ -11,6 +11,8 @@ import game.world.WorldObject;
 import voxngine.graphics.Mesh;
 import voxngine.graphics.RenderEngine;
 import voxngine.io.Controlls;
+import voxngine.utils.FutureHandler;
+import voxngine.utils.NonBlockingFuture;
 
 public class Chunk implements WorldObject {
 	
@@ -31,6 +33,8 @@ public class Chunk implements WorldObject {
     private boolean active = false;
     
     private ChunkMaker chunkMaker;
+	protected boolean isDone;
+	protected boolean initDone;
 		
 	public Chunk(int xVox, int yVox, int zVox, 
 				int xOrigin, int yOrigin, int zOrigin) {
@@ -58,24 +62,40 @@ public class Chunk implements WorldObject {
         
 		buildingBuffers = true;
 		
-		Future<Mesh> fMesh = renderer.call(chunkMaker);
+		NonBlockingFuture<Mesh> fMesh = renderer.call(chunkMaker);
 		
 		
-		try {
-			mesh = fMesh.get();
+		fMesh.setHandler(new FutureHandler<Mesh>() {
 			
-			if(mesh != null) {
-		        registeredMeshId = renderer.registerMesh(mesh);
-			} 
-		} catch (Exception e) {
-			System.out.println("Exception returning from callable!");
-			e.printStackTrace();
-		} finally  {
-			fMesh.cancel(true);
-			fMesh = null;
-			buildingBuffers = false;        
-	        if(rebuildEvent) rebuildEvent=false;
-		}
+			@Override
+			public void onSuccess(Mesh newMesh) {
+				buildingBuffers = false;
+				mesh = newMesh;
+				initDone = true;
+			}
+			
+			@Override
+            public void onFailure(Throwable e) {
+                System.out.println(e.getMessage());
+            }
+		});
+		
+		
+//		try {
+//			mesh = fMesh.get();
+//			
+//			if(mesh != null) {
+//		        
+//			} 
+//		} catch (Exception e) {
+//			System.out.println("Exception returning from callable!");
+//			e.printStackTrace();
+//		} finally  {
+//			fMesh.cancel(true);
+//			fMesh = null;
+//			buildingBuffers = false;        
+//	        if(rebuildEvent) rebuildEvent=false;
+//		}
         
         this.renderer = renderer;
         rebuildEvent = true;
@@ -105,10 +125,15 @@ public class Chunk implements WorldObject {
 	@Override
 	public void update(float delta) {
 		
+		if(initDone) {
+			initDone = false;
+			registeredMeshId = renderer.registerMesh(mesh);;
+		}
+		
 		int updatedCount = (int) (voxCount.x*voxCount.y*voxCount.z);
 		renderer.updateDepictedEntityCount(updatedCount);
 		
-		if(!buildingBuffers && (rebuildEvent || lastActive) && (active || lastActive))  {
+		if((!buildingBuffers && (rebuildEvent || lastActive) && (active || lastActive)) || isDone)  {
 			
 			lastActive = false;		
 			
@@ -123,22 +148,45 @@ public class Chunk implements WorldObject {
 			chunkMaker.setRebuildEvent(rebuildEvent);
 			chunkMaker.setActiveChunk(active);
 			
-			Future<Mesh> fMesh = renderer.call(chunkMaker);
+			NonBlockingFuture<Mesh> fMesh = renderer.call(chunkMaker);
 			
-			try {
-				mesh = fMesh.get();
-				if(mesh != null) {
-		        	renderer.updateMesh(registeredMeshId, mesh);
-				} 
-			} catch (Exception e) {
-				System.out.println("Exception returning from callable!");
-				e.printStackTrace();
-			} finally  {
-				fMesh.cancel(true);
-				fMesh = null;
-				buildingBuffers = false;        
-		        if(rebuildEvent) rebuildEvent=false;
+			
+			fMesh.setHandler(new FutureHandler<Mesh>() {
+				
+				@Override
+				public void onSuccess(Mesh newMesh) {
+					buildingBuffers = false;
+					isDone = true;
+					mesh = newMesh;
+				}
+				
+				@Override
+	            public void onFailure(Throwable e) {
+	                System.out.println(e.getMessage());
+	            }
+			});
+			
+			if(isDone) {
+				isDone = false;
+				renderer.updateMesh(registeredMeshId, mesh);
 			}
+			
+
+			
+//			try {
+//				mesh = fMesh.get();
+//				if(mesh != null) {
+//		        	renderer.updateMesh(registeredMeshId, mesh);
+//				} 
+//			} catch (Exception e) {
+//				System.out.println("Exception returning from callable!");
+//				e.printStackTrace();
+//			} finally  {
+//				fMesh.cancel(true);
+//				fMesh = null;
+//				buildingBuffers = false;        
+//		        if(rebuildEvent) rebuildEvent=false;
+//			}
 		}  
 	}
 	
@@ -151,7 +199,9 @@ public class Chunk implements WorldObject {
 	}
  
 	@Override
-	public void render(RenderEngine renderer) {}
+	public void render(RenderEngine renderer) {
+		
+	}
 
 	@Override
 	public void dispose() {}

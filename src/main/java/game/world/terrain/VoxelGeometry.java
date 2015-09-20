@@ -5,7 +5,7 @@ import org.joml.Vector4f;
 
 public class VoxelGeometry {	
 	
-	float cubeSize = 0.475f;
+	float cubeSize = 0.5f;
 	
 	public int[] getIndices(int index) {
 		

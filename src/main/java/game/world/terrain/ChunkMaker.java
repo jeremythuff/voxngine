@@ -23,6 +23,8 @@ class ChunkMaker implements Callable<Mesh> {
 	private boolean rebuildEvent;
 	private boolean activeChunk;
 	
+    private SoftReference<TreeSet<String>> softCulledCoords;
+	
 	ChunkMaker(Mesh mesh, Vector3f voxCount, Vector3f positionOffset, boolean rebuildEvent) {
 		this.mesh = mesh;
 		
@@ -30,6 +32,8 @@ class ChunkMaker implements Callable<Mesh> {
 		this.positionOffset = positionOffset;
 		
 		voxGeo = new VoxelGeometry();
+		
+		softCulledCoords = new SoftReference<TreeSet<String>>(new TreeSet<String>());	
 		
 		this.rebuildEvent = rebuildEvent;
 	}
@@ -51,10 +55,10 @@ class ChunkMaker implements Callable<Mesh> {
 		SoftReference<Map<String, Integer>> weakCullablesMap = new SoftReference<Map<String, Integer>>(new HashMap<String, Integer>());
 		Vector3f vector = new Vector3f();
 		
-		SoftReference<TreeSet<String>> softWorkingCulledCoords = new SoftReference<TreeSet<String>>(mesh.getCulledCoords());
-		if(rebuildEvent) {
-			mesh.setCulledCoords(new TreeSet<String>());
-		}
+		SoftReference<TreeSet<String>> softWorkingCulledCoords = softCulledCoords;//new SoftReference<TreeSet<String>>(mesh.getCulledCoords());
+//		if(rebuildEvent) {
+//			mesh.setCulledCoords(new TreeSet<String>());
+//		}
 				
         int index = 0;
         int culled = 0;
@@ -117,6 +121,7 @@ class ChunkMaker implements Callable<Mesh> {
         return mesh;
 	}
 	
+	
 	private Map<String, Integer> cullTest(Map<String, Integer> cullables, Vector3f vector) {
 		
 		String coords = vector.x+"-"+vector.y+"-"+vector.z;
@@ -126,7 +131,7 @@ class ChunkMaker implements Callable<Mesh> {
 		} else {
 			int curentValue = cullables.get(coords);			
 			if(curentValue > 135) {
-				mesh.addCulledCoord(coords);
+				softCulledCoords.get().add(coords);
 			} else {
 				cullables.replace(coords, curentValue+=1);
 			}
@@ -135,5 +140,24 @@ class ChunkMaker implements Callable<Mesh> {
 		return cullables;
 		
 	}
+	
+//	private Map<String, Integer> cullTest(Map<String, Integer> cullables, Vector3f vector) {
+//		
+//		String coords = vector.x+"-"+vector.y+"-"+vector.z;
+//		
+//		if(cullables.get(coords) == null) {
+//			cullables.put(coords, 129);
+//		} else {
+//			int curentValue = cullables.get(coords);			
+//			if(curentValue > 135) {
+//				mesh.addCulledCoord(coords);
+//			} else {
+//				cullables.replace(coords, curentValue+=1);
+//			}
+//		}
+//		
+//		return cullables;
+//		
+//	}
 
 }

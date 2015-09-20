@@ -4,12 +4,12 @@ import java.util.concurrent.Future;
 
 public class NonBlockingFuture<R> {
 	
-	private FutureHandler<R> handler;
+	private FutureCallback<R> handler;
     private R result;
     private Throwable failure;
     private boolean isCompleted;
     
-    public void setHandler(FutureHandler<R> handler) {
+    public void setCallback(FutureCallback<R> handler) {
         this.handler = handler;
         if (isCompleted) {
             if (failure != null) handler.onFailure(failure);

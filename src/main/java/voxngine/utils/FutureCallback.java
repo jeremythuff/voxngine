@@ -1,6 +1,6 @@
 package voxngine.utils;
 
-public interface FutureHandler<R> {
+public interface FutureCallback<R> {
 	public void onSuccess(R result);
 	void onFailure(Throwable e);
 }

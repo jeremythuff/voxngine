@@ -122,7 +122,7 @@ class ChunkMaker implements Callable<Mesh> {
 	}
 	
 	
-	private Map<String, Integer> cullTest(Map<String, Integer> cullables, Vector3f vector) {
+	private void cullTest(Map<String, Integer> cullables, Vector3f vector) {
 		
 		String coords = vector.x+"-"+vector.y+"-"+vector.z;
 		
@@ -136,28 +136,7 @@ class ChunkMaker implements Callable<Mesh> {
 				cullables.replace(coords, curentValue+=1);
 			}
 		}
-		
-		return cullables;
-		
+				
 	}
-	
-//	private Map<String, Integer> cullTest(Map<String, Integer> cullables, Vector3f vector) {
-//		
-//		String coords = vector.x+"-"+vector.y+"-"+vector.z;
-//		
-//		if(cullables.get(coords) == null) {
-//			cullables.put(coords, 129);
-//		} else {
-//			int curentValue = cullables.get(coords);			
-//			if(curentValue > 135) {
-//				mesh.addCulledCoord(coords);
-//			} else {
-//				cullables.replace(coords, curentValue+=1);
-//			}
-//		}
-//		
-//		return cullables;
-//		
-//	}
 
 }

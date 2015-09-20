@@ -11,7 +11,7 @@ import game.world.WorldObject;
 import voxngine.graphics.Mesh;
 import voxngine.graphics.RenderEngine;
 import voxngine.io.Controlls;
-import voxngine.utils.FutureHandler;
+import voxngine.utils.FutureCallback;
 import voxngine.utils.NonBlockingFuture;
 
 public class Chunk implements WorldObject {
@@ -27,7 +27,6 @@ public class Chunk implements WorldObject {
 	
 	int geoLength;
 	
-	private boolean buildingBuffers = false;
     private boolean rebuildEvent = false ;
     private boolean lastActive = false;
     private boolean active = false;
@@ -58,18 +57,13 @@ public class Chunk implements WorldObject {
         
         chunkMaker = new ChunkMaker(mesh, voxCount, positionOffset, rebuildEvent);
 		chunkMaker.setActiveChunk(active);
-
-        
-		buildingBuffers = true;
 		
 		NonBlockingFuture<Mesh> fMesh = renderer.call(chunkMaker);
 		
-		
-		fMesh.setHandler(new FutureHandler<Mesh>() {
+		fMesh.setCallback(new FutureCallback<Mesh>() {
 			
 			@Override
 			public void onSuccess(Mesh newMesh) {
-				buildingBuffers = false;
 				mesh = newMesh;
 				initDone = true;
 			}
@@ -79,29 +73,8 @@ public class Chunk implements WorldObject {
                 System.out.println(e.getMessage());
             }
 		});
-		
-		
-//		try {
-//			mesh = fMesh.get();
-//			
-//			if(mesh != null) {
-//		        
-//			} 
-//		} catch (Exception e) {
-//			System.out.println("Exception returning from callable!");
-//			e.printStackTrace();
-//		} finally  {
-//			fMesh.cancel(true);
-//			fMesh = null;
-//			buildingBuffers = false;        
-//	        if(rebuildEvent) rebuildEvent=false;
-//		}
         
         this.renderer = renderer;
-        rebuildEvent = true;
-        
-		System.out.println("Chunk "+ this.registeredMeshId +" is initialized...");
-
         
 	}
 		
@@ -127,35 +100,31 @@ public class Chunk implements WorldObject {
 		
 		if(initDone) {
 			initDone = false;
-			registeredMeshId = renderer.registerMesh(mesh);;
+			registeredMeshId = renderer.registerMesh(mesh);
+			System.out.println("Chunk "+ this.registeredMeshId +" is initialized...");
+	        rebuildEvent = true;
 		}
 		
 		int updatedCount = (int) (voxCount.x*voxCount.y*voxCount.z);
 		renderer.updateDepictedEntityCount(updatedCount);
 		
-		if((!buildingBuffers && (rebuildEvent || lastActive) && (active || lastActive)) || isDone)  {
-			
+		if(rebuildEvent && (active || lastActive))  {
+			System.out.println("foo");
 			lastActive = false;		
-			
-			buildingBuffers = true;
-			
+					
 			mesh.updateVertBuffer();
 			mesh.updateIndecesBuffer();
-				        
-			buildingBuffers = true;
-			
+				       			
 			chunkMaker.setMesh(mesh);
 			chunkMaker.setRebuildEvent(rebuildEvent);
 			chunkMaker.setActiveChunk(active);
 			
 			NonBlockingFuture<Mesh> fMesh = renderer.call(chunkMaker);
 			
-			
-			fMesh.setHandler(new FutureHandler<Mesh>() {
+			fMesh.setCallback(new FutureCallback<Mesh>() {
 				
 				@Override
 				public void onSuccess(Mesh newMesh) {
-					buildingBuffers = false;
 					isDone = true;
 					mesh = newMesh;
 				}
@@ -166,28 +135,14 @@ public class Chunk implements WorldObject {
 	            }
 			});
 			
-			if(isDone) {
-				isDone = false;
-				renderer.updateMesh(registeredMeshId, mesh);
-			}
+			rebuildEvent = false;
 			
-
-			
-//			try {
-//				mesh = fMesh.get();
-//				if(mesh != null) {
-//		        	renderer.updateMesh(registeredMeshId, mesh);
-//				} 
-//			} catch (Exception e) {
-//				System.out.println("Exception returning from callable!");
-//				e.printStackTrace();
-//			} finally  {
-//				fMesh.cancel(true);
-//				fMesh = null;
-//				buildingBuffers = false;        
-//		        if(rebuildEvent) rebuildEvent=false;
-//			}
-		}  
+		}
+		
+		if(isDone) {
+			isDone = false;
+			renderer.updateMesh(registeredMeshId, mesh);
+		}
 	}
 	
 	public boolean getActive() {

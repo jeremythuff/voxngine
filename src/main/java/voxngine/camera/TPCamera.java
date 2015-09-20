@@ -127,9 +127,9 @@ public class TPCamera implements Camera {
 	          mouseX = x;
 	          mouseY = y;
 	          
-	          if(cam.getBeta() < 0.15) {
-		          cam.setBeta(0.15 + 0.0001);
-		      }
+//	          if(cam.getBeta() < 0.15) {
+//		          cam.setBeta(0.15 + 0.0001);
+//		      }
 	      }
 	      
 	      

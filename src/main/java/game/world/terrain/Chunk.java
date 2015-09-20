@@ -30,9 +30,10 @@ public class Chunk implements WorldObject {
     private boolean rebuildEvent = false ;
     private boolean lastActive = false;
     private boolean active = false;
+    private boolean currentlyBuilding = false;
     
     private ChunkMaker chunkMaker;
-	protected boolean isDone;
+	protected boolean finishedBuidling;
 	protected boolean initDone;
 		
 	public Chunk(int xVox, int yVox, int zVox, 
@@ -107,9 +108,10 @@ public class Chunk implements WorldObject {
 		
 		int updatedCount = (int) (voxCount.x*voxCount.y*voxCount.z);
 		renderer.updateDepictedEntityCount(updatedCount);
-		
-		if(rebuildEvent && (active || lastActive))  {
-			System.out.println("foo");
+				
+		if(!currentlyBuilding && ((rebuildEvent || lastActive) && (active || lastActive)))  {
+			
+			currentlyBuilding = true;
 			lastActive = false;		
 					
 			mesh.updateVertBuffer();
@@ -125,7 +127,7 @@ public class Chunk implements WorldObject {
 				
 				@Override
 				public void onSuccess(Mesh newMesh) {
-					isDone = true;
+					finishedBuidling = true;
 					mesh = newMesh;
 				}
 				
@@ -139,8 +141,9 @@ public class Chunk implements WorldObject {
 			
 		}
 		
-		if(isDone) {
-			isDone = false;
+		if(finishedBuidling) {
+			finishedBuidling = false;
+			currentlyBuilding = false;
 			renderer.updateMesh(registeredMeshId, mesh);
 		}
 	}

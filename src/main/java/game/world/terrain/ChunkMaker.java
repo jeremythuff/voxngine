@@ -52,13 +52,14 @@ class ChunkMaker implements Callable<Mesh> {
 	
 	@Override
 	public Mesh call() throws Exception {
+				
 		SoftReference<Map<String, Integer>> weakCullablesMap = new SoftReference<Map<String, Integer>>(new HashMap<String, Integer>());
 		Vector3f vector = new Vector3f();
 		
 		SoftReference<TreeSet<String>> softWorkingCulledCoords = softCulledCoords;//new SoftReference<TreeSet<String>>(mesh.getCulledCoords());
-//		if(rebuildEvent) {
-//			mesh.setCulledCoords(new TreeSet<String>());
-//		}
+		if(rebuildEvent) {
+			mesh.setCulledCoords(new TreeSet<String>());
+		}
 				
         int index = 0;
         int culled = 0;
@@ -94,17 +95,17 @@ class ChunkMaker implements Callable<Mesh> {
                 		continue;
                 	}
         			
-        			cullTest(weakCullablesMap.get(), vector.set((x-positionOffset.x),(y-positionOffset.y)-2,(z-positionOffset.z)));        			
-        			cullTest(weakCullablesMap.get(), vector.set((x-positionOffset.x)+1,(y-positionOffset.y)-2,(z-positionOffset.z)+1));
-        			cullTest(weakCullablesMap.get(), vector.set((x-positionOffset.x)+1,(y-positionOffset.y)-2,(z-positionOffset.z)-1));
+        			cullTest(weakCullablesMap.get(), vector.set((x-positionOffset.x),(y-positionOffset.y)-1,(z-positionOffset.z)));        			
+        			cullTest(weakCullablesMap.get(), vector.set((x-positionOffset.x)+1,(y-positionOffset.y)-1,(z-positionOffset.z)+1));
+        			cullTest(weakCullablesMap.get(), vector.set((x-positionOffset.x)+1,(y-positionOffset.y)-1,(z-positionOffset.z)-1));
         			
-        			cullTest(weakCullablesMap.get(), vector.set((x-positionOffset.x)-1,(y-positionOffset.y)-2,(z-positionOffset.z)+1));
-        			cullTest(weakCullablesMap.get(), vector.set((x-positionOffset.x)-1,(y-positionOffset.y)-2,(z-positionOffset.z)-1));
-        			cullTest(weakCullablesMap.get(), vector.set((x-positionOffset.x)-1,(y-positionOffset.y)-2,(z-positionOffset.z)));
+        			cullTest(weakCullablesMap.get(), vector.set((x-positionOffset.x)-1,(y-positionOffset.y)-1,(z-positionOffset.z)+1));
+        			cullTest(weakCullablesMap.get(), vector.set((x-positionOffset.x)-1,(y-positionOffset.y)-1,(z-positionOffset.z)-1));
+        			cullTest(weakCullablesMap.get(), vector.set((x-positionOffset.x)-1,(y-positionOffset.y)-1,(z-positionOffset.z)));
         			
-        			cullTest(weakCullablesMap.get(), vector.set((x-positionOffset.x)+1,(y-positionOffset.y)-2,(z-positionOffset.z)));
-        			cullTest(weakCullablesMap.get(), vector.set((x-positionOffset.x),(y-positionOffset.y)-2,(z-positionOffset.z)-1));
-        			cullTest(weakCullablesMap.get(), vector.set((x-positionOffset.x),(y-positionOffset.y)-2,(z-positionOffset.z)+1));
+        			cullTest(weakCullablesMap.get(), vector.set((x-positionOffset.x)+1,(y-positionOffset.y)-1,(z-positionOffset.z)));
+        			cullTest(weakCullablesMap.get(), vector.set((x-positionOffset.x),(y-positionOffset.y)-1,(z-positionOffset.z)-1));
+        			cullTest(weakCullablesMap.get(), vector.set((x-positionOffset.x),(y-positionOffset.y)-1,(z-positionOffset.z)+1));
         			
         		}
         	}

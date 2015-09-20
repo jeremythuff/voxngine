@@ -16,10 +16,10 @@ public class Mesh {
     private IntBuffer indecesBuffer;
     
     private int entityCount;
-    //private SoftReference<TreeSet<String>> softCulledCoords;
+    private SoftReference<TreeSet<String>> softCulledCoords;
     
 	public Mesh(){
-		//softCulledCoords = new SoftReference<TreeSet<String>>(new TreeSet<String>());	
+		softCulledCoords = new SoftReference<TreeSet<String>>(new TreeSet<String>());	
 	}
     
     public Mesh(FloatBuffer vertBuffer, IntBuffer indecesBuffer) {
@@ -69,18 +69,18 @@ public class Mesh {
 		this.entityCount = entityCount;
 	}
 	
-//	public void addCulledCoord(String culledCoord) {
-//		softCulledCoords.get().add(culledCoord);
-//	}
-//
-//	public TreeSet<String> getCulledCoords() {
-//		return softCulledCoords.get();
-//	}
-//
-//	public void setCulledCoords(TreeSet<String> culledCoords) {
-//		this.softCulledCoords.clear();
-//		this.softCulledCoords =  new SoftReference<TreeSet<String>>(culledCoords);
-//	}
+	public void addCulledCoord(String culledCoord) {
+		softCulledCoords.get().add(culledCoord);
+	}
+
+	public TreeSet<String> getCulledCoords() {
+		return softCulledCoords.get();
+	}
+
+	public void setCulledCoords(TreeSet<String> culledCoords) {
+		this.softCulledCoords.clear();
+		this.softCulledCoords =  new SoftReference<TreeSet<String>>(culledCoords);
+	}
 	
 	
 	public void destroyBuffer(Buffer buffer) {

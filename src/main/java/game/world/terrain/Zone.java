@@ -94,7 +94,7 @@ public class Zone implements WorldObject {
 		}
 		
 		Window.queScreenMessage("DebugOverlay", new ScreenMessage("Last Active: "+lastActive));
-
+		Window.queScreenMessage("DebugOverlay", new ScreenMessage("Active: "+activeChunk));
 		
 		worldObjects.stream().forEach(worldObject -> {
 			worldObject.input(controlls);

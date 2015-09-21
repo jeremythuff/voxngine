@@ -45,8 +45,8 @@ import voxngine.graphics.textures.Font;
 import voxngine.io.Controlls;
 import voxngine.io.ScreenMessage;
 import voxngine.io.Window;
-import voxngine.utils.NonBlockingExecutor;
-import voxngine.utils.NonBlockingFuture;
+import voxngine.threading.NonBlockingExecutor;
+import voxngine.threading.NonBlockingFuture;
 
 public class RenderEngine {
 	

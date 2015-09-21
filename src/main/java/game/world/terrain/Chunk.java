@@ -11,8 +11,8 @@ import game.world.WorldObject;
 import voxngine.graphics.Mesh;
 import voxngine.graphics.RenderEngine;
 import voxngine.io.Controlls;
-import voxngine.utils.FutureCallback;
-import voxngine.utils.NonBlockingFuture;
+import voxngine.threading.FutureCallback;
+import voxngine.threading.NonBlockingFuture;
 
 public class Chunk implements WorldObject {
 	

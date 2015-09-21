@@ -1,4 +1,4 @@
-package voxngine.utils;
+package voxngine.threading;
 
 import java.util.concurrent.Future;
 

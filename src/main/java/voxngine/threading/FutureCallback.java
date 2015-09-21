@@ -1,4 +1,4 @@
-package voxngine.utils;
+package voxngine.threading;
 
 public interface FutureCallback<R> {
 	public void onSuccess(R result);

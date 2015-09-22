@@ -43,7 +43,7 @@ public class Chunk implements WorldObject {
 		this.positionOffset = new Vector3f(xOrigin, yOrigin, zOrigin);
 		
 		voxGeo = new VoxelGeometry();
-        geoLength = voxGeo.getVertices(new Vector3f(0,0,0)).length;
+        geoLength = voxGeo.getVertices(new Vector3f(0,0,0), "front").length*6;
        		
         mesh = new Mesh();
 

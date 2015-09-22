@@ -2,7 +2,6 @@ package game.world.terrain;
 
 import java.lang.ref.SoftReference;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.TreeSet;
 import java.util.concurrent.Callable;
@@ -59,8 +58,9 @@ class ChunkMaker implements Callable<Mesh> {
 		SoftReference<TreeSet<String>> softWorkingCulledCoords = softCulledCoords;//new SoftReference<TreeSet<String>>(mesh.getCulledCoords());
 		if(rebuildEvent) {
 			mesh.setCulledCoords(new TreeSet<String>());
-		}
-				
+		}		
+		
+		boolean[] faces = new boolean[6];
         int index = 0;
         int culled = 0;
         for(float x=0 ; x < voxCount.x ; x++) {
@@ -72,45 +72,50 @@ class ChunkMaker implements Callable<Mesh> {
         			vector.set((x-positionOffset.x),(y-positionOffset.y),(z-positionOffset.z));
         			
         			if(!softWorkingCulledCoords.get().contains(vector.x+"-"+vector.y+"-"+vector.z)) {
-        				
-        				float[] vertices = null;
-        				if(y == voxCount.y-1) {
-        					if(activeChunk) {
-            					vertices = voxGeo.getVertices(vector, VoxelType.ACTIVE);
-            				} else {
-            					vertices = voxGeo.getVertices(vector);
-            				}
-        				} else {
-        					vertices = voxGeo.getVertices(vector, VoxelType.DIRT);
+        				 
+        				hiddenFaces(vector, faces);
+        				int faceCount = 0;
+        				if(faces[0]) {
+        					mesh.getVertBuffer().put(voxGeo.getVertices(vector, "front"));
+        					faceCount++;
         				}
-        					
         				
-        				mesh.getVertBuffer().put(vertices);
-                		
-            	        int[] indeces = voxGeo.getIndices(index);
-            	        mesh.getIndecesBuffer().put(indeces);
-            	        index++;
-                	} else if(!rebuildEvent) {
-                		//culled++;
-                		continue;
-                	}
-        			
-        			cullTest(weakCullablesMap.get(), vector.set((x-positionOffset.x),(y-positionOffset.y)-1,(z-positionOffset.z)));        			
-        			cullTest(weakCullablesMap.get(), vector.set((x-positionOffset.x)+1,(y-positionOffset.y)-1,(z-positionOffset.z)+1));
-        			cullTest(weakCullablesMap.get(), vector.set((x-positionOffset.x)+1,(y-positionOffset.y)-1,(z-positionOffset.z)-1));
-        			
-        			cullTest(weakCullablesMap.get(), vector.set((x-positionOffset.x)-1,(y-positionOffset.y)-1,(z-positionOffset.z)+1));
-        			cullTest(weakCullablesMap.get(), vector.set((x-positionOffset.x)-1,(y-positionOffset.y)-1,(z-positionOffset.z)-1));
-        			cullTest(weakCullablesMap.get(), vector.set((x-positionOffset.x)-1,(y-positionOffset.y)-1,(z-positionOffset.z)));
-        			
-        			cullTest(weakCullablesMap.get(), vector.set((x-positionOffset.x)+1,(y-positionOffset.y)-1,(z-positionOffset.z)));
-        			cullTest(weakCullablesMap.get(), vector.set((x-positionOffset.x),(y-positionOffset.y)-1,(z-positionOffset.z)-1));
-        			cullTest(weakCullablesMap.get(), vector.set((x-positionOffset.x),(y-positionOffset.y)-1,(z-positionOffset.z)+1));
-        			
+        				if(faces[1]) {
+        					mesh.getVertBuffer().put(voxGeo.getVertices(vector, "right"));
+        					faceCount++;
+        				}
+        				
+        				if(faces[2]) {
+        					mesh.getVertBuffer().put(voxGeo.getVertices(vector, "back"));
+        					faceCount++;
+        				}
+        				
+        				if(faces[3]) {
+        					mesh.getVertBuffer().put(voxGeo.getVertices(vector, "left"));
+        					faceCount++;
+        				}
+        				
+        				if(faces[4]) {
+        					mesh.getVertBuffer().put(voxGeo.getVertices(vector, "bottom"));
+        					faceCount++;
+        				}
+        				
+        				if(faces[5]) {
+        					mesh.getVertBuffer().put(voxGeo.getVertices(vector, "top"));
+        					faceCount++;
+        				}
+        				
+        				
+        				for(int i = 0; i<faceCount ; i++) {
+        					 mesh.getIndecesBuffer().put(voxGeo.getIndices(index, i));
+        				}
+            	        	
+            	        index += faceCount*4;
+                	
+        			}     			
         		}
         	}
         }
-        
         
         mesh.getVertBuffer().flip();        
         mesh.getIndecesBuffer().flip();
@@ -122,22 +127,14 @@ class ChunkMaker implements Callable<Mesh> {
         return mesh;
 	}
 	
-	
-	private void cullTest(Map<String, Integer> cullables, Vector3f vector) {
-		
-		String coords = vector.x+"-"+vector.y+"-"+vector.z;
-		
-		if(cullables.get(coords) == null) {
-			cullables.put(coords, 129);
-		} else {
-			int curentValue = cullables.get(coords);			
-			if(curentValue > 135) {
-				softCulledCoords.get().add(coords);
-			} else {
-				cullables.replace(coords, curentValue+=1);
-			}
-		}
-				
-	}
+	private void hiddenFaces(Vector3f vector, boolean[] faces) {
 
+		faces[0] = true;
+		faces[1] = true;
+		faces[2] = true;
+		faces[3] = true;
+		faces[4] = true;
+		faces[5] = true;
+	}
+	
 }

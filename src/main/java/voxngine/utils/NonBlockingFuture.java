@@ -1,7 +1,5 @@
 package voxngine.utils;
 
-import java.util.concurrent.Future;
-
 public class NonBlockingFuture<R> {
 	
 	private FutureCallback<R> handler;

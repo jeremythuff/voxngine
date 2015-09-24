@@ -50,7 +50,7 @@ public class Zone implements WorldObject {
 //		worldObjects.add(new Chunk(50, 20, 50, 25, 10, -25));
 		
 
-		int width = 200;
+		int width = 1000;
 		Vector4f[] voxelMap = new Vector4f[width*20*width]; 
 		int i = 0;
 		int height = 20;
@@ -74,9 +74,21 @@ public class Zone implements WorldObject {
 			}
 		}
 		
+		Vector4f[] chunkMap = new Vector4f[50*20*50]; 
+		
+		i=0;
+		for(int x = 0; x < 50; x++) {
+			for(int y = 0; y < 20; y++) {
+				for(int z = 0; z < 50; z++) {								
+					chunkMap[i] = voxelMap[i];
+					i++;
+				}
+			}
+		}
+		
 	
 		
-		worldObjects.add(new Chunk(new Vector3f(0,0,0), voxelMap)); // center
+		worldObjects.add(new Chunk(new Vector3f(0,0,0), chunkMap)); // center
 
 //		worldObjects.add(new Chunk(new Vector3f(50,0,0), voxelMap)); // center
 //		worldObjects.add(new Chunk(new Vector3f(-50,0,0), voxelMap)); // center

@@ -10,7 +10,7 @@ public class Keyboard {
 	
 	private GLFWKeyCallback keyCallback;
 	private boolean keyEvent = false;
-	private boolean[] keys = new boolean[65536];
+	private boolean[] keys = new boolean[1000];
 
 	Keyboard() {
 		glfwSetKeyCallback(Window.id, keyCallback = new GLFWKeyCallback() {

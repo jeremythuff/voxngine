@@ -14,8 +14,8 @@ public class Mesh {
     private IntBuffer indecesBuffer;
     
     private int entityCount;
-    
-    public Mesh(){};
+
+	public Mesh(){}
     
     public Mesh(FloatBuffer vertBuffer, IntBuffer indecesBuffer) {
     	this.vertBuffer = vertBuffer;

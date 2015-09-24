@@ -3,8 +3,13 @@ package game.world.terrain;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT;
 
+import static org.lwjgl.stb.STBPerlin.*;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 
 import game.world.WorldObject;
 import voxngine.graphics.RenderEngine;
@@ -41,9 +46,39 @@ public class Zone implements WorldObject {
 //
 //		
 //		worldObjects.add(new Chunk(50, 20, 50, 25, 10, -75));
-		//worldObjects.add(new Chunk(50, 20, 50, 25, 10, -25));
-		worldObjects.add(new Chunk(250, 40, 250, 0, 0, 0)); // center
-		//worldObjects.add(new Chunk(50, 20, 50, 25, 10, 75));
+//		worldObjects.add(new Chunk(50, 20, 50, 25, 10, -25));
+		
+		
+		Vector4f[] voxelMap = new Vector4f[50*20*50]; 
+		int i = 0;
+		int width = 50;
+		for(int x = 0; x < width; x++) {
+			for(int y = 0; y < 20; y++) {
+				for(int z = 0; z < width; z++) {
+					
+					if((stb_perlin_noise3(x*(4234.2123f*x/y), y*(3123.12312f*y/z), z*(423.2434f*z/x),0,0,0) > 1.65-((x*z)/((y*y*y)+1)))) {
+						voxelMap[i] = new Vector4f(x,y,z,1);
+					} else {
+						voxelMap[i] = new Vector4f(x,y,z,-1);
+					}
+						
+					i++;
+				}
+			}
+		}
+		
+	
+		
+		worldObjects.add(new Chunk(new Vector3f(0,0,0), voxelMap)); // center
+		worldObjects.add(new Chunk(new Vector3f(50,0,0), voxelMap)); // center
+		worldObjects.add(new Chunk(new Vector3f(-50,0,0), voxelMap)); // center
+		worldObjects.add(new Chunk(new Vector3f(0,0,50), voxelMap)); // center
+		worldObjects.add(new Chunk(new Vector3f(0,0,-50), voxelMap)); // center
+		worldObjects.add(new Chunk(new Vector3f(50,0,50), voxelMap)); // center
+		worldObjects.add(new Chunk(new Vector3f(50,0,-50), voxelMap)); // center
+		worldObjects.add(new Chunk(new Vector3f(-50,0,50), voxelMap)); // center
+		worldObjects.add(new Chunk(new Vector3f(-50,0,-50), voxelMap)); // center
+//		worldObjects.add(new Chunk(50, 20, 50, 25, 10, 75));
 //		worldObjects.add(new Chunk(50, 20, 50, 25, 10, 125));
 //		
 //		worldObjects.add(new Chunk(50, 20, 50, -25, 10, 125));

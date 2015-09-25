@@ -50,21 +50,27 @@ public class Zone implements WorldObject {
 //		worldObjects.add(new Chunk(50, 20, 50, 25, 10, -25));
 		
 
-		int width = 1000;
-		Vector4f[] voxelMap = new Vector4f[width*20*width]; 
-		int i = 0;
+		int width = 250;
 		int height = 20;
-		int minAlt = height/2;
+		float minAlt = height/1.5f;
 		
-		float randomNum = (float) Math.random()*0.0005f;
+		float randomNum = (float) Math.random()*0.02f;
 		float value = 0.03f+randomNum;
 				
-		for(int x = 0; x < width; x++) {
-			for(int y = 0; y < 20; y++) {
+		Vector4f[] voxelMap = new Vector4f[width*height*width]; 
+		
+		int i = 0;
+		for(int y = 0; y < height; y++) {
+			for(int x = 0; x < width; x++) {
 				for(int z = 0; z < width; z++) {
-										
+					
+						
 					if(y+((stb_perlin_noise3(x*value,0,z*value,0,0,0))*minAlt/2) < minAlt) {
-						voxelMap[i] = new Vector4f(x,y,z,1);
+						if(y>=minAlt/1.35) {
+							voxelMap[i] = new Vector4f(x,y,z,0);
+						} else {
+							voxelMap[i] = new Vector4f(x,y,z,1);
+						}
 					} else {
 						voxelMap[i] = new Vector4f(x,y,z,-1);
 					}
@@ -74,19 +80,19 @@ public class Zone implements WorldObject {
 			}
 		}
 		
-		Vector4f[] chunkMap = new Vector4f[50*20*50]; 
+		Vector4f[] chunkMap = new Vector4f[(width/5)*height*(width/5)];
 		
-		i=0;
-		for(int x = 0; x < 50; x++) {
-			for(int y = 0; y < 20; y++) {
-				for(int z = 0; z < 50; z++) {								
-					chunkMap[i] = voxelMap[i];
-					i++;
-				}
+		int c = 1;
+		int m = 0;
+		for (i=0 ; i < (width/5)*height*(width/5) ; i++) {
+			chunkMap[i] = voxelMap[m];
+			m++;
+			c++;
+			if(c%(width/5)==0) {
+				c = 0;
+				m += (width/5);
 			}
 		}
-		
-	
 		
 		worldObjects.add(new Chunk(new Vector3f(0,0,0), chunkMap)); // center
 

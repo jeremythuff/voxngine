@@ -57,39 +57,34 @@ class ChunkMaker implements Callable<Mesh> {
         	
         	int faceCount = 0;
         	
+        	type = VoxelType.values()[(int) voxel.w];
         	
-        	if(voxel.y<7) {
-        		type = VoxelType.DIRT;
-        	} else {
-        		type = VoxelType.GRASS;
-        	}
-    		
-        	if(hiddenFaces(vector, "front")) {
+        	if(hiddenFaces(voxel, "front")) {
     			mesh.getVertBuffer().put(voxGeo.getVertices(vector, type,"front"));
     			faceCount++;
     		}
     		
-    		if(hiddenFaces(vector, "right")) {
+    		if(hiddenFaces(voxel, "right")) {
     			mesh.getVertBuffer().put(voxGeo.getVertices(vector, type, "right"));
     			faceCount++;
     		}
     		
-    		if(hiddenFaces(vector, "back")) {
+    		if(hiddenFaces(voxel, "back")) {
     			mesh.getVertBuffer().put(voxGeo.getVertices(vector, type, "back"));
     			faceCount++;
     		}
     		
-    		if(hiddenFaces(vector, "left")) {
+    		if(hiddenFaces(voxel, "left")) {
     			mesh.getVertBuffer().put(voxGeo.getVertices(vector, type, "left"));
     			faceCount++;
     		}
     		
-    		if(hiddenFaces(vector, "bottom")) {
+    		if(hiddenFaces(voxel, "bottom")) {
     			mesh.getVertBuffer().put(voxGeo.getVertices(vector, type, "bottom"));
     			faceCount++;
     		}
     		
-    		if(hiddenFaces(vector, "top")) {
+    		if(hiddenFaces(voxel, "top")) {
     			mesh.getVertBuffer().put(voxGeo.getVertices(vector, type, "top"));
     			faceCount++;
     		}
@@ -109,7 +104,10 @@ class ChunkMaker implements Callable<Mesh> {
         return mesh;
 	}
 	
-	private boolean hiddenFaces(Vector3f vector, String string) {
+	private boolean hiddenFaces(Vector4f vector, String string) {
+		
+		
+		
 		return true;
 	}
 	

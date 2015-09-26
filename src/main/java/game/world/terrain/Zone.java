@@ -2,15 +2,10 @@ package game.world.terrain;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT;
-
-import static org.lwjgl.stb.STBPerlin.*;
+import static org.lwjgl.stb.STBPerlin.stb_perlin_noise3;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
-
-import org.joml.Vector3f;
-import org.joml.Vector4f;
 
 import game.world.WorldObject;
 import voxngine.graphics.RenderEngine;
@@ -32,23 +27,6 @@ public class Zone implements WorldObject {
 
 	@Override
 	public void init(RenderEngine renderer) {
-		
-//		worldObjects.add(new Chunk(50, 20, 50, 125, 10, -75));
-//		worldObjects.add(new Chunk(50, 20, 50, 125, 10, -25));
-//		worldObjects.add(new Chunk(50, 20, 50, 125, 10, 25));
-//		worldObjects.add(new Chunk(50, 20, 50, 125, 10, 75));
-//		worldObjects.add(new Chunk(50, 20, 50, 125, 10, 125));
-//		
-//		worldObjects.add(new Chunk(50, 20, 50, 75, 10, -75));
-//		worldObjects.add(new Chunk(50, 20, 50, 75, 10, -25));
-//		worldObjects.add(new Chunk(50, 20, 50, 75, 10, 25));
-//		worldObjects.add(new Chunk(50, 20, 50, 75, 10, 75));
-//		worldObjects.add(new Chunk(50, 20, 50, 75, 10, 125));
-//
-//		
-//		worldObjects.add(new Chunk(50, 20, 50, 25, 10, -75));
-//		worldObjects.add(new Chunk(50, 20, 50, 25, 10, -25));
-		
 
 		int width = 250;
 		int height = 20;
@@ -57,22 +35,20 @@ public class Zone implements WorldObject {
 		float randomNum = (float) Math.random()*0.02f;
 		float value = 0.03f+randomNum;
 				
-		Vector4f[] voxelMap = new Vector4f[width*height*width]; 
+		int[][] voxelMap = new int[width*height*width][4]; 
 		
 		int i = 0;
-		for(int y = 0; y < height; y++) {
-			for(int x = 0; x < width; x++) {
-				for(int z = 0; z < width; z++) {
-					
-						
+		for(int x = 0; x < width; x++) {
+			for(int y = 0; y < height; y++) {
+				for(int z = 0; z < width; z++) {	
 					if(y+((stb_perlin_noise3(x*value,0,z*value,0,0,0))*minAlt/2) < minAlt) {
 						if(y>=minAlt/1.35) {
-							voxelMap[i] = new Vector4f(x,y,z,0);
+							voxelMap[i] = new int[] {x,y,z,0};
 						} else {
-							voxelMap[i] = new Vector4f(x,y,z,1);
+							voxelMap[i] = new int[] {x,y,z,1};
 						}
 					} else {
-						voxelMap[i] = new Vector4f(x,y,z,-1);
+						voxelMap[i] = new int[] {x,y,z,-1};
 					}
 						
 					i++;
@@ -80,44 +56,77 @@ public class Zone implements WorldObject {
 			}
 		}
 		
-		Vector4f[] chunkMap = new Vector4f[(width/5)*height*(width/5)];
+		System.out.println(i);
 		
-		int c = 1;
+		int[][] chunkMap1 = new int[(width/5)*height*(width/5)][4];
+		int[][] chunkMap2 = new int[(width/5)*height*(width/5)][4];
+		int[][] chunkMap3 = new int[(width/5)*height*(width/5)][4];
+		int[][] chunkMap4 = new int[(width/5)*height*(width/5)][4];
+		int[][] chunkMap5 = new int[(width/5)*height*(width/5)][4];
+
+		int c = 0;
 		int m = 0;
-		for (i=0 ; i < (width/5)*height*(width/5) ; i++) {
-			chunkMap[i] = voxelMap[m];
+		for (i=0 ; i < ((width/5)*height*(width/5)) ; i++) {
+			chunkMap1[i] = voxelMap[m];
 			m++;
 			c++;
 			if(c%(width/5)==0) {
 				c = 0;
-				m += (width/5);
+				m += (width/5)*4;
 			}
 		}
 		
-		worldObjects.add(new Chunk(new Vector3f(0,0,0), chunkMap)); // center
-
-//		worldObjects.add(new Chunk(new Vector3f(50,0,0), voxelMap)); // center
-//		worldObjects.add(new Chunk(new Vector3f(-50,0,0), voxelMap)); // center
-//		worldObjects.add(new Chunk(new Vector3f(0,0,50), voxelMap)); // center
-//		worldObjects.add(new Chunk(new Vector3f(0,0,-50), voxelMap)); // center
-//		worldObjects.add(new Chunk(new Vector3f(50,0,50), voxelMap)); // center
-//		worldObjects.add(new Chunk(new Vector3f(50,0,-50), voxelMap)); // center
-//		worldObjects.add(new Chunk(new Vector3f(-50,0,50), voxelMap)); // center
-//		worldObjects.add(new Chunk(new Vector3f(-50,0,-50), voxelMap)); // center
-//		worldObjects.add(new Chunk(50, 20, 50, 25, 10, 75));
-//		worldObjects.add(new Chunk(50, 20, 50, 25, 10, 125));
-//		
-//		worldObjects.add(new Chunk(50, 20, 50, -25, 10, 125));
-//		worldObjects.add(new Chunk(50, 20, 50, -25, 10, 75));
-//		worldObjects.add(new Chunk(50, 20, 50, -25, 10, 25));
-//		worldObjects.add(new Chunk(50, 20, 50, -25, 10, -25));
-//		worldObjects.add(new Chunk(50, 20, 50, -25, 10, -75));
-//		
-//		worldObjects.add(new Chunk(50, 20, 50, -75, 10, 125));
-//		worldObjects.add(new Chunk(50, 20, 50, -75, 10, 75));
-//		worldObjects.add(new Chunk(50, 20, 50, -75, 10, 25));
-//		worldObjects.add(new Chunk(50, 20, 50, -75, 10, -25));
-//		worldObjects.add(new Chunk(50, 20, 50, -75, 10, -75));
+		 c = 0;
+		for (i=0 ; i < ((width/5)*height*(width/5)) ; i++) {
+			chunkMap2[i] = voxelMap[m];
+			m++;
+			c++;
+			if(c%(width/5)==0) {
+				c = 0;
+				m += (width/5)*4;
+			}
+		}
+		
+		c = 0;
+		for (i=0 ; i < ((width/5)*height*(width/5)) ; i++) {
+			chunkMap3[i] = voxelMap[m];
+			m++;
+			c++;
+			if(c%(width/5)==0) {
+				c = 0;
+				m += (width/5)*4;
+			}
+		}
+		
+		c = 0;
+		for (i=0 ; i < ((width/5)*height*(width/5)) ; i++) {
+			chunkMap4[i] = voxelMap[m];
+			m++;
+			c++;
+			if(c%(width/5)==0) {
+				c = 0;
+				m += (width/5)*4;
+			}
+		}
+		
+		c = 0;
+		for (i=0 ; i < ((width/5)*height*(width/5)) ; i++) {
+			chunkMap5[i] = voxelMap[m];
+			m++;
+			c++;
+			if(c%(width/5)==0) {
+				c = 0;
+				m += (width/5)*4;
+			}
+		}
+		
+		System.out.println(m);
+		
+		worldObjects.add(new Chunk(chunkMap1));
+		worldObjects.add(new Chunk(chunkMap2));
+		worldObjects.add(new Chunk(chunkMap3));
+		worldObjects.add(new Chunk(chunkMap4));
+		worldObjects.add(new Chunk(chunkMap5));
 		
 		activeChunk = worldObjects.size() - 1;
 		

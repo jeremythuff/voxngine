@@ -2,28 +2,21 @@ package game.world.terrain;
 
 import java.util.concurrent.Callable;
 
-import org.joml.Vector3f;
-import org.joml.Vector4f;
-
 import voxngine.graphics.Mesh;
 
 class ChunkMaker implements Callable<Mesh> {
 	
 	private Mesh mesh;
-	private Vector4f[] voxMap;
+	private int[][] voxMap;
 	private VoxelGeometry voxGeo;
 	
 	private boolean rebuildEvent;
-	private boolean activeChunk;
-
-	private Vector3f startingCoords;
-	
+	private boolean activeChunk;	
 		
-	ChunkMaker(Mesh mesh, Vector3f startingCoords, Vector4f[] voxMap, boolean rebuildEvent) {
+	ChunkMaker(Mesh mesh, int[][] voxelMap, boolean rebuildEvent) {
 		this.mesh = mesh;
-		this.voxMap = voxMap;
+		this.voxMap = voxelMap;
 		this.voxGeo = new VoxelGeometry();
-		this.startingCoords = startingCoords;
 				
 		this.rebuildEvent = rebuildEvent;
 	}
@@ -42,50 +35,46 @@ class ChunkMaker implements Callable<Mesh> {
 	
 	@Override
 	public Mesh call() throws Exception {
-				
-		Vector3f vector = new Vector3f();
-				
+								
         int index = 0;
        
         VoxelType type;
         
-        for(Vector4f voxel : voxMap) {
+        for(int[] voxel : voxMap) {
         	
-        	if(voxel.w==-1) continue;
-        	
-        	vector.set(voxel.x-startingCoords.x, voxel.y-startingCoords.y, voxel.z-startingCoords.z);
-        	
+        	if(voxel[3]==-1) continue;
+        	        	
         	int faceCount = 0;
         	
-        	type = VoxelType.values()[(int) voxel.w];
+        	type = VoxelType.values()[(int) voxel[3]];
         	
         	if(hiddenFaces(voxel, "front")) {
-    			mesh.getVertBuffer().put(voxGeo.getVertices(vector, type,"front"));
+    			mesh.getVertBuffer().put(voxGeo.getVertices(voxel, type,"front"));
     			faceCount++;
     		}
     		
     		if(hiddenFaces(voxel, "right")) {
-    			mesh.getVertBuffer().put(voxGeo.getVertices(vector, type, "right"));
+    			mesh.getVertBuffer().put(voxGeo.getVertices(voxel, type, "right"));
     			faceCount++;
     		}
     		
     		if(hiddenFaces(voxel, "back")) {
-    			mesh.getVertBuffer().put(voxGeo.getVertices(vector, type, "back"));
+    			mesh.getVertBuffer().put(voxGeo.getVertices(voxel, type, "back"));
     			faceCount++;
     		}
     		
     		if(hiddenFaces(voxel, "left")) {
-    			mesh.getVertBuffer().put(voxGeo.getVertices(vector, type, "left"));
+    			mesh.getVertBuffer().put(voxGeo.getVertices(voxel, type, "left"));
     			faceCount++;
     		}
     		
     		if(hiddenFaces(voxel, "bottom")) {
-    			mesh.getVertBuffer().put(voxGeo.getVertices(vector, type, "bottom"));
+    			mesh.getVertBuffer().put(voxGeo.getVertices(voxel, type, "bottom"));
     			faceCount++;
     		}
     		
     		if(hiddenFaces(voxel, "top")) {
-    			mesh.getVertBuffer().put(voxGeo.getVertices(vector, type, "top"));
+    			mesh.getVertBuffer().put(voxGeo.getVertices(voxel, type, "top"));
     			faceCount++;
     		}
     		
@@ -98,13 +87,11 @@ class ChunkMaker implements Callable<Mesh> {
         
         mesh.getVertBuffer().flip();        
         mesh.getIndecesBuffer().flip();
-        
-        vector = null;
-        
+                
         return mesh;
 	}
 	
-	private boolean hiddenFaces(Vector4f vector, String string) {
+	private boolean hiddenFaces(int[] voxel, String string) {
 		
 		
 		

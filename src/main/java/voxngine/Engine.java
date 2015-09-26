@@ -1,7 +1,6 @@
 package voxngine;
 
 import static org.lwjgl.glfw.GLFW.glfwDestroyWindow;
-import static org.lwjgl.glfw.GLFW.glfwGetTime;
 import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
 import static org.lwjgl.glfw.GLFW.glfwPollEvents;
 import static org.lwjgl.glfw.GLFW.glfwSetErrorCallback;
@@ -71,10 +70,8 @@ public abstract class Engine
 
     public void start()
     {
-        float now, last, delta;
+        float delta;
         
-        last = 0;
-
         // Create the callbacks
         errorCallback = Callbacks.errorCallbackPrint(System.err);
 
@@ -88,11 +85,7 @@ public abstract class Engine
         while (running && glfwWindowShouldClose(Window.id) != GL_TRUE)
         {
         	        	
-            // Get the time
-            now = (float) glfwGetTime();
             delta = timer.getDelta();
-            last = now;
-            
             // Poll the events and swap the buffers
             glfwPollEvents();
             glfwSwapBuffers(Window.id);

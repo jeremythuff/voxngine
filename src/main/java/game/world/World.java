@@ -1,16 +1,14 @@
 package game.world;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import game.GameObject;
-import game.world.World;
-import game.world.terrain.Chunk;
 import game.world.terrain.Zone;
 import voxngine.graphics.RenderEngine;
 import voxngine.io.Controlls;
 import voxngine.io.ScreenMessage;
 import voxngine.io.Window;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class World implements GameObject {
 		

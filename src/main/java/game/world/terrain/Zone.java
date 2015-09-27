@@ -30,6 +30,7 @@ public class Zone implements WorldObject {
 	public void init(RenderEngine renderer) {
 
 		int width = 250;
+		int chunksPerSide = 5;
 		int height = 20;
 		float minAlt = height/1.5f;
 		
@@ -37,6 +38,7 @@ public class Zone implements WorldObject {
 		float value = 0.01f+randomNum;
 				
 		WeakReference<int[][]> weakVoxelMap = new WeakReference<int[][]>(new int[width*height*width][4]); 
+		//int[][] weakVoxelMap = new int[width*height*width][4]; 
 		
 		int i = 0;
 		for(int x = -width/2; x < width/2; x++) {
@@ -57,350 +59,32 @@ public class Zone implements WorldObject {
 				}
 			}
 		}
+						
+		WeakReference<int[][]> chunkMap;
 		
-		System.out.println(i);
-		
-		int[][] chunkMap1 = new int[(width/5)*height*(width/5)][4];
-		int[][] chunkMap2 = new int[(width/5)*height*(width/5)][4];
-		int[][] chunkMap3 = new int[(width/5)*height*(width/5)][4];
-		int[][] chunkMap4 = new int[(width/5)*height*(width/5)][4];
-		int[][] chunkMap5 = new int[(width/5)*height*(width/5)][4];
-		
-		int[][] chunkMap6 = new int[(width/5)*height*(width/5)][4];
-		int[][] chunkMap7 = new int[(width/5)*height*(width/5)][4];
-		int[][] chunkMap8 = new int[(width/5)*height*(width/5)][4];
-		int[][] chunkMap9 = new int[(width/5)*height*(width/5)][4];
-		int[][] chunkMap10 = new int[(width/5)*height*(width/5)][4];
-		
-		int[][] chunkMap11 = new int[(width/5)*height*(width/5)][4];
-		int[][] chunkMap12 = new int[(width/5)*height*(width/5)][4];
-		int[][] chunkMap13 = new int[(width/5)*height*(width/5)][4];
-		int[][] chunkMap14 = new int[(width/5)*height*(width/5)][4];
-		int[][] chunkMap15 = new int[(width/5)*height*(width/5)][4];
-		
-		int[][] chunkMap16 = new int[(width/5)*height*(width/5)][4];
-		int[][] chunkMap17 = new int[(width/5)*height*(width/5)][4];
-		int[][] chunkMap18 = new int[(width/5)*height*(width/5)][4];
-		int[][] chunkMap19 = new int[(width/5)*height*(width/5)][4];
-		int[][] chunkMap20 = new int[(width/5)*height*(width/5)][4];
-		
-		int[][] chunkMap21 = new int[(width/5)*height*(width/5)][4];
-		int[][] chunkMap22 = new int[(width/5)*height*(width/5)][4];
-		int[][] chunkMap23 = new int[(width/5)*height*(width/5)][4];
-		int[][] chunkMap24 = new int[(width/5)*height*(width/5)][4];
-		int[][] chunkMap25 = new int[(width/5)*height*(width/5)][4];
-
-		int c = 0;
 		int m = 0;
-		for (i=0 ; i < ((width/5)*height*(width/5)) ; i++) {
-			chunkMap1[i] = weakVoxelMap.get()[m];
-			m++;
-			c++;
-			if(c%(width/5)==0) {
-				c = 0;
-				m += (width/5)*4;
+		for(int chunkCounter = 0 ; chunkCounter < width/(chunksPerSide*2) ; chunkCounter++) {
+			
+			chunkMap = new WeakReference<int[][]>(new int[(width/5)*height*(width/5)][4]);
+			int c = 0;
+			
+			if(chunkCounter%chunksPerSide==0) m = (width/chunksPerSide)*(chunkCounter/chunksPerSide);
+			
+			for (i=0 ; i < ((width/chunksPerSide)*height*(width/chunksPerSide)) ; i++) {
+				chunkMap.get()[i] = weakVoxelMap.get()[m];
+				m++;
+				c++;
+				if(c%(width/chunksPerSide)==0) {
+					c = 0;
+					m += (width/chunksPerSide)*(chunksPerSide-1);
+				}
 			}
-		}
-		
-		 c = 0;
-		for (i=0 ; i < ((width/5)*height*(width/5)) ; i++) {
-			chunkMap2[i] = weakVoxelMap.get()[m];
-			m++;
-			c++;
-			if(c%(width/5)==0) {
-				c = 0;
-				m += (width/5)*4;
-			}
-		}
-		
-		c = 0;
-		for (i=0 ; i < ((width/5)*height*(width/5)) ; i++) {
-			chunkMap3[i] = weakVoxelMap.get()[m];
-			m++;
-			c++;
-			if(c%(width/5)==0) {
-				c = 0;
-				m += (width/5)*4;
-			}
-		}
-		
-		c = 0;
-		for (i=0 ; i < ((width/5)*height*(width/5)) ; i++) {
-			chunkMap4[i] = weakVoxelMap.get()[m];
-			m++;
-			c++;
-			if(c%(width/5)==0) {
-				c = 0;
-				m += (width/5)*4;
-			}
-		}
-		
-		c = 0;
-		for (i=0 ; i < ((width/5)*height*(width/5)) ; i++) {
-			chunkMap5[i] = weakVoxelMap.get()[m];
-			m++;
-			c++;
-			if(c%(width/5)==0) {
-				c = 0;
-				m += (width/5)*4;
-			}
-		}
-		
-		c = 0;
-		m= (width/5);
-		for (i=0 ; i < ((width/5)*height*(width/5)) ; i++) {
-			chunkMap6[i] = weakVoxelMap.get()[m];
-			m++;
-			c++;
-			if(c%(width/5)==0) {
-				c = 0;
-				m += (width/5)*4;
-			}
-		}
-		
-		c = 0;
-		for (i=0 ; i < ((width/5)*height*(width/5)) ; i++) {
-			chunkMap7[i] = weakVoxelMap.get()[m];
-			m++;
-			c++;
-			if(c%(width/5)==0) {
-				c = 0;
-				m += (width/5)*4;
-			}
-		}
-		
-		c = 0;
-		for (i=0 ; i < ((width/5)*height*(width/5)) ; i++) {
-			chunkMap8[i] = weakVoxelMap.get()[m];
-			m++;
-			c++;
-			if(c%(width/5)==0) {
-				c = 0;
-				m += (width/5)*4;
-			}
-		}
-		
-		c = 0;
-		for (i=0 ; i < ((width/5)*height*(width/5)) ; i++) {
-			chunkMap9[i] = weakVoxelMap.get()[m];
-			m++;
-			c++;
-			if(c%(width/5)==0) {
-				c = 0;
-				m += (width/5)*4;
-			}
-		}
-		
-		c = 0;
-		for (i=0 ; i < ((width/5)*height*(width/5)) ; i++) {
-			chunkMap10[i] = weakVoxelMap.get()[m];
-			m++;
-			c++;
-			if(c%(width/5)==0) {
-				c = 0;
-				m += (width/5)*4;
-			}
-		}
-		
-		c = 0;
-		m= (width/5)*2;
-		for (i=0 ; i < ((width/5)*height*(width/5)) ; i++) {
-			chunkMap11[i] = weakVoxelMap.get()[m];
-			m++;
-			c++;
-			if(c%(width/5)==0) {
-				c = 0;
-				m += (width/5)*4;
-			}
-		}
-		
-		c = 0;
-		for (i=0 ; i < ((width/5)*height*(width/5)) ; i++) {
-			chunkMap12[i] = weakVoxelMap.get()[m];
-			m++;
-			c++;
-			if(c%(width/5)==0) {
-				c = 0;
-				m += (width/5)*4;
-			}
-		}
-		
-		c = 0;
-		for (i=0 ; i < ((width/5)*height*(width/5)) ; i++) {
-			chunkMap13[i] = weakVoxelMap.get()[m];
-			m++;
-			c++;
-			if(c%(width/5)==0) {
-				c = 0;
-				m += (width/5)*4;
-			}
-		}
-		
-		c = 0;
-		for (i=0 ; i < ((width/5)*height*(width/5)) ; i++) {
-			chunkMap14[i] = weakVoxelMap.get()[m];
-			m++;
-			c++;
-			if(c%(width/5)==0) {
-				c = 0;
-				m += (width/5)*4;
-			}
-		}
-		
-		c = 0;
-		for (i=0 ; i < ((width/5)*height*(width/5)) ; i++) {
-			chunkMap15[i] = weakVoxelMap.get()[m];
-			m++;
-			c++;
-			if(c%(width/5)==0) {
-				c = 0;
-				m += (width/5)*4;
-			}
-		}
-		
-		c = 0;
-		m= (width/5)*3;
-		for (i=0 ; i < ((width/5)*height*(width/5)) ; i++) {
-			chunkMap16[i] = weakVoxelMap.get()[m];
-			m++;
-			c++;
-			if(c%(width/5)==0) {
-				c = 0;
-				m += (width/5)*4;
-			}
-		}
-		
-		c = 0;
-		for (i=0 ; i < ((width/5)*height*(width/5)) ; i++) {
-			chunkMap17[i] = weakVoxelMap.get()[m];
-			m++;
-			c++;
-			if(c%(width/5)==0) {
-				c = 0;
-				m += (width/5)*4;
-			}
-		}
-		
-		c = 0;
-		for (i=0 ; i < ((width/5)*height*(width/5)) ; i++) {
-			chunkMap18[i] = weakVoxelMap.get()[m];
-			m++;
-			c++;
-			if(c%(width/5)==0) {
-				c = 0;
-				m += (width/5)*4;
-			}
-		}
-		
-		c = 0;
-		for (i=0 ; i < ((width/5)*height*(width/5)) ; i++) {
-			chunkMap19[i] = weakVoxelMap.get()[m];
-			m++;
-			c++;
-			if(c%(width/5)==0) {
-				c = 0;
-				m += (width/5)*4;
-			}
-		}
-		
-		c = 0;
-		for (i=0 ; i < ((width/5)*height*(width/5)) ; i++) {
-			chunkMap20[i] = weakVoxelMap.get()[m];
-			m++;
-			c++;
-			if(c%(width/5)==0) {
-				c = 0;
-				m += (width/5)*4;
-			}
-		}
-		
-		c = 0;
-		m= (width/5)*4;
-		for (i=0 ; i < ((width/5)*height*(width/5)) ; i++) {
-			chunkMap21[i] = weakVoxelMap.get()[m];
-			m++;
-			c++;
-			if(c%(width/5)==0) {
-				c = 0;
-				m += (width/5)*4;
-			}
-		}
-		
-		c = 0;
-		for (i=0 ; i < ((width/5)*height*(width/5)) ; i++) {
-			chunkMap22[i] = weakVoxelMap.get()[m];
-			m++;
-			c++;
-			if(c%(width/5)==0) {
-				c = 0;
-				m += (width/5)*4;
-			}
-		}
-		
-		c = 0;
-		for (i=0 ; i < ((width/5)*height*(width/5)) ; i++) {
-			chunkMap23[i] = weakVoxelMap.get()[m];
-			m++;
-			c++;
-			if(c%(width/5)==0) {
-				c = 0;
-				m += (width/5)*4;
-			}
-		}
-		
-		c = 0;
-		for (i=0 ; i < ((width/5)*height*(width/5)) ; i++) {
-			chunkMap24[i] = weakVoxelMap.get()[m];
-			m++;
-			c++;
-			if(c%(width/5)==0) {
-				c = 0;
-				m += (width/5)*4;
-			}
-		}
-		
-		c = 0;
-		for (i=0 ; i < ((width/5)*height*(width/5)) ; i++) {
-			chunkMap25[i] = weakVoxelMap.get()[m];
-			m++;
-			c++;
-			if(c%(width/5)==0) {
-				c = 0;
-				m += (width/5)*4;
-			}
+			
+			worldObjects.add(new Chunk(chunkMap.get()));
+			chunkMap.clear();
 		}
 		
 		weakVoxelMap.clear();
-				
-		worldObjects.add(new Chunk(chunkMap1));
-		worldObjects.add(new Chunk(chunkMap2));
-		worldObjects.add(new Chunk(chunkMap3));
-		worldObjects.add(new Chunk(chunkMap4));
-		worldObjects.add(new Chunk(chunkMap5));
-		
-		worldObjects.add(new Chunk(chunkMap6));
-		worldObjects.add(new Chunk(chunkMap7));
-		worldObjects.add(new Chunk(chunkMap8));
-		worldObjects.add(new Chunk(chunkMap9));
-		worldObjects.add(new Chunk(chunkMap10));
-		
-		worldObjects.add(new Chunk(chunkMap11));
-		worldObjects.add(new Chunk(chunkMap12));
-		worldObjects.add(new Chunk(chunkMap13));
-		worldObjects.add(new Chunk(chunkMap14));
-		worldObjects.add(new Chunk(chunkMap15));
-		
-		worldObjects.add(new Chunk(chunkMap16));
-		worldObjects.add(new Chunk(chunkMap17));
-		worldObjects.add(new Chunk(chunkMap18));
-		worldObjects.add(new Chunk(chunkMap19));
-		worldObjects.add(new Chunk(chunkMap20));
-		
-		worldObjects.add(new Chunk(chunkMap21));
-		worldObjects.add(new Chunk(chunkMap22));
-		worldObjects.add(new Chunk(chunkMap23));
-		worldObjects.add(new Chunk(chunkMap24));
-		worldObjects.add(new Chunk(chunkMap25));
 		
 		activeChunk = worldObjects.size() - 1;
 		

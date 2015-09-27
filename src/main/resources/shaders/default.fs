@@ -5,6 +5,5 @@ out vec4 FragColor;
 
 void main()
 {
-	//if(vColor.w < 1.0) discard;
     FragColor = vColor;
 }

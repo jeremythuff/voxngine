@@ -4,6 +4,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT;
 import static org.lwjgl.stb.STBPerlin.stb_perlin_noise3;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,23 +33,24 @@ public class Zone implements WorldObject {
 		int height = 20;
 		float minAlt = height/1.5f;
 		
-		float randomNum = (float) Math.random()*0.02f;
-		float value = 0.02f+randomNum;
+		float randomNum = (float) Math.random()*0.01f;
+		float value = 0.01f+randomNum;
 				
-		int[][] voxelMap = new int[width*height*width][4]; 
+		WeakReference<int[][]> weakVoxelMap = new WeakReference<int[][]>(new int[width*height*width][4]); 
 		
 		int i = 0;
-		for(int x = 0; x < width; x++) {
+		for(int x = -width/2; x < width/2; x++) {
 			for(int y = 0; y < height; y++) {
-				for(int z = 0; z < width; z++) {	
+				for(int z = -width/2; z < width/2; z++) {	
+					
 					if(y+((stb_perlin_noise3(x*value,0,z*value,0,0,0))*minAlt/2) < minAlt) {
-						if(y>=minAlt/1.35) {
-							voxelMap[i] = new int[] {x,y,z,0};
+						if(y>=minAlt/1.45) {
+							weakVoxelMap.get()[i] = new int[] {x,y,z,0};
 						} else {
-							voxelMap[i] = new int[] {x,y,z,1};
+							weakVoxelMap.get()[i] = new int[] {x,y,z,1};
 						}
 					} else {
-						voxelMap[i] = new int[] {x,y,z,-1};
+						weakVoxelMap.get()[i] = new int[] {x,y,z,-1};
 					}
 						
 					i++;
@@ -91,7 +93,7 @@ public class Zone implements WorldObject {
 		int c = 0;
 		int m = 0;
 		for (i=0 ; i < ((width/5)*height*(width/5)) ; i++) {
-			chunkMap1[i] = voxelMap[m];
+			chunkMap1[i] = weakVoxelMap.get()[m];
 			m++;
 			c++;
 			if(c%(width/5)==0) {
@@ -102,7 +104,7 @@ public class Zone implements WorldObject {
 		
 		 c = 0;
 		for (i=0 ; i < ((width/5)*height*(width/5)) ; i++) {
-			chunkMap2[i] = voxelMap[m];
+			chunkMap2[i] = weakVoxelMap.get()[m];
 			m++;
 			c++;
 			if(c%(width/5)==0) {
@@ -113,7 +115,7 @@ public class Zone implements WorldObject {
 		
 		c = 0;
 		for (i=0 ; i < ((width/5)*height*(width/5)) ; i++) {
-			chunkMap3[i] = voxelMap[m];
+			chunkMap3[i] = weakVoxelMap.get()[m];
 			m++;
 			c++;
 			if(c%(width/5)==0) {
@@ -124,7 +126,7 @@ public class Zone implements WorldObject {
 		
 		c = 0;
 		for (i=0 ; i < ((width/5)*height*(width/5)) ; i++) {
-			chunkMap4[i] = voxelMap[m];
+			chunkMap4[i] = weakVoxelMap.get()[m];
 			m++;
 			c++;
 			if(c%(width/5)==0) {
@@ -135,7 +137,7 @@ public class Zone implements WorldObject {
 		
 		c = 0;
 		for (i=0 ; i < ((width/5)*height*(width/5)) ; i++) {
-			chunkMap5[i] = voxelMap[m];
+			chunkMap5[i] = weakVoxelMap.get()[m];
 			m++;
 			c++;
 			if(c%(width/5)==0) {
@@ -147,7 +149,7 @@ public class Zone implements WorldObject {
 		c = 0;
 		m= (width/5);
 		for (i=0 ; i < ((width/5)*height*(width/5)) ; i++) {
-			chunkMap6[i] = voxelMap[m];
+			chunkMap6[i] = weakVoxelMap.get()[m];
 			m++;
 			c++;
 			if(c%(width/5)==0) {
@@ -158,7 +160,7 @@ public class Zone implements WorldObject {
 		
 		c = 0;
 		for (i=0 ; i < ((width/5)*height*(width/5)) ; i++) {
-			chunkMap7[i] = voxelMap[m];
+			chunkMap7[i] = weakVoxelMap.get()[m];
 			m++;
 			c++;
 			if(c%(width/5)==0) {
@@ -169,7 +171,7 @@ public class Zone implements WorldObject {
 		
 		c = 0;
 		for (i=0 ; i < ((width/5)*height*(width/5)) ; i++) {
-			chunkMap8[i] = voxelMap[m];
+			chunkMap8[i] = weakVoxelMap.get()[m];
 			m++;
 			c++;
 			if(c%(width/5)==0) {
@@ -180,7 +182,7 @@ public class Zone implements WorldObject {
 		
 		c = 0;
 		for (i=0 ; i < ((width/5)*height*(width/5)) ; i++) {
-			chunkMap9[i] = voxelMap[m];
+			chunkMap9[i] = weakVoxelMap.get()[m];
 			m++;
 			c++;
 			if(c%(width/5)==0) {
@@ -191,7 +193,7 @@ public class Zone implements WorldObject {
 		
 		c = 0;
 		for (i=0 ; i < ((width/5)*height*(width/5)) ; i++) {
-			chunkMap10[i] = voxelMap[m];
+			chunkMap10[i] = weakVoxelMap.get()[m];
 			m++;
 			c++;
 			if(c%(width/5)==0) {
@@ -203,7 +205,7 @@ public class Zone implements WorldObject {
 		c = 0;
 		m= (width/5)*2;
 		for (i=0 ; i < ((width/5)*height*(width/5)) ; i++) {
-			chunkMap11[i] = voxelMap[m];
+			chunkMap11[i] = weakVoxelMap.get()[m];
 			m++;
 			c++;
 			if(c%(width/5)==0) {
@@ -214,7 +216,7 @@ public class Zone implements WorldObject {
 		
 		c = 0;
 		for (i=0 ; i < ((width/5)*height*(width/5)) ; i++) {
-			chunkMap12[i] = voxelMap[m];
+			chunkMap12[i] = weakVoxelMap.get()[m];
 			m++;
 			c++;
 			if(c%(width/5)==0) {
@@ -225,7 +227,7 @@ public class Zone implements WorldObject {
 		
 		c = 0;
 		for (i=0 ; i < ((width/5)*height*(width/5)) ; i++) {
-			chunkMap13[i] = voxelMap[m];
+			chunkMap13[i] = weakVoxelMap.get()[m];
 			m++;
 			c++;
 			if(c%(width/5)==0) {
@@ -236,7 +238,7 @@ public class Zone implements WorldObject {
 		
 		c = 0;
 		for (i=0 ; i < ((width/5)*height*(width/5)) ; i++) {
-			chunkMap14[i] = voxelMap[m];
+			chunkMap14[i] = weakVoxelMap.get()[m];
 			m++;
 			c++;
 			if(c%(width/5)==0) {
@@ -247,7 +249,7 @@ public class Zone implements WorldObject {
 		
 		c = 0;
 		for (i=0 ; i < ((width/5)*height*(width/5)) ; i++) {
-			chunkMap15[i] = voxelMap[m];
+			chunkMap15[i] = weakVoxelMap.get()[m];
 			m++;
 			c++;
 			if(c%(width/5)==0) {
@@ -259,7 +261,7 @@ public class Zone implements WorldObject {
 		c = 0;
 		m= (width/5)*3;
 		for (i=0 ; i < ((width/5)*height*(width/5)) ; i++) {
-			chunkMap16[i] = voxelMap[m];
+			chunkMap16[i] = weakVoxelMap.get()[m];
 			m++;
 			c++;
 			if(c%(width/5)==0) {
@@ -270,7 +272,7 @@ public class Zone implements WorldObject {
 		
 		c = 0;
 		for (i=0 ; i < ((width/5)*height*(width/5)) ; i++) {
-			chunkMap17[i] = voxelMap[m];
+			chunkMap17[i] = weakVoxelMap.get()[m];
 			m++;
 			c++;
 			if(c%(width/5)==0) {
@@ -281,7 +283,7 @@ public class Zone implements WorldObject {
 		
 		c = 0;
 		for (i=0 ; i < ((width/5)*height*(width/5)) ; i++) {
-			chunkMap18[i] = voxelMap[m];
+			chunkMap18[i] = weakVoxelMap.get()[m];
 			m++;
 			c++;
 			if(c%(width/5)==0) {
@@ -292,7 +294,7 @@ public class Zone implements WorldObject {
 		
 		c = 0;
 		for (i=0 ; i < ((width/5)*height*(width/5)) ; i++) {
-			chunkMap19[i] = voxelMap[m];
+			chunkMap19[i] = weakVoxelMap.get()[m];
 			m++;
 			c++;
 			if(c%(width/5)==0) {
@@ -303,7 +305,7 @@ public class Zone implements WorldObject {
 		
 		c = 0;
 		for (i=0 ; i < ((width/5)*height*(width/5)) ; i++) {
-			chunkMap20[i] = voxelMap[m];
+			chunkMap20[i] = weakVoxelMap.get()[m];
 			m++;
 			c++;
 			if(c%(width/5)==0) {
@@ -315,7 +317,7 @@ public class Zone implements WorldObject {
 		c = 0;
 		m= (width/5)*4;
 		for (i=0 ; i < ((width/5)*height*(width/5)) ; i++) {
-			chunkMap21[i] = voxelMap[m];
+			chunkMap21[i] = weakVoxelMap.get()[m];
 			m++;
 			c++;
 			if(c%(width/5)==0) {
@@ -326,7 +328,7 @@ public class Zone implements WorldObject {
 		
 		c = 0;
 		for (i=0 ; i < ((width/5)*height*(width/5)) ; i++) {
-			chunkMap22[i] = voxelMap[m];
+			chunkMap22[i] = weakVoxelMap.get()[m];
 			m++;
 			c++;
 			if(c%(width/5)==0) {
@@ -337,7 +339,7 @@ public class Zone implements WorldObject {
 		
 		c = 0;
 		for (i=0 ; i < ((width/5)*height*(width/5)) ; i++) {
-			chunkMap23[i] = voxelMap[m];
+			chunkMap23[i] = weakVoxelMap.get()[m];
 			m++;
 			c++;
 			if(c%(width/5)==0) {
@@ -348,7 +350,7 @@ public class Zone implements WorldObject {
 		
 		c = 0;
 		for (i=0 ; i < ((width/5)*height*(width/5)) ; i++) {
-			chunkMap24[i] = voxelMap[m];
+			chunkMap24[i] = weakVoxelMap.get()[m];
 			m++;
 			c++;
 			if(c%(width/5)==0) {
@@ -359,7 +361,7 @@ public class Zone implements WorldObject {
 		
 		c = 0;
 		for (i=0 ; i < ((width/5)*height*(width/5)) ; i++) {
-			chunkMap25[i] = voxelMap[m];
+			chunkMap25[i] = weakVoxelMap.get()[m];
 			m++;
 			c++;
 			if(c%(width/5)==0) {
@@ -367,6 +369,8 @@ public class Zone implements WorldObject {
 				m += (width/5)*4;
 			}
 		}
+		
+		weakVoxelMap.clear();
 				
 		worldObjects.add(new Chunk(chunkMap1));
 		worldObjects.add(new Chunk(chunkMap2));

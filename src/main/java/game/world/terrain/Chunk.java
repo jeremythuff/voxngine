@@ -1,7 +1,10 @@
 package game.world.terrain;
 
+import java.io.IOException;
 import java.lang.ref.SoftReference;
-import java.lang.ref.WeakReference;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.joml.Vector3f;
 
@@ -20,7 +23,7 @@ public class Chunk implements WorldObject {
 		
 	private VoxelGeometry voxGeo;
 	private Vector3f startCoords;
-	private SoftReference<byte[]> voxelMap;
+	private int chunkCounter;
 	
 	private int geoLength;
 	
@@ -33,8 +36,8 @@ public class Chunk implements WorldObject {
 	protected boolean finishedBuidling;
 	protected boolean initDone;
 		
-	public Chunk(Vector3f startCoords, byte[] voxelMap) {	
-		this.voxelMap = new SoftReference<byte[]>(voxelMap);
+	public Chunk(Vector3f startCoords, int chunkCounter) {	
+		this.chunkCounter = chunkCounter;
 		this.voxGeo = new VoxelGeometry();
 		this.startCoords = startCoords;
         this.geoLength = voxGeo.getVertices(new int[]{0,0,0,0}, "front").length*6;	
@@ -43,13 +46,22 @@ public class Chunk implements WorldObject {
 			
 	@Override
 	public void init(RenderEngine renderer) {
+		
+		Path path = Paths.get("src/main/resources/maps/"+chunkCounter+".map");
+	    SoftReference<byte[]> voxelMap = null;
+		try {
+			voxelMap = new SoftReference<byte[]>(Files.readAllBytes(path));
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		     
         mesh.setVertBuffer((int) (voxelMap.get().length*geoLength));
 		mesh.setIndecesBuffer((int) (voxelMap.get().length*36));
 				
 		mesh.setEntityCount((int) (voxelMap.get().length));
         
-        chunkMaker = new ChunkMaker(mesh, voxelMap.get(), startCoords, rebuildEvent);
+        chunkMaker = new ChunkMaker(mesh, chunkCounter, startCoords, rebuildEvent);
 		chunkMaker.setActiveChunk(active);
 		
 		NonBlockingFuture<Mesh> fMesh = renderer.call(chunkMaker);
@@ -99,8 +111,8 @@ public class Chunk implements WorldObject {
 	        rebuildEvent = true;
 		}
 		
-		int updatedCount = (int) (voxelMap.get().length);
-		renderer.updateDepictedEntityCount(updatedCount);
+//		int updatedCount = (int) (voxelMap.get().length);
+//		renderer.updateDepictedEntityCount(updatedCount);
 				
 		if(!currentlyBuilding && ((rebuildEvent || lastActive) && (active || lastActive)))  {
 			

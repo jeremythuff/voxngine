@@ -4,7 +4,12 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT;
 import static org.lwjgl.stb.STBPerlin.stb_perlin_noise3;
 
+import java.io.IOException;
+import java.lang.ref.SoftReference;
 import java.lang.ref.WeakReference;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,7 +44,7 @@ public class Zone implements WorldObject {
 		float randomNum = (float) Math.random()*0.01f;
 		float value = 0.01f+randomNum;
 				
-		WeakReference<byte[]> weakVoxelMap = new WeakReference<byte[]>(new byte[width*height*width]); 
+		SoftReference<byte[]> weakVoxelMap = new SoftReference<byte[]>(new byte[width*height*width]); 
 		
 		int i = 0;
 		for(int x = -width/2; x < width/2; x++) {
@@ -88,7 +93,16 @@ public class Zone implements WorldObject {
 				}
 			}
 			
-			worldObjects.add(new Chunk(new Vector3f(XStart,YStart,ZStart), chunkMap.get()));
+			Path path = Paths.get("src/main/resources/maps/"+chunkCounter+".map");
+			
+			try {
+				Files.write(path, chunkMap.get());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			worldObjects.add(new Chunk(new Vector3f(XStart,YStart,ZStart), chunkCounter));
 			
 			
 			XStart += width/chunksPerSide;

@@ -8,6 +8,8 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.joml.Vector3f;
+
 import game.world.WorldObject;
 import voxngine.graphics.RenderEngine;
 import voxngine.io.Controlls;
@@ -37,8 +39,7 @@ public class Zone implements WorldObject {
 		float randomNum = (float) Math.random()*0.01f;
 		float value = 0.01f+randomNum;
 				
-		WeakReference<int[][]> weakVoxelMap = new WeakReference<int[][]>(new int[width*height*width][4]); 
-		//int[][] weakVoxelMap = new int[width*height*width][4]; 
+		WeakReference<byte[]> weakVoxelMap = new WeakReference<byte[]>(new byte[width*height*width]); 
 		
 		int i = 0;
 		for(int x = -width/2; x < width/2; x++) {
@@ -47,12 +48,12 @@ public class Zone implements WorldObject {
 					
 					if(y+((stb_perlin_noise3(x*value,0,z*value,0,0,0))*minAlt/2) < minAlt) {
 						if(y>=minAlt/1.45) {
-							weakVoxelMap.get()[i] = new int[] {x,y,z,0};
+							weakVoxelMap.get()[i] = 1;
 						} else {
-							weakVoxelMap.get()[i] = new int[] {x,y,z,1};
+							weakVoxelMap.get()[i] = 2;
 						}
 					} else {
-						weakVoxelMap.get()[i] = new int[] {x,y,z,-1};
+						weakVoxelMap.get()[i] = 0;
 					}
 						
 					i++;
@@ -60,12 +61,19 @@ public class Zone implements WorldObject {
 			}
 		}
 						
-		WeakReference<int[][]> chunkMap;
+		WeakReference<byte[]> chunkMap;
 		
 		int m = 0;
+		
+		float XStart = 0;
+		float YStart = 0;
+		float ZStart = 0;
+		
+		boolean add = true;
+				
 		for(int chunkCounter = 0 ; chunkCounter < width/(chunksPerSide*2) ; chunkCounter++) {
 			
-			chunkMap = new WeakReference<int[][]>(new int[(width/5)*height*(width/5)][4]);
+			chunkMap = new WeakReference<byte[]>(new byte[(width/5)*height*(width/5)]);
 			int c = 0;
 			
 			if(chunkCounter%chunksPerSide==0) m = (width/chunksPerSide)*(chunkCounter/chunksPerSide);
@@ -80,7 +88,19 @@ public class Zone implements WorldObject {
 				}
 			}
 			
-			worldObjects.add(new Chunk(chunkMap.get()));
+			worldObjects.add(new Chunk(new Vector3f(XStart,YStart,ZStart), chunkMap.get()));
+			
+			
+			XStart += width/chunksPerSide;
+			if((chunkCounter+1)%chunksPerSide==0) {
+				if(chunkCounter != 0) {
+					XStart = 0;
+					ZStart += width/chunksPerSide;
+				}
+			}
+			
+			
+			
 			chunkMap.clear();
 		}
 		

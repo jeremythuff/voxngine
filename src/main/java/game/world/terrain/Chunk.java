@@ -1,5 +1,10 @@
 package game.world.terrain;
 
+import java.lang.ref.SoftReference;
+import java.lang.ref.WeakReference;
+
+import org.joml.Vector3f;
+
 import game.world.WorldObject;
 import voxngine.graphics.Mesh;
 import voxngine.graphics.RenderEngine;
@@ -14,7 +19,8 @@ public class Chunk implements WorldObject {
     private Mesh mesh;
 		
 	private VoxelGeometry voxGeo;
-	private int[][] voxelMap;
+	private Vector3f startCoords;
+	private SoftReference<byte[]> voxelMap;
 	
 	private int geoLength;
 	
@@ -27,22 +33,23 @@ public class Chunk implements WorldObject {
 	protected boolean finishedBuidling;
 	protected boolean initDone;
 		
-	public Chunk(int[][] voxelMap) {	
-		this.voxelMap = voxelMap;
+	public Chunk(Vector3f startCoords, byte[] voxelMap) {	
+		this.voxelMap = new SoftReference<byte[]>(voxelMap);
 		this.voxGeo = new VoxelGeometry();
-        this.geoLength = voxGeo.getVertices(voxelMap[0], "front").length*6;	
+		this.startCoords = startCoords;
+        this.geoLength = voxGeo.getVertices(new int[]{0,0,0,0}, "front").length*6;	
         this.mesh = new Mesh();
 	}
 			
 	@Override
 	public void init(RenderEngine renderer) {
 		     
-        mesh.setVertBuffer((int) (voxelMap.length*geoLength));
-		mesh.setIndecesBuffer((int) (voxelMap.length*36));
+        mesh.setVertBuffer((int) (voxelMap.get().length*geoLength));
+		mesh.setIndecesBuffer((int) (voxelMap.get().length*36));
 				
-		mesh.setEntityCount((int) (voxelMap.length));
+		mesh.setEntityCount((int) (voxelMap.get().length));
         
-        chunkMaker = new ChunkMaker(mesh, voxelMap, rebuildEvent);
+        chunkMaker = new ChunkMaker(mesh, voxelMap.get(), startCoords, rebuildEvent);
 		chunkMaker.setActiveChunk(active);
 		
 		NonBlockingFuture<Mesh> fMesh = renderer.call(chunkMaker);
@@ -92,7 +99,7 @@ public class Chunk implements WorldObject {
 	        rebuildEvent = true;
 		}
 		
-		int updatedCount = (int) (voxelMap.length);
+		int updatedCount = (int) (voxelMap.get().length);
 		renderer.updateDepictedEntityCount(updatedCount);
 				
 		if(!currentlyBuilding && ((rebuildEvent || lastActive) && (active || lastActive)))  {

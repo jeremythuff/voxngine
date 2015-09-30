@@ -284,7 +284,7 @@ public class RenderEngine {
             shaderProgram.bind();
 
             glUniformMatrix4fv(matLocation, false, fb);
-            glDrawElements(GL_TRIANGLES, 36*entities, GL_UNSIGNED_INT, 0);
+            glDrawElements(GL_TRIANGLES, (36*entities)+1, GL_UNSIGNED_INT, 1);
             
             shaderProgram.unbind();
             vao.unbind();

@@ -39,7 +39,7 @@ public class TPCamera implements Camera {
 	float yMove=0.0f;
 	float zMove=0.0f;
 	
-	float zoom = 200;
+	float zoom = 500;
 	int mouseX, mouseY;
 	boolean down;
 	
@@ -100,19 +100,19 @@ public class TPCamera implements Camera {
 		if(controlls.getMouse().activeScrollEvent()) {
 			if (controlls.getMouse().getScrollDelta().y > 0) {
 			
-				if(zoom > 75) {
+				//if(zoom > 75) {
 					zoom /= 1.05f;
-				} else {
-					zoom *= 1.05f;
-				}	
+//				} else {
+//					zoom *= 1.05f;
+//				}	
 			
 			} else {
 				
-				if(zoom < 250) {
+				//if(zoom < 250) {
 					zoom *= 1.05f;
-				} else {
-					zoom /= 1.05f;
-				}
+//				} else {
+//					zoom /= 1.05f;
+//				}
 			}
 		}
 	}

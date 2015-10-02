@@ -13,6 +13,9 @@ public class Mesh {
 	private FloatBuffer vertBuffer;
     private IntBuffer indecesBuffer;
     
+    private Float[] vertArray;
+    private int[] intArray;
+    
     private int entityCount;
 
 	public Mesh(){}

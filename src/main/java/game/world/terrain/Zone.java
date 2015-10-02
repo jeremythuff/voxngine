@@ -36,8 +36,8 @@ public class Zone implements WorldObject {
 	@Override
 	public void init(RenderEngine renderer) {
 
-		int width = 250;
-		int chunksPerSide = 5;
+		int width = 3000;
+		int chunksPerSide = 60;
 		int height = 20;
 		float minAlt = height/1.5f;
 		
@@ -47,78 +47,87 @@ public class Zone implements WorldObject {
 		SoftReference<byte[]> weakVoxelMap = new SoftReference<byte[]>(new byte[width*height*width]); 
 		
 		int i = 0;
-		for(int x = -width/2; x < width/2; x++) {
-			for(int y = 0; y < height; y++) {
-				for(int z = -width/2; z < width/2; z++) {	
-					
-					if(y+((stb_perlin_noise3(x*value,0,z*value,0,0,0))*minAlt/2) < minAlt) {
-						if(y>=minAlt/1.45) {
-							weakVoxelMap.get()[i] = 1;
-						} else {
-							weakVoxelMap.get()[i] = 2;
-						}
-					} else {
-						weakVoxelMap.get()[i] = 0;
-					}
-						
-					i++;
-				}
-			}
-		}
+//		for(int x = -width/2; x < width/2; x++) {
+//			for(int y = 0; y < height; y++) {
+//				for(int z = -width/2; z < width/2; z++) {	
+//					
+//					if(y+((stb_perlin_noise3(x*value,0,z*value,0,0,0))*minAlt/2) < minAlt) {
+//						if(y>=minAlt/1.45) {
+//							weakVoxelMap.get()[i] = 1;
+//						} else {
+//							weakVoxelMap.get()[i] = 2;
+//						}
+//					} else {
+//						weakVoxelMap.get()[i] = 0;
+//					}
+//						
+//					i++;
+//				}
+//			}
+//		}
 						
 		WeakReference<byte[]> chunkMap;
 		
 		int m = 0;
+								
+//		for(int chunkCounter = 0 ; chunkCounter < chunksPerSide*chunksPerSide ; chunkCounter++) {
+//			
+//			chunkMap = new WeakReference<byte[]>(new byte[(width/chunksPerSide)*height*(width/chunksPerSide)]);
+//			int c = 0;
+//			
+//			if(chunkCounter%chunksPerSide==0) m = (width/chunksPerSide)*(chunkCounter/chunksPerSide);
+//			
+//			for (i=0 ; i < ((width/chunksPerSide)*height*(width/chunksPerSide)) ; i++) {
+//				chunkMap.get()[i] = weakVoxelMap.get()[m];
+//				m++;
+//				c++;
+//				if(c%(width/chunksPerSide)==0) {
+//					c = 0;
+//					m += (width/chunksPerSide)*(chunksPerSide-1);
+//				}
+//			}
+//			
+//			Path path = Paths.get("src/main/resources/maps/"+chunkCounter+".map");
+//			
+//			try {
+//				Files.write(path, chunkMap.get());
+//			} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//			
+//			chunkMap.clear();
+//		}
+		
+		weakVoxelMap.clear();
+
 		
 		float XStart = 0;
 		float YStart = 0;
 		float ZStart = 0;
-		
-		boolean add = true;
-				
-		for(int chunkCounter = 0 ; chunkCounter < width/(chunksPerSide*2) ; chunkCounter++) {
+					
+		int chunkCounter = 0;
+		int startingMap = 500;
+		for(int c = 0 ; c < 25 ; c++) {
 			
-			chunkMap = new WeakReference<byte[]>(new byte[(width/5)*height*(width/5)]);
-			int c = 0;
-			
-			if(chunkCounter%chunksPerSide==0) m = (width/chunksPerSide)*(chunkCounter/chunksPerSide);
-			
-			for (i=0 ; i < ((width/chunksPerSide)*height*(width/chunksPerSide)) ; i++) {
-				chunkMap.get()[i] = weakVoxelMap.get()[m];
-				m++;
-				c++;
-				if(c%(width/chunksPerSide)==0) {
-					c = 0;
-					m += (width/chunksPerSide)*(chunksPerSide-1);
-				}
+			worldObjects.add(new Chunk(new Vector3f(XStart,YStart,ZStart), chunkCounter+startingMap));
+			chunkCounter++;
+			if(chunkCounter%5==0) {
+				chunkCounter+=(chunksPerSide)-5;
 			}
 			
-			Path path = Paths.get("src/main/resources/maps/"+chunkCounter+".map");
-			
-			try {
-				Files.write(path, chunkMap.get());
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-			worldObjects.add(new Chunk(new Vector3f(XStart,YStart,ZStart), chunkCounter));
 			
 			
-			XStart += width/chunksPerSide;
-			if((chunkCounter+1)%chunksPerSide==0) {
-				if(chunkCounter != 0) {
+			XStart += 50;
+			if((c+1)%5==0) {
+				if(c != 0) {
 					XStart = 0;
-					ZStart += width/chunksPerSide;
+					ZStart += 50;
 				}
 			}
 			
-			
-			
-			chunkMap.clear();
 		}
 		
-		weakVoxelMap.clear();
 		
 		activeChunk = worldObjects.size() - 1;
 		

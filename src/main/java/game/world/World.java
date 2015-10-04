@@ -1,5 +1,8 @@
 package game.world;
 
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_1;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_2;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,28 +14,54 @@ import voxngine.io.ScreenMessage;
 import voxngine.io.Window;
 
 public class World implements GameObject {
+	
+	private RenderEngine renderer;
+	
+	private boolean displayIntro;
 		
-	List<WorldObject> worldObjects = new ArrayList<WorldObject>();
+	private WorldGenerator worldGenerator;
+	private List<WorldObject> worldObjects = new ArrayList<WorldObject>();
 
 	public void init(RenderEngine renderer) {
 		
-		worldObjects.add(new Zone());
+		displayIntro = true;
+		
+		worldGenerator = new WorldGenerator();
+		
+		this.renderer = renderer; 
 		
 		renderer.initShaders();
-		
-		worldObjects.stream().forEach(worldObject -> {		
-			System.out.println("Initialiazing the "+ worldObject.getClass().getSimpleName() +" Object...");
-			worldObject.init(renderer);
-		});
-		
 		
 	}
 	
 	@Override
 	public void input(Controlls controlls) {
+		
+		if(controlls.getKeyboad().activeKeyEvent()) {
+			if(controlls.getKeyboad().isKeyDown(GLFW_KEY_1)) {
+				worldGenerator.makeWorld(60);
+			}
+			
+			if(controlls.getKeyboad().isKeyDown(GLFW_KEY_2)) {
+				worldObjects.add(new Zone());
+				
+				worldObjects.stream().forEach(worldObject -> {		
+					System.out.println("Initialiazing the "+ worldObject.getClass().getSimpleName() +" Object...");
+					worldObject.init(renderer);
+				});
+			}
+		}
+		
+//		if(displayIntro) {
+//			Window.queScreenMessage("StartMenu", new ScreenMessage("Last Active: "+lastActive));
+//		}
+		
+		
 		worldObjects.stream().forEach(worldObject -> {
 			worldObject.input(controlls);
 		});
+		
+				
 	}
 
 	@Override

@@ -56,8 +56,8 @@ public class Chunk implements WorldObject {
 			e1.printStackTrace();
 		}
 		     
-        mesh.setVertBuffer((int) (voxelMap.get().length*geoLength));
-		mesh.setIndecesBuffer((int) (voxelMap.get().length*36));
+        mesh.setVertArray((int) (voxelMap.get().length*geoLength));
+		mesh.setIndecesArray((int) (voxelMap.get().length*36));
 				
 		mesh.setEntityCount((int) (voxelMap.get().length));
         
@@ -110,17 +110,14 @@ public class Chunk implements WorldObject {
 			System.out.println("Chunk "+ this.registeredMeshId +" is initialized...");
 	        rebuildEvent = true;
 		}
-		
-//		int updatedCount = (int) (voxelMap.get().length);
-//		renderer.updateDepictedEntityCount(updatedCount);
 				
 		if(!currentlyBuilding && ((rebuildEvent || lastActive) && (active || lastActive)))  {
 			
 			currentlyBuilding = true;
 			lastActive = false;		
 					
-			mesh.updateVertBuffer();
-			mesh.updateIndecesBuffer();
+			//mesh.updateVertBuffer();
+			//mesh.updateIndecesArray();
 				       			
 			chunkMaker.setMesh(mesh);
 			chunkMaker.setRebuildEvent(rebuildEvent);
@@ -140,6 +137,7 @@ public class Chunk implements WorldObject {
 	            public void onFailure(Throwable e) {
 	                System.out.println("Error on non blocking callable"+ e.getMessage());
 	            }
+				
 			});
 			
 			rebuildEvent = false;

@@ -1,11 +1,5 @@
 package game.world.terrain;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.lang.ref.SoftReference;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -76,37 +70,74 @@ class ChunkMaker implements Callable<Mesh> {
                 	int[] voxel = new int[] {(int) (x+startCoords.x),(int) (y+startCoords.y),(int) (z+startCoords.z)};
                 	
                 	if(hiddenFaces(voxel, "front")) {
-            			mesh.getVertBuffer().put(voxGeo.getVertices(voxel, type,"front"));
+                		
+            			float[] newArray = voxGeo.getVertices(voxel, type,"front");
+            	
+            			for(int v=0; v<newArray.length; v++) {
+            				mesh.addVert(newArray[v]);
+            			}	
+            			
             			faceCount++;
             		}
             		
             		if(hiddenFaces(voxel, "right")) {
-            			mesh.getVertBuffer().put(voxGeo.getVertices(voxel, type, "right"));
+            			float[] newArray = voxGeo.getVertices(voxel, type,"right");
+                    	
+            			for(int v=0; v<newArray.length; v++) {
+            				mesh.addVert(newArray[v]);
+            			}	
+            			
             			faceCount++;
             		}
             		
             		if(hiddenFaces(voxel, "back")) {
-            			mesh.getVertBuffer().put(voxGeo.getVertices(voxel, type, "back"));
+            			float[] newArray = voxGeo.getVertices(voxel, type,"back");
+                    	
+            			for(int v=0; v<newArray.length; v++) {
+            				mesh.addVert(newArray[v]);
+            			}	
+            			
             			faceCount++;
             		}
             		
             		if(hiddenFaces(voxel, "left")) {
-            			mesh.getVertBuffer().put(voxGeo.getVertices(voxel, type, "left"));
+            			float[] newArray = voxGeo.getVertices(voxel, type,"left");
+                    	
+            			for(int v=0; v<newArray.length; v++) {
+            				mesh.addVert(newArray[v]);
+            			}	
+            			
             			faceCount++;
             		}
             		
             		if(hiddenFaces(voxel, "bottom")) {
-            			mesh.getVertBuffer().put(voxGeo.getVertices(voxel, type, "bottom"));
+            			float[] newArray = voxGeo.getVertices(voxel, type,"bottom");
+                    	
+            			for(int v=0; v<newArray.length; v++) {
+            				mesh.addVert(newArray[v]);
+            			}	
+            			
             			faceCount++;
             		}
             		
             		if(hiddenFaces(voxel, "top")) {
-            			mesh.getVertBuffer().put(voxGeo.getVertices(voxel, type, "top"));
+            			float[] newArray = voxGeo.getVertices(voxel, type,"top");
+                    	
+            			for(int v=0; v<newArray.length; v++) {
+            				mesh.addVert(newArray[v]);
+            			}	
+            			
             			faceCount++;
             		}
             		
             		for(int i = 0; i<faceCount ; i++) {
-            			mesh.getIndecesBuffer().put(voxGeo.getIndices(index, i));	 
+            			
+            			Integer[] newArray = voxGeo.getIndices(index, i);
+            			
+            			for(int ind=0; ind<newArray.length; ind++) {
+            				mesh.addInd(newArray[ind]);
+            			}
+            			
             		}
                     
             		m++;
@@ -116,49 +147,12 @@ class ChunkMaker implements Callable<Mesh> {
         }
         
         chunkMap.clear();
-        
-        mesh.getVertBuffer().flip();        
-        mesh.getIndecesBuffer().flip();
-                
+                                
         return mesh;
 	}
 	
 	private boolean hiddenFaces(int[] voxel, String string) {
 		return true;
 	}
-	
-	/** Read the given binary file, and return its contents as a byte array.*/ 
-	  byte[] read(String aInputFileName){
-	    File file = new File(aInputFileName);
-	    byte[] result = new byte[(int)file.length()];
-	    try {
-	      InputStream input = null;
-	      try {
-	        int totalBytesRead = 0;
-	        input = new BufferedInputStream(new FileInputStream(file));
-	        while(totalBytesRead < result.length){
-	          int bytesRemaining = result.length - totalBytesRead;
-	          //input.read() returns -1, 0, or more :
-	          int bytesRead = input.read(result, totalBytesRead, bytesRemaining); 
-	          if (bytesRead > 0){
-	            totalBytesRead = totalBytesRead + bytesRead;
-	          }
-	        }
-	        /*
-	         the above style is a bit tricky: it places bytes into the 'result' array; 
-	         'result' is an output parameter;
-	         the while loop usually has a single iteration only.
-	        */
-	      }
-	      finally {
-	        input.close();
-	      }
-	    }
-	    catch (FileNotFoundException ex) {
-	    }
-	    catch (IOException ex) {
-	    }
-	    return result;
-	  }
 	
 }

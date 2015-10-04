@@ -47,6 +47,7 @@ import voxngine.io.ScreenMessage;
 import voxngine.io.Window;
 import voxngine.threading.NonBlockingExecutor;
 import voxngine.threading.NonBlockingFuture;
+import voxngine.utils.BufferManager;
 
 public class RenderEngine {
 	
@@ -58,7 +59,9 @@ public class RenderEngine {
 	
 	private NonBlockingExecutor executor =
             new NonBlockingExecutor(Executors.newSingleThreadExecutor());
-		
+	
+	private BufferManager bufferManager;
+	
     private Vao textVao;
     private Rbo textVbo;
 
@@ -76,10 +79,15 @@ public class RenderEngine {
 	private final FloatBuffer      xb = BufferUtils.createFloatBuffer(1);
 	private final FloatBuffer      yb = BufferUtils.createFloatBuffer(1);
 	
+	public RenderEngine() {
+		bufferManager = new BufferManager();
+	}
+	
+	
 	public int registerMesh(Mesh mesh) {
 		
-		Map<String, RenderObject> roMap = buildRenderObject(mesh.getEntityCount(), mesh.getVertBuffer(), mesh.getIndecesBuffer());
-		
+		Map<String, RenderObject> roMap = buildRenderObject(mesh.getEntityCount(), mesh.getVertArray(), mesh.getIndecesArray());
+		mesh.clear();
 		int id = renderObjects.size();
 		
 		renderObjects.put(id, roMap);
@@ -88,8 +96,9 @@ public class RenderEngine {
 	}
 	
 	public void updateMesh(int id, Mesh mesh) {
-		Map<String, RenderObject> newRoMap = buildRenderObject(mesh.getEntityCount(), mesh.getVertBuffer(), mesh.getIndecesBuffer());
+		Map<String, RenderObject> newRoMap = buildRenderObject(mesh.getEntityCount(), mesh.getVertArray(), mesh.getIndecesArray());
 		renderObjects.replace(id, renderObjects.get(id), newRoMap);
+		mesh.clear();
 	}
 	
 	public void updateDepictedEntityCount(int count) {
@@ -97,11 +106,15 @@ public class RenderEngine {
 	}
 
 	
-	private Map<String, RenderObject> buildRenderObject(int entityCount, FloatBuffer verticesBuffer, IntBuffer entityBuffer) {
+	private Map<String, RenderObject> buildRenderObject(int entityCount, float[] verticesArray, int[] entityArray) {
 		
 		Vao vao = new Vao();
 		vao.setCount(entityCount);
 		vao.bind();
+				
+		FloatBuffer verticesBuffer = bufferManager.getFloatBuffer();
+		verticesBuffer.put(verticesArray);		
+		verticesBuffer.flip();
 		
 		// Create a Buffer Object and upload the vertices buffer   
         Rbo vbo = new Rbo(GL_ARRAY_BUFFER);
@@ -109,11 +122,19 @@ public class RenderEngine {
         vbo.uploadData(verticesBuffer, GL_DYNAMIC_DRAW);
         vbo.setCount(entityCount);
         
+        bufferManager.releaseFLoatBuffer(verticesBuffer);
+        
+        IntBuffer entityBuffer = bufferManager.getIntBuffer();
+        entityBuffer.put(entityArray);		
+        entityBuffer.flip();
+        
         // Create a Buffer Object and upload the vertices buffer   
         Rbo ebo = new Rbo(GL_ELEMENT_ARRAY_BUFFER);
         ebo.bind();
         ebo.uploadData(entityBuffer, GL_DYNAMIC_DRAW);
         ebo.setCount(entityCount);
+        
+        bufferManager.releaseIntBuffer(entityBuffer);
         
         // The size of float, in bytes (will be 4)
         final int sizeOfFloat = Float.SIZE / Byte.SIZE;

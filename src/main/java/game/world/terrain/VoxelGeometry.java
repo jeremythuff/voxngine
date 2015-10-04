@@ -6,10 +6,10 @@ public class VoxelGeometry {
 	
 	float cubeSize = 0.5f;
 	
-	public int[] getIndices(int index, int i) {
+	public Integer[] getIndices(int index, int i) {
 		
 		int stride = 4*i+index;//8*index+i;
-		int indices[] = { 
+		Integer indices[] = { 
 			stride+0, stride+1, stride+3, stride+0, stride+3, stride+2, // Front face
 		};
 			 

@@ -51,8 +51,7 @@ class ChunkMaker implements Callable<Mesh> {
         
         Path path = Paths.get("src/main/resources/maps/"+chunkCounter+".map");
         SoftReference<byte[]> chunkMap = new SoftReference<byte[]>(Files.readAllBytes(path));
-		
-       
+		        
         for(int x=0; x<50; x++) {
         	for(int y=0; y<20; y++) {
         		voxelLoop:
@@ -69,7 +68,7 @@ class ChunkMaker implements Callable<Mesh> {
                 	
                 	int[] voxel = new int[] {(int) (x+startCoords.x),(int) (y+startCoords.y),(int) (z+startCoords.z)};
                 	
-                	if(hiddenFaces(voxel, "front")) {
+                	if(hiddenFaces(chunkMap.get(), m, "front")) {
                 		
             			float[] newArray = voxGeo.getVertices(voxel, type,"front");
             	
@@ -80,7 +79,7 @@ class ChunkMaker implements Callable<Mesh> {
             			faceCount++;
             		}
             		
-            		if(hiddenFaces(voxel, "right")) {
+            		if(hiddenFaces(chunkMap.get(), m, "right")) {
             			float[] newArray = voxGeo.getVertices(voxel, type,"right");
                     	
             			for(int v=0; v<newArray.length; v++) {
@@ -90,7 +89,7 @@ class ChunkMaker implements Callable<Mesh> {
             			faceCount++;
             		}
             		
-            		if(hiddenFaces(voxel, "back")) {
+            		if(hiddenFaces(chunkMap.get(), m, "back")) {
             			float[] newArray = voxGeo.getVertices(voxel, type,"back");
                     	
             			for(int v=0; v<newArray.length; v++) {
@@ -100,7 +99,7 @@ class ChunkMaker implements Callable<Mesh> {
             			faceCount++;
             		}
             		
-            		if(hiddenFaces(voxel, "left")) {
+            		if(hiddenFaces(chunkMap.get(), m, "left")) {
             			float[] newArray = voxGeo.getVertices(voxel, type,"left");
                     	
             			for(int v=0; v<newArray.length; v++) {
@@ -110,7 +109,7 @@ class ChunkMaker implements Callable<Mesh> {
             			faceCount++;
             		}
             		
-            		if(hiddenFaces(voxel, "bottom")) {
+            		if(hiddenFaces(chunkMap.get(), m, "bottom")) {
             			float[] newArray = voxGeo.getVertices(voxel, type,"bottom");
                     	
             			for(int v=0; v<newArray.length; v++) {
@@ -120,7 +119,7 @@ class ChunkMaker implements Callable<Mesh> {
             			faceCount++;
             		}
             		
-            		if(hiddenFaces(voxel, "top")) {
+            		if(hiddenFaces(chunkMap.get(), m, "top")) {
             			float[] newArray = voxGeo.getVertices(voxel, type,"top");
                     	
             			for(int v=0; v<newArray.length; v++) {
@@ -151,8 +150,45 @@ class ChunkMaker implements Callable<Mesh> {
         return mesh;
 	}
 	
-	private boolean hiddenFaces(int[] voxel, String string) {
-		return true;
+	private boolean hiddenFaces(byte[] chunkMap, int m, String face) {
+		
+		boolean buildface = true;
+		
+//		switch(face) {
+//			case "front":
+//				if((m+1 < chunkMap.length)&&(chunkMap[m+1] != 0)) {					
+//					buildface = false;
+//				}
+//			break;
+//			case "right":
+//				if((m+50 < chunkMap.length)&&(chunkMap[m+50] != 0)) {					
+//					buildface = false;
+//				}
+//			break;
+//			case "back":
+//				if((m-1 != -1)&&(chunkMap[m-1] != 0)) {					
+//					buildface = false;
+//				}
+//			break;
+//			case "left":
+//				if((m-50 > 0)&&(chunkMap[m-50] != 0)) {					
+//					buildface = false;
+//				}
+//			break;
+//			case "bottom":
+//				if((m-2500 > 0)&&(chunkMap[m-2500] != 0)) {					
+//					buildface = false;
+//				}
+//			break;
+//			case "top":
+//				if((m+2500 < chunkMap.length)&&(chunkMap[m+2500] != 0)) {					
+//					buildface = false;
+//				}
+//			break;
+//			
+//		}
+		
+		return buildface;
 	}
 	
 }

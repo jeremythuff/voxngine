@@ -31,9 +31,9 @@ public class Zone implements WorldObject {
 	@Override
 	public void init(RenderEngine renderer) {
 		
-		float XStart = 0;
+		float XStart = -125;
 		float YStart = 0;
-		float ZStart = 0;
+		float ZStart = -125;
 					
 		int chunkCounter = 0;
 		int startingMap = 3;
@@ -50,7 +50,7 @@ public class Zone implements WorldObject {
 			XStart += 50;
 			if((c+1)%5==0) {
 				if(c != 0) {
-					XStart = 0;
+					XStart = -125;
 					ZStart += 50;
 				}
 			}

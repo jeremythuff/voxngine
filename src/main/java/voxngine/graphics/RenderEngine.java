@@ -86,7 +86,7 @@ public class RenderEngine {
 	
 	public int registerMesh(Mesh mesh) {
 		
-		Map<String, RenderObject> roMap = buildRenderObject(mesh.getEntityCount(), mesh.getVertArray(), mesh.getIndecesArray());
+		Map<String, RenderObject> roMap = buildRenderObject(mesh);
 		mesh.clear();
 		int id = renderObjects.size();
 		
@@ -96,7 +96,7 @@ public class RenderEngine {
 	}
 	
 	public void updateMesh(int id, Mesh mesh) {
-		Map<String, RenderObject> newRoMap = buildRenderObject(mesh.getEntityCount(), mesh.getVertArray(), mesh.getIndecesArray());
+		Map<String, RenderObject> newRoMap = buildRenderObject(mesh);
 		renderObjects.replace(id, renderObjects.get(id), newRoMap);
 		mesh.clear();
 	}
@@ -106,35 +106,37 @@ public class RenderEngine {
 	}
 
 	
-	private Map<String, RenderObject> buildRenderObject(int entityCount, float[] verticesArray, int[] entityArray) {
+	private Map<String, RenderObject> buildRenderObject(Mesh mesh) {
 		
 		Vao vao = new Vao();
-		vao.setCount(entityCount);
+		vao.setCount(mesh.getEntityCount());
 		vao.bind();
 				
 		FloatBuffer verticesBuffer = bufferManager.getFloatBuffer();
-		verticesBuffer.put(verticesArray);		
+		verticesBuffer.put(mesh.getVertArray());		
 		verticesBuffer.flip();
 		
 		// Create a Buffer Object and upload the vertices buffer   
         Rbo vbo = new Rbo(GL_ARRAY_BUFFER);
         vbo.bind();
         vbo.uploadData(verticesBuffer, GL_DYNAMIC_DRAW);
-        vbo.setCount(entityCount);
+        vbo.setCount(mesh.getIndecesArray().length);
         
         bufferManager.releaseFLoatBuffer(verticesBuffer);
         
         IntBuffer entityBuffer = bufferManager.getIntBuffer();
-        entityBuffer.put(entityArray);		
+        entityBuffer.put(mesh.getIndecesArray());		
         entityBuffer.flip();
         
         // Create a Buffer Object and upload the vertices buffer   
         Rbo ebo = new Rbo(GL_ELEMENT_ARRAY_BUFFER);
         ebo.bind();
         ebo.uploadData(entityBuffer, GL_DYNAMIC_DRAW);
-        ebo.setCount(entityCount);
+        ebo.setCount(mesh.getEntityCount());
         
         bufferManager.releaseIntBuffer(entityBuffer);
+        
+        mesh.clear();
         
         // The size of float, in bytes (will be 4)
         final int sizeOfFloat = Float.SIZE / Byte.SIZE;
